@@ -1,13 +1,15 @@
 package servidor.aplicacao;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import servidor.frames.*;
 
 public class Principal {
 
+    public static boolean executando;
+    
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -17,5 +19,14 @@ public class Principal {
         FrameInicio frame = new FrameInicio();
         frame.setVisible(true);
         
+    }
+    
+    public static void rodar(int porta) throws IOException{
+        ServerSocket servidor = new ServerSocket(porta);
+        while(executando){
+            Socket conexao = servidor.accept();
+            Thread t = new ConexaoServidor(porta, conexao);
+            t.start();
+        }
     }
 }

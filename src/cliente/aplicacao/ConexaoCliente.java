@@ -3,13 +3,13 @@ package cliente.aplicacao;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Conexao {
+public class ConexaoCliente {
     
     private String endereco;
     private int porta;
     private Socket conexao;
     
-    public Conexao(String endereco, int porta){
+    public ConexaoCliente(String endereco, int porta){
         this.endereco = endereco;
         this.porta = porta;
     }
@@ -24,5 +24,6 @@ public class Conexao {
     
     public void fecharConexao() throws IOException{
         conexao.close();
+        
     }
 }

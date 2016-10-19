@@ -1,12 +1,12 @@
 package cliente.frames;
 
-import cliente.aplicacao.Conexao;
+import cliente.aplicacao.ConexaoCliente;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 public class FrameLogin extends javax.swing.JFrame {
 
-    Conexao conexao;
+    ConexaoCliente conexao;
     
     public FrameLogin() {
         initComponents();
@@ -15,7 +15,7 @@ public class FrameLogin extends javax.swing.JFrame {
 
     private void addListeners(){
         btnLogin.addActionListener((ActionEvent e) -> {
-            conexao = new Conexao(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()));
+            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()));
             try {
                 conexao.criarConexao();
             } catch (IOException ex) {
