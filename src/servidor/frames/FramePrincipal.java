@@ -25,16 +25,20 @@ public class FramePrincipal extends javax.swing.JFrame {
                 lblStatus.setText("Iniciando...");
                 lblStatus.setForeground(Color.yellow);
                 enviarLog("Iniciando servidor...");
-                Principal.executando = true; // define como verdadeiro a variável que controla o loop dos threads
                 new Thread(() -> {
                     try {
                         Principal.rodar(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        Principal.executando = false;
-                        enviarLog("Erro: " + ex.getMessage());
-                        lblStatus.setText("Parado");
-                        lblStatus.setForeground(Color.red);
+                        try {
+                            Principal.pararServidor();
+                            enviarLog("Exceção: " + ex.getMessage());
+                            lblStatus.setText("Parado");
+                            lblStatus.setForeground(Color.red);
+                        } catch (IOException ex1) {
+                            ex1.printStackTrace();
+                            enviarLog("Exceção: " + ex1.getMessage());
+                        }
                     }
                 }).start();
                 lblStatus.setText("Rodando");
@@ -47,13 +51,18 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         
         btnParar.addActionListener((ActionEvent e) -> {
-            Principal.executando = false; // volta a variável de controle para falso para não criar mais threads
-            enviarLog("Servidor parado com sucesos!");
-            lblStatus.setText("Parado");
-            lblStatus.setForeground(Color.red);
-            btnIniciar.setEnabled(true);
-            btnParar.setEnabled(false);
-            txtPorta.setEnabled(true);
+            try {
+                Principal.pararServidor(); // chama a função que para o servidor e desvincula da porta usada
+                enviarLog("Servidor parado com sucesso");
+                lblStatus.setText("Parado");
+                lblStatus.setForeground(Color.red);
+                btnIniciar.setEnabled(true);
+                btnParar.setEnabled(false);
+                txtPorta.setEnabled(true);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                enviarLog("Exceção: " + ex.getMessage());
+            }
         });
     }
     

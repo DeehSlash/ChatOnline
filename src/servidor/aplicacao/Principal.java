@@ -8,9 +8,10 @@ import servidor.frames.*;
 
 public class Principal {
 
-    public static boolean executando;
+    private static boolean executando;
     public static FrameInicio frmInicio;
     public static FramePrincipal frmPrincipal;
+    private static ServerSocket servidor;
     
     public static void main(String[] args) {
         try {
@@ -24,14 +25,18 @@ public class Principal {
     }
     
     public static void rodar(int porta) throws IOException{
-        ServerSocket servidor = new ServerSocket(porta);
+        servidor = new ServerSocket(porta);
+        executando = true;
         while(executando){
             Socket conexao = servidor.accept();
             frmPrincipal.alterarUsuarios(true);
             Thread t = new ConexaoServidor(porta, conexao);
             t.start();
         }
-        if(!executando)
-            servidor.close();
+    }
+
+    public static void pararServidor() throws IOException{
+        executando = false;
+        servidor.close();
     }
 }

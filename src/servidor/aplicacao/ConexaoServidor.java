@@ -11,20 +11,15 @@ public class ConexaoServidor extends Thread {
     int idCliente;
     BufferedReader entrada;
     
-    public ConexaoServidor(int porta, Socket cliente){
+    public ConexaoServidor(int porta, Socket cliente) throws IOException{
         this.cliente = cliente;
         this.idCliente = setId();
         Principal.frmPrincipal.enviarLog("Cliente com ID " + idCliente + " se conectou");
     }
     
-    private int setId(){
-        try {
-            entrada = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-            return Integer.parseInt(entrada.readLine());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return -1;
+    private int setId() throws IOException{
+        entrada = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+        return Integer.parseInt(entrada.readLine());
     }
     
     public boolean getStatus(){
@@ -50,6 +45,7 @@ public class ConexaoServidor extends Thread {
                     fecharConexao();
             } catch (IOException ex) {
                 ex.printStackTrace();
+                Principal.frmPrincipal.enviarLog("Exceção: " + ex.getMessage());
             }
         }
     }
