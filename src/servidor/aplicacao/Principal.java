@@ -3,8 +3,10 @@ package servidor.aplicacao;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import javax.swing.UIManager;
 import servidor.frames.*;
+import servidor.modelo.*;
 
 public class Principal {
 
@@ -12,6 +14,7 @@ public class Principal {
     public static FrameInicio frmInicio;
     public static FramePrincipal frmPrincipal;
     private static ServerSocket servidor;
+    public static ArrayList<Usuario> usuarios;
     
     public static void main(String[] args) {
         try {
@@ -24,7 +27,7 @@ public class Principal {
         frmInicio.setVisible(true);
     }
     
-    public static void rodar(int porta) throws IOException{
+    public static void iniciarServidor(int porta) throws IOException{
         servidor = new ServerSocket(porta);
         executando = true;
         while(executando){
