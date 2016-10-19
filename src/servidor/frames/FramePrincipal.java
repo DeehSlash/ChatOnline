@@ -21,9 +21,10 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(txtPorta.getText().isEmpty()) // mostra uma mensagem de erro caso o campo porta esteja vazio
                 JOptionPane.showMessageDialog(this, "O campo porta não pode estar vazio!", "Erro", JOptionPane.ERROR_MESSAGE);
             else{
+                txtLog.setText(null);
                 lblStatus.setText("Iniciando...");
                 lblStatus.setForeground(Color.yellow);
-                txtLog.append("Iniciando servidor...\n");
+                enviarLog("Iniciando servidor...");
                 Principal.executando = true; // define como verdadeiro a variável que controla o loop dos threads
                 new Thread(() -> {
                     try {
@@ -31,7 +32,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         Principal.executando = false;
-                        txtLog.append("Erro: " + ex.getMessage());
+                        enviarLog("Erro: " + ex.getMessage());
                         lblStatus.setText("Parado");
                         lblStatus.setForeground(Color.red);
                     }
@@ -41,13 +42,13 @@ public class FramePrincipal extends javax.swing.JFrame {
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);
                 txtPorta.setEnabled(false);
-                txtLog.append("Servidor iniciado com sucesso!\n");   
+                enviarLog("Servidor iniciado com sucesso na porta " + txtPorta.getText());   
             }
         });
         
         btnParar.addActionListener((ActionEvent e) -> {
             Principal.executando = false; // volta a variável de controle para falso para não criar mais threads
-            txtLog.append("Servidor parado com sucesos!\n");
+            enviarLog("Servidor parado com sucesos!");
             lblStatus.setText("Parado");
             lblStatus.setForeground(Color.red);
             btnIniciar.setEnabled(true);
@@ -58,7 +59,11 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     public void alterarUsuarios(boolean incremento){
         if(incremento) usuariosConectados++; else usuariosConectados--;
-        lblUsuarios.setText(Integer.toString(usuariosConectados));
+        lblUsuariosConectados.setText(Integer.toString(usuariosConectados));
+    }
+    
+    public void enviarLog(String mensagem){
+        txtLog.append(mensagem + "\n");
     }
     
     /** This method is called from within the constructor to
@@ -85,10 +90,10 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Servidor");
-        setMaximumSize(new java.awt.Dimension(450, 375));
-        setMinimumSize(new java.awt.Dimension(450, 375));
+        setMaximumSize(new java.awt.Dimension(450, 500));
+        setMinimumSize(new java.awt.Dimension(450, 500));
         setName("frmPrincipal"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(450, 375));
+        setPreferredSize(new java.awt.Dimension(450, 500));
         setResizable(false);
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.columnWeights = new double[] {1.0};
@@ -158,7 +163,7 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         txtLog.setEditable(false);
         txtLog.setColumns(20);
-        txtLog.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        txtLog.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
         txtLog.setRows(5);
         txtLog.setToolTipText("");
         txtLog.setWrapStyleWord(true);
@@ -173,6 +178,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipady = 100;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(20, 20, 5, 20);

@@ -1,11 +1,44 @@
 package cliente.frames;
 
+import cliente.aplicacao.ConexaoCliente;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class FramePrincipal extends javax.swing.JFrame {
 
-    public FramePrincipal() {
+    ConexaoCliente conexao;
+    
+    public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
+        addListeners();
+        this.conexao = conexao;
     }
 
+    private void addListeners(){
+        btnEnviar.addActionListener((ActionEvent e) -> {
+            try {
+                conexao.enviarMensagem(txtMensagem.getText());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        
+        this.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                try {
+                    conexao.fecharConexao();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -14,12 +47,29 @@ public class FramePrincipal extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        txtMensagem = new javax.swing.JTextField();
+        btnEnviar = new javax.swing.JButton();
         mnbMenu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 200;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(txtMensagem, gridBagConstraints);
+
+        btnEnviar.setText("Enviar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(btnEnviar, gridBagConstraints);
 
         jMenu1.setText("File");
         mnbMenu.add(jMenu1);
@@ -29,24 +79,15 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         setJMenuBar(mnbMenu);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEnviar;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar mnbMenu;
+    private javax.swing.JTextField txtMensagem;
     // End of variables declaration//GEN-END:variables
 
 }

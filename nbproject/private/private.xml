@@ -3,9 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/andre/Documents/NetBeansProjects/ChatOnline/src/servidor/frames/FramePrincipal.java</file>
-            <file>file:/C:/Users/andre/Documents/NetBeansProjects/ChatOnline/src/servidor/aplicacao/ConexaoServidor.java</file>
-            <file>file:/C:/Users/andre/Documents/NetBeansProjects/ChatOnline/src/servidor/aplicacao/Principal.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/servidor/aplicacao/Principal.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/servidor/aplicacao/ConexaoServidor.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/servidor/frames/FrameInicio.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/cliente/aplicacao/ConexaoCliente.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/servidor/frames/FramePrincipal.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/cliente/aplicacao/Principal.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/cliente/frames/FrameLogin.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/ChatOnline/src/cliente/frames/FramePrincipal.java</file>
         </group>
     </open-files>
 </project-private>

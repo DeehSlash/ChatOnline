@@ -1,9 +1,12 @@
 package cliente.aplicacao;
 
-import cliente.frames.FrameLogin;
+import cliente.frames.*;
 import javax.swing.UIManager;
 
 public class Principal {
+    
+    public static FrameLogin frmLogin;
+    public static FramePrincipal frmPrincipal;
     
     public static void main(String[] args) {
         try {
@@ -11,7 +14,12 @@ public class Principal {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        FrameLogin login = new FrameLogin();
-        login.setVisible(true);
+        frmLogin = new FrameLogin();
+        frmLogin.setVisible(true);
+    }
+    
+    public static void rodar(ConexaoCliente conexao){
+        Thread t = conexao;
+        t.start();
     }
 }

@@ -1,6 +1,6 @@
 package cliente.frames;
 
-import cliente.aplicacao.ConexaoCliente;
+import cliente.aplicacao.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
@@ -15,16 +15,17 @@ public class FrameLogin extends javax.swing.JFrame {
 
     private void addListeners(){
         btnLogin.addActionListener((ActionEvent e) -> {
-            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()));
+            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText()));
             try {
                 conexao.criarConexao();
+                conexao.enviarIdCliente();
+                System.out.println("Conectado!");
+                Principal.frmPrincipal = new FramePrincipal(conexao);
+                Principal.frmPrincipal.setVisible(true);
+                dispose();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            if(conexao.getStatus())
-                System.out.println("Conectado!");
-            FramePrincipal frame = new FramePrincipal();
-            dispose();
         });
     }
     

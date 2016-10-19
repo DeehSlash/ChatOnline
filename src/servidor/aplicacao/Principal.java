@@ -9,6 +9,8 @@ import servidor.frames.*;
 public class Principal {
 
     public static boolean executando;
+    public static FrameInicio frmInicio;
+    public static FramePrincipal frmPrincipal;
     
     public static void main(String[] args) {
         try {
@@ -16,17 +18,20 @@ public class Principal {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        FrameInicio frame = new FrameInicio();
-        frame.setVisible(true);
-        
+        frmInicio = new FrameInicio();
+        frmPrincipal = new FramePrincipal();
+        frmInicio.setVisible(true);
     }
     
     public static void rodar(int porta) throws IOException{
         ServerSocket servidor = new ServerSocket(porta);
         while(executando){
             Socket conexao = servidor.accept();
+            frmPrincipal.alterarUsuarios(true);
             Thread t = new ConexaoServidor(porta, conexao);
             t.start();
         }
+        if(!executando)
+            servidor.close();
     }
 }

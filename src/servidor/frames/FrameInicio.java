@@ -2,6 +2,7 @@ package servidor.frames;
 
 import java.awt.event.ActionEvent;
 import javax.swing.ButtonGroup;
+import servidor.aplicacao.Principal;
 
 public class FrameInicio extends javax.swing.JFrame {
 
@@ -17,8 +18,7 @@ public class FrameInicio extends javax.swing.JFrame {
     private void addListeners(){
         btnIniciar.addActionListener((ActionEvent e) -> {   // Evento de clique no botão Iniciar
             if(rbtnGrafico.isSelected()){
-                FramePrincipal frame = new FramePrincipal();
-                frame.setVisible(true);
+                Principal.frmPrincipal.setVisible(true);
                 dispose();
             }else if(rbtnConsole.isSelected()){
                 System.out.println("Modo console indisponível");
