@@ -1,9 +1,24 @@
 package cliente.frames;
 
+import compartilhado.modelo.Usuario;
+import javax.swing.ImageIcon;
+
 public class FrameConversa extends javax.swing.JFrame {
 
-    public FrameConversa() {
+    private Usuario origem;
+    private Usuario destino;
+    
+    public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
+        this.origem = origem;
+        this.destino = destino;
+    }
+    
+    private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
+        lblFoto.setIcon(new ImageIcon(destino.getFoto()));
+        lblUsuario.setText(destino.getUsuario());
+        setTitle(destino.getUsuario());
+        lblStatus.setText((destino.isOnline()? "Online" : "Offline"));
     }
     
     /** This method is called from within the constructor to

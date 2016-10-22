@@ -1,34 +1,81 @@
 package cliente.frames;
 
 import cliente.aplicacao.ConexaoCliente;
-import java.awt.event.ActionEvent;
+import cliente.aplicacao.Principal;
+import compartilhado.modelo.Usuario;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    ConexaoCliente conexao;
+    private ConexaoCliente conexao;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
+        carregarInfoUsuario();
+        carregarLista();
     }
 
     private void addListeners(){
-
-        
         this.addWindowListener(new WindowAdapter(){
             @Override
-            public void windowClosing(WindowEvent e){
+            public void windowClosing(WindowEvent e){ // caso a janela tenha sido fechada, encerra a conexão com o servidor
                 try {
-                    conexao.fecharConexao();
+                    conexao.desconectar();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         });
+        
+        listUsuarios.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    Usuario destino = Principal.usuarios.get(Principal.usuarios.indexOf(listUsuarios.getSelectedValue()));
+                    if(destino != null){
+                        FrameConversa frame = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente()), destino);
+                    }
+                }
+            }
+        });
+    }
+    
+    private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
+        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente());;
+        lblFoto.setIcon(new ImageIcon(usuario.getFoto()));
+        lblUsuario.setText(usuario.getUsuario());
+        atualizarStatusConexao();
+    }
+    
+    private void atualizarStatusConexao(){ // atualiza os labels com a informação da conexão
+        if(conexao.getStatus()){
+            lblStatusConexao.setText("Conectado");
+            lblStatus.setText("Online");
+            lblIP.setText(conexao.getEndereco() + ":" + conexao.getPorta());
+        }
+    }
+    
+    private void carregarLista(){ // carrega a lista de usuários
+        DefaultListModel listModel = new DefaultListModel();
+        for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
+            if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
+                listModel.addElement(usuario.getUsuario());
+            }
+        }
+        for (Usuario usuario : Principal.usuarios) { // só então adiciona os usuários offline
+            if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
+                listModel.addElement(usuario.getUsuario());
+            }
+        }
+        listUsuarios.setModel(listModel);
     }
     
     /** This method is called from within the constructor to
@@ -47,7 +94,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        listUsuarios = new javax.swing.JList<>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();
@@ -108,7 +155,7 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         pnlListaUsuarios.setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(listUsuarios);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -195,13 +242,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblStatusConexao;
     private javax.swing.JLabel lblUsuario;
+    private javax.swing.JList<String> listUsuarios;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu mnuArquivo;
     private javax.swing.JMenu mnuContatos;

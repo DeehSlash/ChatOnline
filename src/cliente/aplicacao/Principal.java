@@ -1,12 +1,14 @@
 package cliente.aplicacao;
-
-import cliente.frames.*;
+import compartilhado.modelo.Usuario;
+import java.util.ArrayList;
 import javax.swing.UIManager;
+import cliente.frames.*;
 
 public class Principal {
     
     public static FrameLogin frmLogin;
     public static FramePrincipal frmPrincipal;
+    public static ArrayList<Usuario> usuarios;
     
     public static void main(String[] args) {
         try {
