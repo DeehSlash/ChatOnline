@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 22-Out-2016 às 20:25
+-- Generation Time: 23-Out-2016 às 00:31
 -- Versão do servidor: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `menssageiro`
+-- Database: `mensageiro`
 --
 
 -- --------------------------------------------------------
@@ -38,7 +38,8 @@ CREATE TABLE `grupo` (
   `idMembro7` int(3) UNSIGNED DEFAULT NULL,
   `idMembro8` int(3) UNSIGNED DEFAULT NULL,
   `idMembro9` int(3) UNSIGNED DEFAULT NULL,
-  `idMembro10` int(3) UNSIGNED DEFAULT NULL
+  `idMembro10` int(3) UNSIGNED DEFAULT NULL,
+  `foto` blob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -48,9 +49,9 @@ CREATE TABLE `grupo` (
 --
 
 CREATE TABLE `mensagem` (
+  `idMensagem` int(5) UNSIGNED NOT NULL,
   `idUsuarioOrigem` int(3) UNSIGNED NOT NULL,
   `idDestino` int(3) UNSIGNED NOT NULL,
-  `idMensagem` int(5) UNSIGNED NOT NULL,
   `destinoTipo` enum('U','G') NOT NULL,
   `txtMensagem` text NOT NULL,
   `timeMensagem` datetime NOT NULL,
@@ -72,6 +73,13 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Extraindo dados da tabela `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `usuario`, `senha`, `foto`) VALUES
+(2, 'dsdfsdf', '454', NULL);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -85,7 +93,7 @@ ALTER TABLE `grupo`
 -- Indexes for table `mensagem`
 --
 ALTER TABLE `mensagem`
-  ADD PRIMARY KEY (`idUsuarioOrigem`,`idDestino`,`idMensagem`);
+  ADD PRIMARY KEY (`idMensagem`);
 
 --
 -- Indexes for table `usuario`
@@ -93,6 +101,25 @@ ALTER TABLE `mensagem`
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id`);
 
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `grupo`
+--
+ALTER TABLE `grupo`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `mensagem`
+--
+ALTER TABLE `mensagem`
+  MODIFY `idMensagem` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id` int(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
