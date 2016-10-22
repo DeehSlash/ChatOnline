@@ -55,10 +55,10 @@ public class FrameLogin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
-        setMaximumSize(new java.awt.Dimension(350, 300));
-        setMinimumSize(new java.awt.Dimension(350, 300));
+        setMaximumSize(new java.awt.Dimension(400, 300));
+        setMinimumSize(new java.awt.Dimension(400, 300));
         setName("frmLogin"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(350, 300));
+        setPreferredSize(new java.awt.Dimension(400, 300));
         setResizable(false);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
