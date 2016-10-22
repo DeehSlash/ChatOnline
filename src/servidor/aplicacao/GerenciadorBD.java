@@ -46,29 +46,45 @@ public class GerenciadorBD {
         return c;
     }
     
-    public void cadastrarUsuario(Usuario u) throws SQLException{
+    //  ALTERAR NOME DA CLASSE USUARIOAUTENTICADOR PARA O NOME DA CLASSE USUÁRIO COM SENHA
+    public void cadastrarUsuario(UsuarioAutenticador usuario) throws SQLException{
         Statement st = conexao().createStatement();
         String SQL = "INSERT INTO usuario (usuario, senha, foto) "
-                + "VALUES ('" + u.getUsuario() + "', '" + u.getSenha() + "', '" + u.getFoto() + "')";
+                + "VALUES ('" + usuario.getUsuario() + "', '" + usuario.getSenha() + "', '" + u.getFoto() + "')";
         st.executeUpdate(SQL);
-
     }
     
-    public ArrayList getUsuarios() throws SQLException, IOException{
+    // ALTERAR O NOME DA CLASSE USUARIOLISTA PARA O NOME DA CLASSE USUARIO SEM SENHA
+    public ArrayList<UsuarioLista> getListaUsuarios() throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "SELECT * FROM usuarios ORDER by usuario";
+        String SQL = "SELECT id, usuario, foto FROM usuarios ORDER by usuario";
         ResultSet rs = st.executeQuery(SQL);
-        ArrayList<Usuario> usuarios = new ArrayList<>();
+        ArrayList<UsuarioLista> usuarios = new ArrayList<UsuarioLista>();
         while(rs.next()){
             int id = rs.getInt("id");
             String usuario = rs.getString("usuario");
-            String senha = rs.getString("senha");
             Blob blob = rs.getBlob("foto");
             InputStream is = blob.getBinaryStream();
             Image image = ImageIO.read(is);
             ImageIcon flag = new ImageIcon(image);
-            usuarios.add(new Usuario(id, usuario, senha, flag));
+            usuarios.add(new UsuarioLista(id, usuario, flag));
         }
         return usuarios;
+    }
+    
+    // ALTERAR O NOME DAS CLASSES MENSAGEM E USUARIOLISTA PARA OS NOMES DAS CLASSES DA MENSAGEM E DO USUARIO SEM SENHA
+    public void enviarMensagem(Mensagem msg, UsuarioLista usuarioOrigem, UsuarioLista usuarioDestino) throws SQLException {
+        Statement st = conexao().createStatement();
+        switch(msg.destino){
+            case grupo:
+                String SQL = "INSERT INTO mensagemgrupo (idUsuarioOrigem, idUsuarioDestino, idMensagem, txtMensagem, dataMensagem, horaMensagem) "
+                + "VALUES ('" + usuarioOrigem.getIdUsuario() + "', '" + usuarioDestino.getIdUsuario()() + "', '" + ????() + "', '" + msg.textoMensagem + ')";
+                break;
+            case usuario:
+                String SQL = "INSERT INTO mensagem (usuario, senha, foto) "
+                + "VALUES ('" + u.getUsuario() + "', '" + u.getSenha() + "', '" + u.getFoto() + "')";
+                break;
+        }
+        st.executeUpdate(SQL);
     }
 }
