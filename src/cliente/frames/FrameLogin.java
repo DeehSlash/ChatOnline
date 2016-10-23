@@ -1,12 +1,15 @@
 package cliente.frames;
 
 import cliente.aplicacao.*;
+import compartilhado.modelo.UsuarioAutenticacao;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
 
-    ConexaoCliente conexao;
+    private ConexaoCliente conexao;
     
     public FrameLogin() {
         initComponents();
@@ -15,20 +18,65 @@ public class FrameLogin extends javax.swing.JFrame {
 
     private void addListeners(){
         btnLogin.addActionListener((ActionEvent e) -> {
-            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText()));
-            try {
-                conexao.criarConexao();
-                conexao.enviarIdCliente();
-                System.out.println("Conectado!");
-                Principal.frmPrincipal = new FramePrincipal(conexao);
-                Principal.frmPrincipal.setVisible(true);
-                dispose();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if(verificarCampos()){ // se os campos estiverem preenchidos, continua
+                lblStatus.setText("Criando conexão...");
+                conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText())); // cria a conexão
+                try {
+                    lblStatus.setText("Conectando ao servidor...");
+                    conexao.conectar(); // conecta com o servidor
+                    lblStatus.setText("Autenticando usuário...");
+                    if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
+                        if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
+                            Principal.frmPrincipal = new FramePrincipal(conexao);
+                            Principal.frmPrincipal.setVisible(true);
+                            dispose();
+                        }else
+                            JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
+                    }else
+                        JOptionPane.showMessageDialog(this, "A autenticação falhou, verifique seus dados e tente novamente",
+                                                            "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex){
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
+                }
+            }
+        });
+        
+        btnCadastrar.addActionListener((ActionEvent e) -> {
+            if(verificarCampos()){ // se os campos estiverem preenchidos, continua
+                lblStatus.setText("Criando conexão...");
+                conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText())); // cria a conexão
+                try {
+                    lblStatus.setText("Conectando ao servidor...");
+                    conexao.conectar(); // conecta com o servidor
+                    lblStatus.setText("Cadastrando usuário...");
+                    if(conexao.cadastrarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // cadastra o usuário no servidor
+                        if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
+                            Principal.frmPrincipal = new FramePrincipal(conexao);
+                            Principal.frmPrincipal.setVisible(true);
+                            dispose();
+                        }else
+                            JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
+                    }else
+                        JOptionPane.showMessageDialog(this, "O cadastramento falhou, verifique seus dados e tente novamente",
+                                                            "Falha no cadastramento", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex){
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
+                }
             }
         });
     }
     
+    private boolean verificarCampos(){ // verifica se todos os campos foram preenchidos
+        if(txtEndereco.getText().isEmpty() || txtPorta.getText().isEmpty() ||
+           txtUsuario.getText().isEmpty() || Arrays.toString(txtSenha.getPassword()).isEmpty()){
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos e tente novamente", "Campos em branco", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }else{
+            return true;
+        }
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -52,14 +100,14 @@ public class FrameLogin extends javax.swing.JFrame {
         txtEndereco = new javax.swing.JTextField();
         lblPorta = new javax.swing.JLabel();
         txtPorta = new javax.swing.JTextField();
+        lblStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
-        setMaximumSize(new java.awt.Dimension(350, 300));
-        setMinimumSize(new java.awt.Dimension(350, 300));
+        setMaximumSize(null);
+        setMinimumSize(new java.awt.Dimension(400, 400));
         setName("frmLogin"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(350, 300));
-        setResizable(false);
+        setPreferredSize(new java.awt.Dimension(400, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         lblLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -117,7 +165,7 @@ public class FrameLogin extends javax.swing.JFrame {
         btnLogin.setText("Login");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(btnLogin, gridBagConstraints);
@@ -125,7 +173,7 @@ public class FrameLogin extends javax.swing.JFrame {
         btnCadastrar.setText("Cadastrar");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 20, 5);
         getContentPane().add(btnCadastrar, gridBagConstraints);
@@ -160,6 +208,14 @@ public class FrameLogin extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 20);
         getContentPane().add(txtPorta, gridBagConstraints);
 
+        lblStatus.setText("Esperando conexão");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 20, 5);
+        getContentPane().add(lblStatus, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -171,6 +227,7 @@ public class FrameLogin extends javax.swing.JFrame {
     private javax.swing.JLabel lblLogin;
     private javax.swing.JLabel lblPorta;
     private javax.swing.JLabel lblSenha;
+    private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblUsuario;
     private javax.swing.JTextField txtEndereco;
     private javax.swing.JTextField txtPorta;

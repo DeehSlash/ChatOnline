@@ -27,7 +27,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 enviarLog("Iniciando servidor...");
                 new Thread(() -> {
                     try {
-                        Principal.rodar(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
+                        Principal.iniciarServidor(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
                     } catch (IOException ex) {
                         ex.printStackTrace();
                         try {

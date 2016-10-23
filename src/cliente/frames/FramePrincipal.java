@@ -1,40 +1,81 @@
 package cliente.frames;
 
 import cliente.aplicacao.ConexaoCliente;
-import java.awt.event.ActionEvent;
+import cliente.aplicacao.Principal;
+import compartilhado.modelo.Usuario;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    ConexaoCliente conexao;
+    private ConexaoCliente conexao;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
+        carregarInfoUsuario();
+        carregarLista();
     }
 
     private void addListeners(){
-        btnEnviar.addActionListener((ActionEvent e) -> {
-            try {
-                conexao.enviarMensagem(txtMensagem.getText());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        
         this.addWindowListener(new WindowAdapter(){
             @Override
-            public void windowClosing(WindowEvent e){
+            public void windowClosing(WindowEvent e){ // caso a janela tenha sido fechada, encerra a conexão com o servidor
                 try {
-                    conexao.fecharConexao();
+                    conexao.desconectar();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         });
+        
+        listUsuarios.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    Usuario destino = Principal.usuarios.get(Principal.usuarios.indexOf(listUsuarios.getSelectedValue()));
+                    if(destino != null){
+                        FrameConversa frame = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente()), destino);
+                    }
+                }
+            }
+        });
+    }
+    
+    private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
+        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente());;
+        lblFoto.setIcon(new ImageIcon(usuario.getFoto()));
+        lblUsuario.setText(usuario.getUsuario());
+        atualizarStatusConexao();
+    }
+    
+    private void atualizarStatusConexao(){ // atualiza os labels com a informação da conexão
+        if(conexao.getStatus()){
+            lblStatusConexao.setText("Conectado");
+            lblStatus.setText("Online");
+            lblIP.setText(conexao.getEndereco() + ":" + conexao.getPorta());
+        }
+    }
+    
+    private void carregarLista(){ // carrega a lista de usuários
+        DefaultListModel listModel = new DefaultListModel();
+        for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
+            if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
+                listModel.addElement(usuario.getUsuario());
+            }
+        }
+        for (Usuario usuario : Principal.usuarios) { // só então adiciona os usuários offline
+            if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
+                listModel.addElement(usuario.getUsuario());
+            }
+        }
+        listUsuarios.setModel(listModel);
     }
     
     /** This method is called from within the constructor to
@@ -47,45 +88,174 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        txtMensagem = new javax.swing.JTextField();
-        btnEnviar = new javax.swing.JButton();
-        mnbMenu = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        pnlHeader = new javax.swing.JPanel();
+        lblFoto = new javax.swing.JLabel();
+        lblUsuario = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
+        pnlListaUsuarios = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        listUsuarios = new javax.swing.JList<>();
+        pnlInfo = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lblStatusConexao = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        lblIP = new javax.swing.JLabel();
+        menuBar = new javax.swing.JMenuBar();
+        mnuArquivo = new javax.swing.JMenu();
+        itemSair = new javax.swing.JMenuItem();
+        mnuContatos = new javax.swing.JMenu();
+        itemAddContato = new javax.swing.JMenuItem();
+        itemDelContato = new javax.swing.JMenuItem();
+        mnuSobre = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+        setTitle("Mensageiro");
+        setMaximumSize(null);
+        setMinimumSize(new java.awt.Dimension(500, 600));
+        setPreferredSize(new java.awt.Dimension(500, 600));
+        java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
+        layout.rowWeights = new double[] {2.0, 50.0, 1.0};
+        getContentPane().setLayout(layout);
+
+        pnlHeader.setLayout(new java.awt.GridBagLayout());
+
+        lblFoto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lblFoto.setMaximumSize(new java.awt.Dimension(50, 50));
+        lblFoto.setMinimumSize(new java.awt.Dimension(50, 50));
+        lblFoto.setPreferredSize(new java.awt.Dimension(50, 50));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 200;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(txtMensagem, gridBagConstraints);
+        pnlHeader.add(lblFoto, gridBagConstraints);
 
-        btnEnviar.setText("Enviar");
+        lblUsuario.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblUsuario.setText("Usuário");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(btnEnviar, gridBagConstraints);
+        pnlHeader.add(lblUsuario, gridBagConstraints);
 
-        jMenu1.setText("File");
-        mnbMenu.add(jMenu1);
+        lblStatus.setText("Offline");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlHeader.add(lblStatus, gridBagConstraints);
 
-        jMenu2.setText("Edit");
-        mnbMenu.add(jMenu2);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(pnlHeader, gridBagConstraints);
 
-        setJMenuBar(mnbMenu);
+        pnlListaUsuarios.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane1.setViewportView(listUsuarios);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        pnlListaUsuarios.add(jScrollPane1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(pnlListaUsuarios, gridBagConstraints);
+
+        pnlInfo.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("Status:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInfo.add(jLabel1, gridBagConstraints);
+
+        lblStatusConexao.setForeground(new java.awt.Color(255, 0, 0));
+        lblStatusConexao.setText("Desconectado");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 10);
+        pnlInfo.add(lblStatusConexao, gridBagConstraints);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("Servidor:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        pnlInfo.add(jLabel3, gridBagConstraints);
+
+        lblIP.setText("0.0.0.0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlInfo.add(lblIP, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(pnlInfo, gridBagConstraints);
+
+        mnuArquivo.setText("Arquivo");
+
+        itemSair.setText("Sair");
+        mnuArquivo.add(itemSair);
+
+        menuBar.add(mnuArquivo);
+
+        mnuContatos.setText("Contatos");
+
+        itemAddContato.setText("Adicionar contato");
+        mnuContatos.add(itemAddContato);
+
+        itemDelContato.setText("Excluir contato");
+        mnuContatos.add(itemDelContato);
+
+        menuBar.add(mnuContatos);
+
+        mnuSobre.setText("Sobre");
+        menuBar.add(mnuSobre);
+
+        setJMenuBar(menuBar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEnviar;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar mnbMenu;
-    private javax.swing.JTextField txtMensagem;
+    private javax.swing.JMenuItem itemAddContato;
+    private javax.swing.JMenuItem itemDelContato;
+    private javax.swing.JMenuItem itemSair;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblFoto;
+    private javax.swing.JLabel lblIP;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblStatusConexao;
+    private javax.swing.JLabel lblUsuario;
+    private javax.swing.JList<String> listUsuarios;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu mnuArquivo;
+    private javax.swing.JMenu mnuContatos;
+    private javax.swing.JMenu mnuSobre;
+    private javax.swing.JPanel pnlHeader;
+    private javax.swing.JPanel pnlInfo;
+    private javax.swing.JPanel pnlListaUsuarios;
     // End of variables declaration//GEN-END:variables
 
 }
