@@ -38,7 +38,7 @@ Statement st = conexao().createStatement();
 
 public class GerenciadorBD {
         
-   private String url = "jdbc:mysql://";
+    private String url = "jdbc:mysql://";
     private String usuario;
     private String senha;
     
@@ -54,11 +54,11 @@ public class GerenciadorBD {
     }
     
     
-     private String convData(Date dt){
+    private String convData(Date dt){
         return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss:SSS").format(dt);
     }    
     
-     private ByteArrayInputStream imageToBlob(Image imagem) throws IOException{
+    private ByteArrayInputStream imageToBlob(Image imagem) throws IOException{
         BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bi.createGraphics();
         g2d.drawImage(imagem, 0, 0, null);
@@ -71,33 +71,23 @@ public class GerenciadorBD {
             try {
                 baos.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return new ByteArrayInputStream(baos.toByteArray());
     }
     
     
-    //  ALTERAR NOME DA CLASSE USUARIOAUTENTICADOR PARA O NOME DA CLASSE USUÁRIO COM SENHA
-    /*public Usuario autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
-        Usuario user = null;
-        Statement st = conexao().createStatement();
-        String SQL = "SELECT * FROM usuario WHERE usuario = '" + userAuth.getUsuario() + "' AND senha = '" + userAuth.getSenha() + "'";
-        ResultSet rs = st.executeQuery(SQL);
-        if(rs.next()){
-            user = new Usuario(rs.getInt("id"), rs.getString("usuario"), rs.getBlob("foto"));
-        }
-        return user;
-    }*/
-     public boolean autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
+    public boolean autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
         Statement st = conexao().createStatement();
         String SQL = "SELECT * FROM usuario WHERE usuario = '" + userAuth.getUsuario() + "'";
         ResultSet rs = st.executeQuery(SQL);
         return rs.next() && rs.getString("senha").equals(userAuth.getSenha());
-     }
+    }
      
-    public boolean alterarUsuario(Usuario user) throws SQLException{
+    public boolean alterarUsuario(Usuario usuario) throws SQLException{
         Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET usuario = '" + user.getUsuario + "' , foto = '" + imageToBlob(user.getFoto) + "' WHERE id = '" + Integer.toString(user.getId()) + "'";
+        String SQL = "UPDATE usuario SET usuario = '" + usuario.getUsuario + "' , foto = '" + imageToBlob(usuario.getFoto) + "' WHERE id = '" + Integer.toString(usuario.getId()) + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -131,14 +121,14 @@ public class GerenciadorBD {
         return (result1 == 1) && (result2 >= 1);
     }
    
-    public boolean alterarSenha(int id, String novaSenha)throws SQLException{
+    public boolean alterarSenha(int id, String novaSenha) throws SQLException{
         Statement st = conexao().createStatement();
         String SQL = "UPDATE usuario SET senha = '" + novaSenha + "' WHERE id = '" + Integer.toString(id) + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
     
-    public boolean deletarUsuario(int id)throws SQLException{
+    public boolean deletarUsuario(int id) throws SQLException{
         Statement st = conexao().createStatement();
         String SQL = "DELETE FROM usuario WHERE id = '" + Integer.toString(id) + "'";
         int result = st.executeUpdate(SQL);
