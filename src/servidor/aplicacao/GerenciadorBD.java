@@ -106,7 +106,7 @@ public class GerenciadorBD {
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
         String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
-                + grupo.getID() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" +m[1] + "', '" + m[2] + "', '" +m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + imageToBlob(grupo.getFoto) + "')";
+                + grupo.getID() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + imageToBlob(grupo.getFoto) + "')";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -128,12 +128,12 @@ public class GerenciadorBD {
         SQL = "DELETE FROM mensagem WHERE destinoTipo = 'G' AND idDestino = '" + id + "'"; 
         int result2 = st.executeUpdate(SQL);
         
-        return (result1 == 1) && (result2 == 1);
+        return (result1 == 1) && (result2 >= 1);
     }
    
     public boolean alterarSenha(int id, String novaSenha)throws SQLException{
         Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET senha = '" + novaSenha + "' WHERE id = '"+Integer.toString(id) + "'";
+        String SQL = "UPDATE usuario SET senha = '" + novaSenha + "' WHERE id = '" + Integer.toString(id) + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
