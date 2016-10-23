@@ -50,8 +50,7 @@ public class GerenciadorBD {
     
     public Connection conexao() throws SQLException{
         DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-        Connection c = DriverManager.getConnection(url, usuario, senha);
-        return c;
+        return DriverManager.getConnection(url, usuario, senha);
     }
     
     
@@ -74,71 +73,86 @@ public class GerenciadorBD {
             } catch (Exception e) {
             }
         }
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        return bais;
+        return new ByteArrayInputStream(baos.toByteArray());
     }
     
     
     //  ALTERAR NOME DA CLASSE USUARIOAUTENTICADOR PARA O NOME DA CLASSE USUÁRIO COM SENHA
-    public Usuario autenticar(UsuarioAutenticacao userAuth) throws SQLException{
+    /*public Usuario autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
         Usuario user = null;
         Statement st = conexao().createStatement();
-        String SQL = "SELECT * FROM usuario WHERE usuario = '"+userAuth.getUsuario() +"' AND senha = '"+userAuth.getSenha()+"'";
+        String SQL = "SELECT * FROM usuario WHERE usuario = '" + userAuth.getUsuario() + "' AND senha = '" + userAuth.getSenha() + "'";
         ResultSet rs = st.executeQuery(SQL);
         if(rs.next()){
-            user = new Usuario(rs.getInt("id"),rs.getString("usuario"),rs.getBlob("foto"));
+            user = new Usuario(rs.getInt("id"), rs.getString("usuario"), rs.getBlob("foto"));
         }
         return user;
-    }
-    
-    public void alterarContato(Usuario user)throws SQLException{
+    }*/
+     public boolean autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
         Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET usuario = '"+ user.getUsuario +"' , foto = '"+imageToBlob(user.getFoto)+"' WHERE id = "+Integer.toString(user.getId());
-        st.executeUpdate(SQL);
+        String SQL = "SELECT * FROM usuario WHERE usuario = '" + userAuth.getUsuario() + "'";
+        ResultSet rs = st.executeQuery(SQL);
+        return rs.next() && rs.getString("senha").equals(userAuth.getSenha());
+     }
+     
+    public boolean alterarUsuario(Usuario user) throws SQLException{
+        Statement st = conexao().createStatement();
+        String SQL = "UPDATE usuario SET usuario = '" + user.getUsuario + "' , foto = '" + imageToBlob(user.getFoto) + "' WHERE id = '" + Integer.toString(user.getId()) + "'";
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
     
-    public void criarGrupo(Grupo grupo)throws SQLException{
+    public boolean criarGrupo(Grupo grupo) throws SQLException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
-        String SQL = "INSERT INTO grupo (id,nomeGrupo,idMembro1,idMembro2,idMembro3,idMembro4,idMembro5,idMembro6,idMembro7,idMembro8,idMembro9,idMembro10,foto) VALUES (" 
-                +grupo.getID()+", '" + grupo.getNome() + "',"+m[0]+ ","+m[1] + ","+m[2] + ","+m[3] + ","+m[4] + ","+m[5] + ","+m[6] + ","+m[7] + ","+m[8] + ","+m[9] +" ,'"+imageToBlob(grupo.getFoto)+"')";
-        st.executeUpdate(SQL);
+        String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
+                + grupo.getID() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" +m[1] + "', '" + m[2] + "', '" +m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + imageToBlob(grupo.getFoto) + "')";
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
     
-    public void alterarGrupo(Grupo grupo) throws SQLException{
+    public boolean alterarGrupo(Grupo grupo) throws SQLException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
-        String SQL = "UPDATE grupo SET id = "+grupo.getId()+",nomeGrupo = "+grupo.getNome()+",idMembro1 = "+m[0]+",idMembro2 = "+m[1]+",idMembro3 = "+m[2]+",idMembro4 = "+m[3]+",idMembro5 = "+m[4]+",idMembro6 = "+m[5]+
-                     ",idMembro7 = "+m[6]+",idMembro8 = "+m[7]+",idMembro9 = "+m[8]+",idMembro10 = "+m[9]+",foto = "+imageToBlob(grupo.getFoto())+" WHERE id = " + grupo.getId(); 
-        st.executeUpdate(SQL);
+        String SQL = "UPDATE grupo SET id = '" + grupo.getId() + "',nomeGrupo = '" + grupo.getNome() + "',idMembro1 = '" + m[0] + "',idMembro2 = '" + m[1] + "',idMembro3 = '" + m[2] + "',idMembro4 = '" + m[3] + "',idMembro5 = '" + m[4] + "',idMembro6 = '" + m[5]
+                     + "',idMembro7 = '" + m[6] + "',idMembro8 = '" + m[7] + "',idMembro9 = '" + m[8] + "',idMembro10 = '" + m[9] + "',foto = '" + imageToBlob(grupo.getFoto()) + "' WHERE id = '" + grupo.getId() + "'";
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
     
-    public void deleteGrupo(int id) throws SQLException{
+    public boolean deletarGrupo(int id) throws SQLException{
         Statement st = conexao().createStatement();
-        String SQL = "DELETE FROM grupo WHERE id = " + id; 
-        st.executeUpdate(SQL);
+        String SQL = "DELETE FROM grupo WHERE id = '" + id + "'"; 
+        int result1 = st.executeUpdate(SQL);
+        
+        SQL = "DELETE FROM mensagem WHERE destinoTipo = 'G' AND idDestino = '" + id + "'"; 
+        int result2 = st.executeUpdate(SQL);
+        
+        return (result1 == 1) && (result2 == 1);
     }
    
-    public void alterarSenha(int id, String novaSenha)throws SQLException{
+    public boolean alterarSenha(int id, String novaSenha)throws SQLException{
         Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET senha = '"+ novaSenha +"' WHERE id = "+Integer.toString(id);
-        st.executeUpdate(SQL);
+        String SQL = "UPDATE usuario SET senha = '" + novaSenha + "' WHERE id = '"+Integer.toString(id) + "'";
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
     
-    public void deletarContato(int id)throws SQLException{
+    public boolean deletarUsuario(int id)throws SQLException{
         Statement st = conexao().createStatement();
-        String SQL = "DELETE FROM usuario WHERE id = "+Integer.toString(id);
-        st.executeUpdate(SQL);
+        String SQL = "DELETE FROM usuario WHERE id = '" + Integer.toString(id) + "'";
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
     
-    public void cadastrarUsuario(Usuario usuario, String senha) throws SQLException{
+    public boolean cadastrarUsuario(Usuario usuario, String senha) throws SQLException{
         Statement st = conexao().createStatement();
         String SQL = "INSERT INTO usuario (usuario, senha, foto) "
                 + "VALUES ('" + usuario.getUsuario() + "', '" + senha + "', '" + imageToBlob(usuario.getFoto()) + "')";
-        st.executeUpdate(SQL);
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
     
-    // ALTERAR O NOME DA CLASSE USUARIOLISTA PARA O NOME DA CLASSE USUARIO SEM SENHA
     public ArrayList<Usuario> getListaUsuarios() throws SQLException, IOException{
         Statement st = conexao().createStatement();
         String SQL = "SELECT id, usuario, foto FROM usuarios ORDER by usuario";
@@ -154,14 +168,12 @@ public class GerenciadorBD {
         }
         return usuarios;
     }
-    
-  
-    
-    // ALTERAR O NOME DAS CLASSES MENSAGEM E USUARIOLISTA PARA OS NOMES DAS CLASSES DA MENSAGEM E DO USUARIO SEM SENHA
-    public void enviarMensagem(Mensagem msg, int idOrigem, int idDestino, char tipoDestino) throws SQLException {
+        
+    public boolean enviarMensagem(Mensagem msg, int idOrigem, int idDestino, char tipoDestino) throws SQLException {
         Statement st = conexao().createStatement();
             String SQL = "INSERT INTO mensagem (idUsuarioOrigem, idDestino, destinoTipo, txtMensagem, timeMensagem, arquivo, tipoMens) "
-            + "VALUES ('" + idOrigem + "', '" + idDestino + "', '" + msg.getTexto() + "', '" +convData(msg.getData) + "', '"+ msg.getArquivo +"', '"+msg.getTipo() +"')";
-        st.executeUpdate(SQL);
+            + "VALUES ('" + idOrigem + "', '" + idDestino + "', '" + msg.getTexto() + "', '" + convData(msg.getData) + "', '" + msg.getArquivo +"', '" + msg.getTipo() + "')";
+        int result = st.executeUpdate(SQL);
+        return result == 1;
     }
 }
