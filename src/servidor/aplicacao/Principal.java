@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import javax.swing.UIManager;
 import servidor.frames.*;
-import servidor.modelo.*;
+import compartilhado.modelo.*;
 
 public class Principal {
 

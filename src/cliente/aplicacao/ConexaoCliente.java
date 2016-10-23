@@ -1,5 +1,6 @@
 package cliente.aplicacao;
 
+import compartilhado.modelo.UsuarioAutenticacao;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -10,7 +11,7 @@ public class ConexaoCliente extends Thread {
     private int porta;
     private Socket conexao;
     private int idCliente;
-    PrintStream saida;
+    private PrintStream saida;
 
     public ConexaoCliente(String endereco, int porta, int idCliente){
         this.endereco = endereco;
@@ -19,18 +20,25 @@ public class ConexaoCliente extends Thread {
     }
     
     public int getIdCliente(){ return idCliente; }
+    public String getEndereco(){ return endereco; }
+    public int getPorta(){ return porta; }
+    public boolean getStatus(){ return conexao.isConnected(); }
     
-    public void criarConexao() throws IOException{
+    public void conectar() throws IOException{
         conexao = new Socket(endereco, porta);
     }
     
-    public boolean getStatus(){
-        return conexao.isConnected();
-    }
-    
-    public void fecharConexao() throws IOException{
+    public void desconectar() throws IOException{
         saida.close();
         conexao.close();
+    }
+    
+    public boolean autenticarUsuario(UsuarioAutenticacao usuario){
+        return false; // falta implementação com a DB
+    }
+    
+    public boolean cadastrarUsuario(UsuarioAutenticacao usuario){
+        return false; // falta implementação com a DB
     }
     
     public void enviarMensagem(String msg) throws IOException{
