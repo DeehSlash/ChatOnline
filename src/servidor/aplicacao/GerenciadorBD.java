@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import compartilhado.modelo.*;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -10,31 +11,13 @@ import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
-/*
-
---> String SELECT
-Statement st = conexao().createStatement();
-String SQL = "SELECT * FROM pais ORDER by nome";
-
---> String UPDATE:
-Statement st = conexao().createStatement();
-    String SQL = "INSERT INTO telefone VALUES ("
-            + t.getId() + ", '" + t.getNome() + "', '" + t.getCodPais() + "', '" + t.getNumero() + "')";
-    st.executeUpdate(SQL);
-*/
-
 
 public class GerenciadorBD {
         
@@ -85,23 +68,23 @@ public class GerenciadorBD {
         return rs.next() && rs.getString("senha").equals(userAuth.getSenha());
     }
      
-    public boolean alterarUsuario(Usuario usuario) throws SQLException{
+    public boolean alterarUsuario(Usuario usuario) throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET usuario = '" + usuario.getUsuario + "' , foto = '" + imageToBlob(usuario.getFoto) + "' WHERE id = '" + Integer.toString(usuario.getId()) + "'";
+        String SQL = "UPDATE usuario SET usuario = '" + usuario.getUsuario() + "' , foto = '" + imageToBlob(usuario.getFoto()) + "' WHERE id = '" + Integer.toString(usuario.getId()) + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
     
-    public boolean criarGrupo(Grupo grupo) throws SQLException{
+    public boolean criarGrupo(Grupo grupo) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
         String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
-                + grupo.getID() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + imageToBlob(grupo.getFoto) + "')";
+                + grupo.getId() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + imageToBlob(grupo.getFoto()) + "')";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
     
-    public boolean alterarGrupo(Grupo grupo) throws SQLException{
+    public boolean alterarGrupo(Grupo grupo) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
         String SQL = "UPDATE grupo SET id = '" + grupo.getId() + "',nomeGrupo = '" + grupo.getNome() + "',idMembro1 = '" + m[0] + "',idMembro2 = '" + m[1] + "',idMembro3 = '" + m[2] + "',idMembro4 = '" + m[3] + "',idMembro5 = '" + m[4] + "',idMembro6 = '" + m[5]
@@ -135,7 +118,7 @@ public class GerenciadorBD {
         return result == 1;
     }
     
-    public boolean cadastrarUsuario(Usuario usuario, String senha) throws SQLException{
+    public boolean cadastrarUsuario(Usuario usuario, String senha) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         String SQL = "INSERT INTO usuario (usuario, senha, foto) "
                 + "VALUES ('" + usuario.getUsuario() + "', '" + senha + "', '" + imageToBlob(usuario.getFoto()) + "')";
