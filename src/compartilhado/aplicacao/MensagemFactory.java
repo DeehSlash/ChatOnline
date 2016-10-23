@@ -1,4 +1,4 @@
-package cliente.aplicacao;
+package compartilhado.aplicacao;
 
 import compartilhado.modelo.*;
 
