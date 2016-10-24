@@ -96,7 +96,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<>();
+        listUsuarios = new javax.swing.JList<String>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();

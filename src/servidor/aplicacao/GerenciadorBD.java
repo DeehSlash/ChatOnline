@@ -142,11 +142,17 @@ public class GerenciadorBD {
         return usuarios;
     }
         
-//    public boolean enviarMensagem(Mensagem msg, int idOrigem, int idDestino, char tipoDestino) throws SQLException {
-//        Statement st = conexao().createStatement();
-//            String SQL = "INSERT INTO mensagem (idUsuarioOrigem, idDestino, destinoTipo, txtMensagem, timeMensagem, arquivo, tipoMens) "
-//            + "VALUES ('" + idOrigem + "', '" + idDestino + "', '" + msg.getTexto() + "', '" + convData(msg.getData) + "', '" + msg.getArquivo +"', '" + msg.getTipo() + "')";
-//        int result = st.executeUpdate(SQL);
-//        return result == 1;
-//    }
+    public boolean enviarMensagem(Mensagem mensagem) throws SQLException {
+        String SQL;
+        Statement st = conexao().createStatement();
+        if(mensagem.getTipoMensagem() == 'T'){
+            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idDestino, txtMensagem, timeMensagem, destinoTipo, tipoMens) "
+        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getDestinoTipo() + "', '" + mensagem.getTipoMensagem() + " ')";
+        } else {
+            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idDestino, arquivo, timeMensagem, destinoTipo, tipoMens) "
+        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getDestinoTipo() + "', '" + mensagem.getTipoMensagem() + " ')";
+        }
+        int result = st.executeUpdate(SQL);
+        return result == 1;
+    }
 }
