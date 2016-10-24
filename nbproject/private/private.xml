@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/aplicacao/ConexaoServidor.java</file>
             <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemTexto.java</file>
+            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/aplicacao/MensagemFactory.java</file>
             <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/frames/FrameLogin.java</file>
             <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/Grupo.java</file>
             <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemVideo.java</file>

@@ -42,12 +42,14 @@ public class ConexaoCliente extends Thread {
     public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
         entradaObjeto = new ObjectInputStream(conexao.getInputStream());
         Principal.usuarios = (ArrayList)entradaObjeto.readObject();
+        Principal.frmPrincipal.carregarLista();
     }
     
     public boolean autenticarUsuario(UsuarioAutenticacao usuario) throws IOException{ // serve tanto para cadastro quanto para autenticação
         saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
         saidaObjeto.writeObject(usuario);
         entradaDados = new DataInputStream(conexao.getInputStream());
+        idCliente = entradaDados.readInt(); // recupera o id do usuário
         return entradaDados.readBoolean();
     }
     

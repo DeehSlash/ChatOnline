@@ -65,7 +65,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
-    private void carregarLista(){ // carrega a lista de usuários
+    public void carregarLista(){ // carrega a lista de usuários
         DefaultListModel listModel = new DefaultListModel();
         for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
             if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){

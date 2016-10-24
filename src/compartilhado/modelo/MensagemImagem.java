@@ -19,6 +19,8 @@ public class MensagemImagem extends Mensagem<Image> {
     public char getDestinoTipo(){ return destinoTipo; }
     @Override
     public Date getDataMensagem(){ return dataMensagem; }
+    @Override
     public Image getMensagem(){ return imagem; }
+    @Override
     public char getTipoMensagem(){ return tipoMensagem; }
 }

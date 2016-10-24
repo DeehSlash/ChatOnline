@@ -34,7 +34,7 @@ public class FrameLogin extends javax.swing.JFrame {
                 lblStatus.setText("Conectando ao servidor...");
                 conexao.conectar(); // conecta com o servidor
                 lblStatus.setText(cadastro? "Cadastrando usuário..." : "Autenticando usuário...");
-                if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
+                if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
                     if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
                         Principal.frmPrincipal = new FramePrincipal(conexao);
                         Principal.frmPrincipal.setVisible(true);

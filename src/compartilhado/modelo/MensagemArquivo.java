@@ -17,6 +17,8 @@ public class MensagemArquivo extends Mensagem<File> {
     public char getDestinoTipo(){ return destinoTipo; }
     @Override
     public Date getDataMensagem(){ return dataMensagem; }
+    @Override
     public File getMensagem(){ return arquivo; }
+    @Override
     public char getTipoMensagem(){ return tipoMensagem; }
 }

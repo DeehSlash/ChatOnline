@@ -2,7 +2,7 @@ package compartilhado.modelo;
 
 import java.awt.Image;
 
-public class Usuario {
+public class Usuario implements java.io.Serializable {
     
     private int id;
     private String usuario;

@@ -25,7 +25,6 @@ public class FramePrincipal extends javax.swing.JFrame {
                 txtLog.setText(null);
                 lblStatus.setText("Iniciando...");
                 lblStatus.setForeground(Color.yellow);
-                enviarLog("Iniciando servidor...");
                 new Thread(() -> {
                     try {
                         Principal.iniciarServidor(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
@@ -42,7 +41,6 @@ public class FramePrincipal extends javax.swing.JFrame {
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);
                 txtPorta.setEnabled(false);
-                enviarLog("Servidor iniciado com sucesso na porta " + txtPorta.getText());   
             }
         });
         

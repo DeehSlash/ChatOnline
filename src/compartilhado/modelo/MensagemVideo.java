@@ -19,5 +19,6 @@ public class MensagemVideo extends Mensagem<String> {
     public Date getDataMensagem(){ return dataMensagem; }
     @Override
     public String getMensagem(){ return "OK";}
+    @Override
     public char getTipoMensagem(){ return tipoMensagem; }
 }

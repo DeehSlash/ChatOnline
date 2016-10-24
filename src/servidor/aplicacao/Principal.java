@@ -32,12 +32,14 @@ public class Principal {
     
     public static void iniciarServidor(int porta) throws IOException, SQLException{
         servidor = new ServerSocket(porta);
+        conexoes = new ArrayList<>();
         Principal.frmPrincipal.enviarLog("O servidor está sendo iniciado...");
         gerenciador = new GerenciadorBD("localhost/mensageiro", "root", "");
         frmPrincipal.enviarLog("Gerenciador de banco de dados iniciado");
         usuarios = gerenciador.getListaUsuarios();
         frmPrincipal.enviarLog("Lista de usuários recuperada");
         executando = true;
+        frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
             Socket conexao = servidor.accept();
             ConexaoServidor cs = new ConexaoServidor(porta, conexao);

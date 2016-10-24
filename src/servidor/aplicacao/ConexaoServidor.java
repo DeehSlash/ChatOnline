@@ -78,8 +78,9 @@ public class ConexaoServidor extends Thread {
             setIdCliente(Principal.usuarios.size());
         }
         if(autenticou){
-             Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " (" + idCliente + ") se conectou");
-             Principal.frmPrincipal.alterarUsuarios(true);
+            saidaDados.writeInt(idCliente); // envia a id do cliente
+            Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " (" + idCliente + ") se conectou");
+            Principal.frmPrincipal.alterarUsuarios(true);
         }
         saidaDados.writeBoolean(autenticou); // envia para o cliente se a autenticação funcionou
         return autenticou;

@@ -1,7 +1,5 @@
 package compartilhado.modelo;
 
-import java.awt.Image;
-import java.io.File;
 import java.util.Date;
 
 public abstract class Mensagem<T>{
