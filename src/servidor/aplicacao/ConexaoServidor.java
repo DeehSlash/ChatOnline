@@ -3,6 +3,7 @@ package servidor.aplicacao;
 import compartilhado.modelo.Usuario;
 import compartilhado.modelo.UsuarioAutenticacao;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +19,8 @@ public class ConexaoServidor extends Thread {
     private BufferedReader entrada;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
-    private DataOutputStream saidaData;
+    private DataInputStream entradaDados;
+    private DataOutputStream saidaDados;
     
     public ConexaoServidor(int porta, Socket cliente) throws IOException{
         this.cliente = cliente;
@@ -58,7 +60,7 @@ public class ConexaoServidor extends Thread {
     private boolean autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
         boolean existe = false, autenticou = false;
         entradaObjeto = new ObjectInputStream(cliente.getInputStream());
-        saidaData = new DataOutputStream(cliente.getOutputStream());
+        saidaDados = new DataOutputStream(cliente.getOutputStream());
         UsuarioAutenticacao usuario = (UsuarioAutenticacao)entradaObjeto.readObject(); // recebe o objeto do cliente
         System.out.println("Recebeu objeto do cliente");
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
@@ -79,25 +81,30 @@ public class ConexaoServidor extends Thread {
              Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " (" + idCliente + ") se conectou");
              Principal.frmPrincipal.alterarUsuarios(true);
         }
-        saidaData.writeBoolean(autenticou); // envia para o cliente se a autenticação funcionou
+        saidaDados.writeBoolean(autenticou); // envia para o cliente se a autenticação funcionou
         return autenticou;
     }
     
     @Override
     public void run(){
-        String msg;
+        int comando;
         try {
             if(autenticarUsuario()){
                 alterarStatus(true);
                 atualizarListaUsuarios();
-//                while(!cliente.isClosed()){
-//                    entrada = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
-//                    msg = entrada.readLine();
-//                    if(msg != null)
-//                        System.out.println(idCliente + ": " + msg);
-//                    else
-//                        fecharConexao();
-//                }
+                while(!cliente.isClosed()){
+                    entradaDados = new DataInputStream(cliente.getInputStream());
+                    comando = entradaDados.readInt();
+                    switch(comando){
+                        case 0: // caso mensagem enviada
+                            break;
+                        case 1: 
+                            break;
+                        default:
+                            fecharConexao();
+                            break;
+                    }
+                }
             }else
                 fecharConexao();
         } catch (IOException | ClassNotFoundException | SQLException ex) {
