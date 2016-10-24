@@ -4,7 +4,6 @@ import cliente.aplicacao.*;
 import compartilhado.modelo.UsuarioAutenticacao;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
@@ -53,7 +52,7 @@ public class FrameLogin extends javax.swing.JFrame {
     
     private boolean verificarCampos(){ // verifica se todos os campos foram preenchidos
         if(txtEndereco.getText().isEmpty() || txtPorta.getText().isEmpty() ||
-           txtUsuario.getText().isEmpty() || Arrays.toString(txtSenha.getPassword()).isEmpty()){
+           txtUsuario.getText().isEmpty() || new String(txtSenha.getPassword()).isEmpty()){
             JOptionPane.showMessageDialog(this, "Preencha todos os campos e tente novamente", "Campos em branco", JOptionPane.ERROR_MESSAGE);
             return false;
         }else{

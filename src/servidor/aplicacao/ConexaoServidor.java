@@ -26,13 +26,9 @@ public class ConexaoServidor extends Thread {
         this.cliente = cliente;
     }
     
-    private void setIdCliente(int id) throws IOException{
-        this.idCliente = id;
-    }
-    
-    public boolean getStatus(){
-        return cliente.isConnected();
-    }
+    public int getIdCliente(){ return this.idCliente; }
+    private void setIdCliente(int id) throws IOException{ this.idCliente = id; } 
+    public boolean getStatus(){ return cliente.isConnected(); }
     
     public void fecharConexao() throws IOException{
         cliente.close();
@@ -44,7 +40,8 @@ public class ConexaoServidor extends Thread {
     
     private void atualizarListaUsuarios() throws IOException{
         for (ConexaoServidor conexao : Principal.conexoes) {
-            conexao.enviarListaUsuarios();
+            if(conexao.getIdCliente() == getIdCliente())
+                conexao.enviarListaUsuarios();
         }
     }
     
@@ -54,7 +51,7 @@ public class ConexaoServidor extends Thread {
     }
     
     private void alterarStatus(boolean online){
-        Principal.usuarios.get(idCliente).setOnline(online);
+        Principal.usuarios.get(idCliente+1).setOnline(online);
     }
     
     private boolean autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
@@ -62,27 +59,27 @@ public class ConexaoServidor extends Thread {
         entradaObjeto = new ObjectInputStream(cliente.getInputStream());
         saidaDados = new DataOutputStream(cliente.getOutputStream());
         UsuarioAutenticacao usuario = (UsuarioAutenticacao)entradaObjeto.readObject(); // recebe o objeto do cliente
-        System.out.println("Recebeu objeto do cliente");
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
-            if(u.getUsuario().equals(usuario.getUsuario()))
+            if(u.getUsuario().equals(usuario.getUsuario())){
                 existe = true;
                 setIdCliente(u.getId());
+            }
         }
-        if(existe){ // se existe, faz o login
+        if(existe) // se existe, faz o login
             autenticou = Principal.gerenciador.autenticarUsuario(usuario);
-        }else{ // se não existe, faz o cadastro
+        else{ // se não existe, faz o cadastro
             Principal.gerenciador.cadastrarUsuario(usuario);
             Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado");
             Principal.usuarios.add(new Usuario(Principal.usuarios.size(), usuario.getUsuario(), null));
             autenticou = Principal.gerenciador.autenticarUsuario(usuario);
             setIdCliente(Principal.usuarios.size());
         }
+        saidaDados.writeBoolean(autenticou); // envia para o cliente se a autenticação funcionou
         if(autenticou){
             saidaDados.writeInt(idCliente); // envia a id do cliente
             Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " (" + idCliente + ") se conectou");
             Principal.frmPrincipal.alterarUsuarios(true);
         }
-        saidaDados.writeBoolean(autenticou); // envia para o cliente se a autenticação funcionou
         return autenticou;
     }
     

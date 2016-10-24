@@ -18,12 +18,9 @@ public class Principal {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        usuarios = new ArrayList<>();
         frmLogin = new FrameLogin();
         frmLogin.setVisible(true);
-    }
-    
-    public static void rodar(ConexaoCliente conexao){
-        Thread t = conexao;
-        t.start();
+        
     }
 }
