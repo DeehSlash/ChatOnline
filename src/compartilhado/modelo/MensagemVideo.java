@@ -2,13 +2,9 @@ package compartilhado.modelo;
 
 import java.util.Date;
 
-public class MensagemVideo implements Mensagem {
-    
-    private int idOrigem;
-    private int idDestino;
-    private int idMensagem;
-    private char destinoTipo;
-    private Date dataMensagem;
+public class MensagemVideo extends Mensagem<String> {
+ 
+    public static final char tipo = 'V';
     //private Video video; verificar qual classe usar para vídeo
     
     @Override
@@ -19,6 +15,10 @@ public class MensagemVideo implements Mensagem {
     public int getIdMensagem(){ return idMensagem; }
     @Override
     public char getDestinoTipo(){ return destinoTipo; }
+    @Override
     public Date getDataMensagem(){ return dataMensagem; }
-    //public Video getVideo(){ return video; } implementar método
+    @Override
+    public String getMensagem(){ return "OK";}
+    @Override
+    public char getTipoMensagem(){ return tipoMensagem; }
 }

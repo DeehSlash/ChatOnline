@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.UIManager;
 import servidor.frames.*;
 import compartilhado.modelo.*;
+import java.sql.SQLException;
 
 public class Principal {
 
@@ -14,7 +15,9 @@ public class Principal {
     public static FrameInicio frmInicio;
     public static FramePrincipal frmPrincipal;
     private static ServerSocket servidor;
+    public static GerenciadorBD gerenciador;
     public static ArrayList<Usuario> usuarios;
+    public static ArrayList<ConexaoServidor> conexoes;
     
     public static void main(String[] args) {
         try {
@@ -27,13 +30,21 @@ public class Principal {
         frmInicio.setVisible(true);
     }
     
-    public static void iniciarServidor(int porta) throws IOException{
+    public static void iniciarServidor(int porta) throws IOException, SQLException{
         servidor = new ServerSocket(porta);
+        conexoes = new ArrayList<>();
+        Principal.frmPrincipal.enviarLog("O servidor está sendo iniciado...");
+        gerenciador = new GerenciadorBD("localhost/mensageiro", "root", "");
+        frmPrincipal.enviarLog("Gerenciador de banco de dados iniciado");
+        usuarios = gerenciador.getListaUsuarios();
+        frmPrincipal.enviarLog("Lista de usuários recuperada");
         executando = true;
+        frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
             Socket conexao = servidor.accept();
-            frmPrincipal.alterarUsuarios(true);
-            Thread t = new ConexaoServidor(porta, conexao);
+            ConexaoServidor cs = new ConexaoServidor(porta, conexao);
+            conexoes.add(cs);
+            Thread t = cs;
             t.start();
         }
     }

@@ -2,11 +2,21 @@ package compartilhado.modelo;
 
 import java.util.Date;
 
-public interface Mensagem {
+public abstract class Mensagem<T>{
     
-    public int getIdMensagem();
-    public int getIdOrigem();
-    public int getIdDestino();
-    public char getDestinoTipo();
-    public Date getDataMensagem();
+    protected int idOrigem;
+    protected int idDestino;
+    protected int idMensagem;
+    protected char destinoTipo;
+    protected Date dataMensagem;
+    protected char tipoMensagem;
+    
+    public abstract int getIdOrigem();
+    public abstract int getIdDestino();
+    public abstract int getIdMensagem();
+    public abstract char getDestinoTipo();
+    public abstract Date getDataMensagem();
+    public abstract T getMensagem();
+    public abstract char getTipoMensagem();
+    
 }

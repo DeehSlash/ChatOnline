@@ -2,13 +2,9 @@ package compartilhado.modelo;
 
 import java.util.Date;
 
-public class MensagemTexto implements Mensagem {
+public class MensagemTexto extends Mensagem<String> {
     
-    private int idOrigem;
-    private int idDestino;
-    private int idMensagem;
-    private char destinoTipo;
-    private Date dataMensagem;
+    public static final char tipo = 'T';
     private String mensagem;
     
     @Override
@@ -19,6 +15,10 @@ public class MensagemTexto implements Mensagem {
     public int getIdMensagem(){ return idMensagem; }
     @Override
     public char getDestinoTipo(){ return destinoTipo; }
+    @Override
     public Date getDataMensagem(){ return dataMensagem; }
+    @Override
     public String getMensagem(){ return mensagem; }
+    @Override
+    public char getTipoMensagem(){ return tipoMensagem; }
 }

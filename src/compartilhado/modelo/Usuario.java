@@ -2,7 +2,7 @@ package compartilhado.modelo;
 
 import java.awt.Image;
 
-public class Usuario {
+public class Usuario implements java.io.Serializable {
     
     private int id;
     private String usuario;
@@ -18,6 +18,7 @@ public class Usuario {
     public int getId(){ return id; }
     public String getUsuario(){ return usuario; }
     public Image getFoto(){ return foto; }
+    public void setOnline(boolean online){ this.online = online; }
     public void setFoto(Image foto){ this.foto = foto; }
     
     public boolean isOnline(){

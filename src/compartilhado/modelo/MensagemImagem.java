@@ -1,15 +1,12 @@
 package compartilhado.modelo;
 
 import java.awt.Image;
+import java.io.File;
 import java.util.Date;
 
-public class MensagemImagem implements Mensagem {
+public class MensagemImagem extends Mensagem<Image> {
     
-    private int idOrigem;
-    private int idDestino;
-    private int idMensagem;
-    private char destinoTipo;
-    private Date dataMensagem;
+    public static final char tipo = 'I';
     private Image imagem;
     
     @Override
@@ -20,6 +17,10 @@ public class MensagemImagem implements Mensagem {
     public int getIdMensagem(){ return idMensagem; }
     @Override
     public char getDestinoTipo(){ return destinoTipo; }
+    @Override
     public Date getDataMensagem(){ return dataMensagem; }
-    public Image getImagem(){ return imagem; }
+    @Override
+    public Image getMensagem(){ return imagem; }
+    @Override
+    public char getTipoMensagem(){ return tipoMensagem; }
 }

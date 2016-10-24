@@ -8,12 +8,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
     private ConexaoCliente conexao;
+    public ArrayList<FrameConversa> conversas;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
@@ -41,7 +43,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 if (evt.getClickCount() == 2) {
                     Usuario destino = Principal.usuarios.get(Principal.usuarios.indexOf(listUsuarios.getSelectedValue()));
                     if(destino != null){
-                        FrameConversa frame = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente()), destino);
+                        conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente()), destino));
                     }
                 }
             }
@@ -49,7 +51,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente());;
+        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente());
         lblFoto.setIcon(new ImageIcon(usuario.getFoto()));
         lblUsuario.setText(usuario.getUsuario());
         atualizarStatusConexao();
@@ -63,7 +65,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
-    private void carregarLista(){ // carrega a lista de usuários
+    public void carregarLista(){ // carrega a lista de usuários
         DefaultListModel listModel = new DefaultListModel();
         for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
             if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
@@ -94,7 +96,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<>();
+        listUsuarios = new javax.swing.JList<String>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();
