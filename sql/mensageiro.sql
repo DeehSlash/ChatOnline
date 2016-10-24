@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 23-Out-2016 às 00:31
+-- Generation Time: 24-Out-2016 às 21:05
 -- Versão do servidor: 10.1.16-MariaDB
--- PHP Version: 5.6.24
+-- PHP Version: 7.0.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -49,14 +49,15 @@ CREATE TABLE `grupo` (
 --
 
 CREATE TABLE `mensagem` (
-  `idMensagem` int(5) UNSIGNED NOT NULL,
   `idUsuarioOrigem` int(3) UNSIGNED NOT NULL,
-  `idDestino` int(3) UNSIGNED NOT NULL,
+  `idUsuarioDestino` int(3) UNSIGNED NOT NULL,
   `destinoTipo` enum('U','G') NOT NULL,
   `txtMensagem` text NOT NULL,
   `timeMensagem` datetime NOT NULL,
   `arquivo` blob,
-  `tipoMens` enum('M','I','V','A') NOT NULL
+  `tipoMens` enum('M','I','V','A') NOT NULL,
+  `idMensagem` int(5) NOT NULL,
+  `idGrupoDestino` int(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -73,6 +74,13 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Extraindo dados da tabela `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `usuario`, `senha`, `foto`) VALUES
+(2, 'dsdfsdf', '454', NULL);
+
+--
 -- Indexes for dumped tables
 --
 
@@ -86,7 +94,9 @@ ALTER TABLE `grupo`
 -- Indexes for table `mensagem`
 --
 ALTER TABLE `mensagem`
-  ADD PRIMARY KEY (`idMensagem`);
+  ADD KEY `idUsuarioOrigem` (`idUsuarioOrigem`),
+  ADD KEY `idUsuarioDestino` (`idUsuarioDestino`),
+  ADD KEY `idGrupoDestino` (`idGrupoDestino`);
 
 --
 -- Indexes for table `usuario`
@@ -104,15 +114,22 @@ ALTER TABLE `usuario`
 ALTER TABLE `grupo`
   MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT for table `mensagem`
---
-ALTER TABLE `mensagem`
-  MODIFY `idMensagem` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
---
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
+  MODIFY `id` int(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Limitadores para a tabela `mensagem`
+--
+ALTER TABLE `mensagem`
+  ADD CONSTRAINT `mensagem_ibfk_1` FOREIGN KEY (`idUsuarioOrigem`) REFERENCES `usuario` (`id`),
+  ADD CONSTRAINT `mensagem_ibfk_2` FOREIGN KEY (`idUsuarioDestino`) REFERENCES `usuario` (`id`),
+  ADD CONSTRAINT `mensagem_ibfk_3` FOREIGN KEY (`idGrupoDestino`) REFERENCES `grupo` (`id`);
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

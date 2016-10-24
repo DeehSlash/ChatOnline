@@ -21,4 +21,5 @@ public class MensagemArquivo extends Mensagem<File> {
     public File getMensagem(){ return arquivo; }
     @Override
     public char getTipoMensagem(){ return tipoMensagem; }
+    public int getIdGrupo() {return idGrupo;}
 }
