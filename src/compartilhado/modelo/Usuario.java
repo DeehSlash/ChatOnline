@@ -18,6 +18,7 @@ public class Usuario {
     public int getId(){ return id; }
     public String getUsuario(){ return usuario; }
     public Image getFoto(){ return foto; }
+    public void setOnline(boolean online){ this.online = online; }
     public void setFoto(Image foto){ this.foto = foto; }
     
     public boolean isOnline(){

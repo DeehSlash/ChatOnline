@@ -3,6 +3,7 @@ package servidor.frames;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import servidor.aplicacao.Principal;
 
@@ -28,17 +29,12 @@ public class FramePrincipal extends javax.swing.JFrame {
                 new Thread(() -> {
                     try {
                         Principal.iniciarServidor(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
-                    } catch (IOException ex) {
+                        Principal.pararServidor();
+                        lblStatus.setText("Parado");
+                        lblStatus.setForeground(Color.red);
+                    } catch (IOException | SQLException ex) {
                         ex.printStackTrace();
-                        try {
-                            Principal.pararServidor();
-                            enviarLog("Exceção: " + ex.getMessage());
-                            lblStatus.setText("Parado");
-                            lblStatus.setForeground(Color.red);
-                        } catch (IOException ex1) {
-                            ex1.printStackTrace();
-                            enviarLog("Exceção: " + ex1.getMessage());
-                        }
+                        enviarLog("Exceção: " + ex.getMessage());
                     }
                 }).start();
                 lblStatus.setText("Rodando");

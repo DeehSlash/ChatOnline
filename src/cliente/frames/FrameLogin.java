@@ -18,54 +18,37 @@ public class FrameLogin extends javax.swing.JFrame {
 
     private void addListeners(){
         btnLogin.addActionListener((ActionEvent e) -> {
-            if(verificarCampos()){ // se os campos estiverem preenchidos, continua
-                lblStatus.setText("Criando conexão...");
-                conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText())); // cria a conexão
-                try {
-                    lblStatus.setText("Conectando ao servidor...");
-                    conexao.conectar(); // conecta com o servidor
-                    lblStatus.setText("Autenticando usuário...");
-                    if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
-                        if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
-                            Principal.frmPrincipal = new FramePrincipal(conexao);
-                            Principal.frmPrincipal.setVisible(true);
-                            dispose();
-                        }else
-                            JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
-                    }else
-                        JOptionPane.showMessageDialog(this, "A autenticação falhou, verifique seus dados e tente novamente",
-                                                            "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex){
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
-                }
-            }
+            autenticarUsuario(false);
         });
         
         btnCadastrar.addActionListener((ActionEvent e) -> {
-            if(verificarCampos()){ // se os campos estiverem preenchidos, continua
-                lblStatus.setText("Criando conexão...");
-                conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText())); // cria a conexão
-                try {
-                    lblStatus.setText("Conectando ao servidor...");
-                    conexao.conectar(); // conecta com o servidor
-                    lblStatus.setText("Cadastrando usuário...");
-                    if(conexao.cadastrarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // cadastra o usuário no servidor
-                        if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
-                            Principal.frmPrincipal = new FramePrincipal(conexao);
-                            Principal.frmPrincipal.setVisible(true);
-                            dispose();
-                        }else
-                            JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
-                    }else
-                        JOptionPane.showMessageDialog(this, "O cadastramento falhou, verifique seus dados e tente novamente",
-                                                            "Falha no cadastramento", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex){
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
-                }
-            }
+            autenticarUsuario(true);
         });
+    }
+    
+    private void autenticarUsuario(boolean cadastro){
+        if(verificarCampos()){ // se os campos estiverem preenchidos, continua
+            lblStatus.setText("Criando conexão...");
+            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
+            try {
+                lblStatus.setText("Conectando ao servidor...");
+                conexao.conectar(); // conecta com o servidor
+                lblStatus.setText(cadastro? "Cadastrando usuário..." : "Autenticando usuário...");
+                if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
+                    if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
+                        Principal.frmPrincipal = new FramePrincipal(conexao);
+                        Principal.frmPrincipal.setVisible(true);
+                        dispose();
+                    }else
+                        JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
+                }else
+                    JOptionPane.showMessageDialog(this, "A autenticação falhou, verifique seus dados e tente novamente",
+                                                        "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex){
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
+            }
+        }
     }
     
     private boolean verificarCampos(){ // verifica se todos os campos foram preenchidos

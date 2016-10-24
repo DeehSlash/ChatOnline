@@ -1,9 +1,15 @@
 package cliente.aplicacao;
 
 import compartilhado.modelo.UsuarioAutenticacao;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConexaoCliente extends Thread {
     
@@ -12,11 +18,13 @@ public class ConexaoCliente extends Thread {
     private Socket conexao;
     private int idCliente;
     private PrintStream saida;
+    private ObjectInputStream entradaObjeto;
+    private ObjectOutputStream saidaObjeto;
+    private DataInputStream entradaData;
 
-    public ConexaoCliente(String endereco, int porta, int idCliente){
+    public ConexaoCliente(String endereco, int porta){
         this.endereco = endereco;
         this.porta = porta;
-        this.idCliente = idCliente;
     }
     
     public int getIdCliente(){ return idCliente; }
@@ -33,12 +41,16 @@ public class ConexaoCliente extends Thread {
         conexao.close();
     }
     
-    public boolean autenticarUsuario(UsuarioAutenticacao usuario){
-        return false; // falta implementação com a DB
+    public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
+        entradaObjeto = new ObjectInputStream(conexao.getInputStream());
+        Principal.usuarios = (ArrayList)entradaObjeto.readObject();
     }
     
-    public boolean cadastrarUsuario(UsuarioAutenticacao usuario){
-        return false; // falta implementação com a DB
+    public boolean autenticarUsuario(UsuarioAutenticacao usuario) throws IOException{ // serve tanto para cadastro quanto para autenticação
+        saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
+        saidaObjeto.writeObject(usuario);
+        entradaData = new DataInputStream(conexao.getInputStream());
+        return entradaData.readBoolean();
     }
     
     public void enviarMensagem(String msg) throws IOException{
@@ -53,6 +65,20 @@ public class ConexaoCliente extends Thread {
     
     @Override
     public void run(){
-        
+        int comando;
+        while(!conexao.isClosed()){
+            try{
+                entradaData = new DataInputStream(conexao.getInputStream());
+                    comando = entradaData.readInt();
+                switch(comando){
+                    case 0: // caso mensagem recebida
+                        break;
+                    case 1: // caso atualização da lista de usuários
+                        break;
+                }
+            } catch (IOException ex){
+                ex.printStackTrace();
+            }
+        }
     }
 }
