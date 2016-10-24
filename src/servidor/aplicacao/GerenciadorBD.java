@@ -118,17 +118,17 @@ public class GerenciadorBD {
         return result == 1;
     }
     
-    public boolean cadastrarUsuario(Usuario usuario, String senha) throws SQLException, IOException{
+    public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         String SQL = "INSERT INTO usuario (usuario, senha, foto) "
-                + "VALUES ('" + usuario.getUsuario() + "', '" + senha + "', '" + imageToBlob(usuario.getFoto()) + "')";
+                + "VALUES ('" + usuario.getUsuario() + "', '" + usuario.getSenha() + "', '')";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
     
     public ArrayList<Usuario> getListaUsuarios() throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "SELECT id, usuario, foto FROM usuarios ORDER by usuario";
+        String SQL = "SELECT id, usuario, foto FROM usuario ORDER by usuario";
         ResultSet rs = st.executeQuery(SQL);
         ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
         while(rs.next()){
