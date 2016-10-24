@@ -3,13 +3,8 @@ package compartilhado.modelo;
 import java.io.File;
 import java.util.Date;
 
-public class MensagemArquivo implements Mensagem {
+public class MensagemArquivo extends Mensagem<File> {
 
-    private int idOrigem;
-    private int idDestino;
-    private int idMensagem;
-    private char destinoTipo;
-    private Date dataMensagem;
     private File arquivo;
     
     @Override
@@ -20,6 +15,8 @@ public class MensagemArquivo implements Mensagem {
     public int getIdMensagem(){ return idMensagem; }
     @Override
     public char getDestinoTipo(){ return destinoTipo; }
+    @Override
     public Date getDataMensagem(){ return dataMensagem; }
-    public File getArquivo(){ return arquivo; }
+    public File getMensagem(){ return arquivo; }
+    public char getTipoMensagem(){ return tipoMensagem; }
 }
