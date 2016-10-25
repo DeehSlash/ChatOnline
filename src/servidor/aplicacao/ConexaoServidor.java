@@ -1,7 +1,6 @@
 package servidor.aplicacao;
 
-import compartilhado.modelo.Usuario;
-import compartilhado.modelo.UsuarioAutenticacao;
+import compartilhado.modelo.*;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -85,6 +84,24 @@ public class ConexaoServidor extends Thread {
             Principal.frmPrincipal.alterarUsuarios(true);
         }
         return autenticou;
+    }
+    
+    private void receberMensagem(Mensagem mensagem) throws IOException{
+        saidaDados = new DataOutputStream(cliente.getOutputStream());
+        saidaDados.writeInt(0);
+        saidaObjeto = new ObjectOutputStream(cliente.getOutputStream());
+        saidaObjeto.writeObject(mensagem);
+    }
+    
+    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{
+        entradaObjeto = new ObjectInputStream(cliente.getInputStream());
+        Mensagem mensagem = (Mensagem)entradaObjeto.readObject();
+        Principal.gerenciador.enviarMensagem(mensagem);
+        for (ConexaoServidor conexao : Principal.conexoes) {
+            if(conexao.getIdCliente() == mensagem.getIdDestino()){
+                conexao.receberMensagem(mensagem);
+            }     
+        }
     }
     
     @Override

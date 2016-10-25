@@ -1,19 +1,47 @@
 package cliente.frames;
 
+import compartilhado.aplicacao.MensagemFactory;
+import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
+import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class FrameConversa extends javax.swing.JFrame {
 
     private Usuario origem;
     private Usuario destino;
+    private StyledDocument doc;
     
     public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
         this.origem = origem;
         this.destino = destino;
+        doc = txtConversa.getStyledDocument();
         carregarInfoUsuario();
         setVisible(true);
+    }
+    
+    private void addListeners(){
+        btnEnviar.addActionListener((ActionEvent e) -> {
+            if(!txtMensagem.getText().isEmpty()){
+                Mensagem mensagem = MensagemFactory.criarMensagem('T');
+                // falta construtor de mensagem para montar o objeto e enviar
+            }
+        });
+    }
+    
+    public int getIdDestino(){ return destino.getId(); }
+    
+    public void receberMensagem(Mensagem mensagem) throws BadLocationException{
+        SimpleAttributeSet formatacao = new SimpleAttributeSet();
+        StyleConstants.setBold(formatacao, true);
+        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao);
+        StyleConstants.setBold(formatacao, false);
+        doc.insertString(doc.getLength(), mensagem.getMensagem().toString(), null);
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)

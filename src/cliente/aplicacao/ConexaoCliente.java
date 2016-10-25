@@ -53,6 +53,11 @@ public class ConexaoCliente extends Thread {
         return autenticou;
     }
     
+    private void receberMensagem() throws IOException, ClassNotFoundException{
+        entradaObjeto = new ObjectInputStream(conexao.getInputStream());
+        Mensagem mensagem = (Mensagem)entradaObjeto.readObject();
+    }
+    
     public void enviarMensagem(String msg) throws IOException{
         saida = new PrintStream(conexao.getOutputStream());
         saida.println(msg);

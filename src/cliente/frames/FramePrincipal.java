@@ -2,6 +2,7 @@ package cliente.frames;
 
 import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
+import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
@@ -10,8 +11,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
@@ -22,6 +26,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         initComponents();
         addListeners();
         this.conexao = conexao;
+        conversas = new ArrayList<>();
         carregarLista();
         carregarInfoUsuario();
         Thread t = conexao;
@@ -53,6 +58,26 @@ public class FramePrincipal extends javax.swing.JFrame {
                 }
             }
         });
+    }
+    
+    public void receberMensagem(Mensagem mensagem){
+        boolean conversaAberta = false;
+        int id = -1;
+        for (FrameConversa conversa : conversas) {
+            if(conversa.getIdDestino() == mensagem.getIdDestino()){
+                conversaAberta = true;
+                id = conversas.indexOf(conversa);
+            }
+        }
+        try {
+            if(conversaAberta)
+                conversas.get(id).receberMensagem(mensagem);
+            else
+                conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
+                        Principal.usuarios.get(mensagem.getIdDestino() - 1)));
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+        }
     }
     
     private int idPorNome(String nome){
@@ -118,7 +143,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<>();
+        listUsuarios = new javax.swing.JList<String>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();

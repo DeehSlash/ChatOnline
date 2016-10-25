@@ -3,25 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/aplicacao/ConexaoServidor.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemTexto.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/aplicacao/MensagemFactory.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/frames/FrameLogin.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/Grupo.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemVideo.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/frames/FrameInicio.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemImagem.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/Usuario.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/frames/FramePrincipal.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/frames/FrameConversa.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemArquivo.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/frames/FramePrincipal.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/UsuarioAutenticacao.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/aplicacao/Principal.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/aplicacao/ConexaoCliente.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/Mensagem.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/aplicacao/Principal.java</file>
-            <file>file:/C:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/aplicacao/GerenciadorBD.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/servidor/aplicacao/ConexaoServidor.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/compartilhado/modelo/MensagemTexto.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/compartilhado/modelo/Mensagem.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/servidor/aplicacao/GerenciadorBD.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/cliente/frames/FrameConversa.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/cliente/aplicacao/ConexaoCliente.java</file>
+            <file>file:/C:/Users/5973430/Documents/GitHub/Mensageiro/src/cliente/frames/FramePrincipal.java</file>
         </group>
     </open-files>
 </project-private>
