@@ -21,4 +21,5 @@ public class MensagemTexto extends Mensagem<String> {
     public String getMensagem(){ return mensagem; }
     @Override
     public char getTipoMensagem(){ return tipoMensagem; }
+    public int getIdGrupo() {return idGrupo;}
 }

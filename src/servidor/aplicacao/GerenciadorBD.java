@@ -87,8 +87,8 @@ public class GerenciadorBD {
     public boolean alterarGrupo(Grupo grupo) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
-        String SQL = "UPDATE grupo SET id = '" + grupo.getId() + "',nomeGrupo = '" + grupo.getNome() + "',idMembro1 = '" + m[0] + "',idMembro2 = '" + m[1] + "',idMembro3 = '" + m[2] + "',idMembro4 = '" + m[3] + "',idMembro5 = '" + m[4] + "',idMembro6 = '" + m[5]
-                     + "',idMembro7 = '" + m[6] + "',idMembro8 = '" + m[7] + "',idMembro9 = '" + m[8] + "',idMembro10 = '" + m[9] + "',foto = '" + imageToBlob(grupo.getFoto()) + "' WHERE id = '" + grupo.getId() + "'";
+        String SQL = "UPDATE grupo SET nomeGrupo = '" + grupo.getNome() + "', idMembro1 = '" + m[0] + "', idMembro2 = '" + m[1] + "', idMembro3 = '" + m[2] + "', idMembro4 = '" + m[3] + "', idMembro5 = '" + m[4] + "', idMembro6 = '" + m[5]
+                     + "', idMembro7 = '" + m[6] + "', idMembro8 = '" + m[7] + "', idMembro9 = '" + m[8] + "', idMembro10 = '" + m[9] + "', foto = '" + imageToBlob(grupo.getFoto()) + "' WHERE id = '" + grupo.getId() + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -98,7 +98,7 @@ public class GerenciadorBD {
         String SQL = "DELETE FROM grupo WHERE id = '" + id + "'"; 
         int result1 = st.executeUpdate(SQL);
         
-        SQL = "DELETE FROM mensagem WHERE destinoTipo = 'G' AND idDestino = '" + id + "'"; 
+        SQL = "DELETE FROM mensagem WHERE destinoTipo = 'G' AND idGrupoDestino = '" + id + "'"; 
         int result2 = st.executeUpdate(SQL);
         
         return (result1 == 1) && (result2 >= 1);
@@ -121,7 +121,7 @@ public class GerenciadorBD {
     public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         String SQL = "INSERT INTO usuario (usuario, senha, foto) "
-                + "VALUES ('" + usuario.getUsuario() + "', '" + usuario.getSenha() + "', '')";
+                + "VALUES ('" + usuario.getUsuario() + "', '" + usuario.getSenha() + "', ' ')";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -146,11 +146,11 @@ public class GerenciadorBD {
         String SQL;
         Statement st = conexao().createStatement();
         if(mensagem.getTipoMensagem() == 'T'){
-            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idDestino, txtMensagem, timeMensagem, destinoTipo, tipoMens) "
-        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getDestinoTipo() + "', '" + mensagem.getTipoMensagem() + " ')";
+            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, timeMensagem, tipoMens, idMensagem, idGrupoDestino) "
+        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', " + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdGrupo() + " ')";
         } else {
-            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idDestino, arquivo, timeMensagem, destinoTipo, tipoMens) "
-        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getDestinoTipo() + "', '" + mensagem.getTipoMensagem() + " ')";
+            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, arquivo, timeMensagem, tipoMens, idMensagem, idGrupoDestino) "
+        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', ' ', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdGrupo() + " ')";
         }
         int result = st.executeUpdate(SQL);
         return result == 1;

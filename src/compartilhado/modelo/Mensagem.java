@@ -6,6 +6,7 @@ public abstract class Mensagem<T>{
     
     protected int idOrigem;
     protected int idDestino;
+    protected int idGrupo;
     protected int idMensagem;
     protected char destinoTipo;
     protected Date dataMensagem;
@@ -18,5 +19,5 @@ public abstract class Mensagem<T>{
     public abstract Date getDataMensagem();
     public abstract T getMensagem();
     public abstract char getTipoMensagem();
-    
+    public abstract int getIdGrupo();
 }

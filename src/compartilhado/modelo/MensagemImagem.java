@@ -23,4 +23,5 @@ public class MensagemImagem extends Mensagem<Image> {
     public Image getMensagem(){ return imagem; }
     @Override
     public char getTipoMensagem(){ return tipoMensagem; }
+    public int getIdGrupo() {return idGrupo;}
 }
