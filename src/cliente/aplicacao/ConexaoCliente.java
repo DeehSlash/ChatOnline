@@ -1,6 +1,6 @@
 package cliente.aplicacao;
 
-import compartilhado.modelo.UsuarioAutenticacao;
+import compartilhado.modelo.*;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,7 +28,7 @@ public class ConexaoCliente extends Thread {
     public int getIdCliente(){ return idCliente; }
     public String getEndereco(){ return endereco; }
     public int getPorta(){ return porta; }
-    public boolean getStatus(){ return conexao.isConnected(); }
+    public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
     
     public void conectar() throws IOException{
         conexao = new Socket(endereco, porta);
@@ -41,7 +41,7 @@ public class ConexaoCliente extends Thread {
     
     public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
         entradaObjeto = new ObjectInputStream(conexao.getInputStream());
-        Principal.usuarios = (ArrayList)entradaObjeto.readObject();
+        Principal.usuarios = (ArrayList<Usuario>)entradaObjeto.readObject();
         Principal.frmPrincipal.carregarLista();
     }
     
@@ -49,18 +49,16 @@ public class ConexaoCliente extends Thread {
         saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
         saidaObjeto.writeObject(usuario);
         entradaDados = new DataInputStream(conexao.getInputStream());
-        idCliente = entradaDados.readInt(); // recupera o id do usuário
-        return entradaDados.readBoolean();
+        boolean autenticou = entradaDados.readBoolean();
+        if(autenticou)
+            idCliente = entradaDados.readInt(); // recupera o id do usuário
+        System.out.println(idCliente);
+        return autenticou;
     }
     
     public void enviarMensagem(String msg) throws IOException{
         saida = new PrintStream(conexao.getOutputStream());
         saida.println(msg);
-    }
-    
-    public void enviarIdCliente() throws IOException{
-        saida = new PrintStream(conexao.getOutputStream());
-        saida.println(Integer.toString(idCliente));
     }
     
     @Override

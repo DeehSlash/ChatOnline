@@ -20,8 +20,5 @@ public class Usuario implements java.io.Serializable {
     public Image getFoto(){ return foto; }
     public void setOnline(boolean online){ this.online = online; }
     public void setFoto(Image foto){ this.foto = foto; }
-    
-    public boolean isOnline(){
-        return online;
-    }
+    public boolean isOnline(){ return online; }
 }

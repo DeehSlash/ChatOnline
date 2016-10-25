@@ -128,7 +128,7 @@ public class GerenciadorBD {
     
     public ArrayList<Usuario> getListaUsuarios() throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "SELECT id, usuario, foto FROM usuario ORDER by usuario";
+        String SQL = "SELECT * FROM usuario ORDER by id";
         ResultSet rs = st.executeQuery(SQL);
         ArrayList<Usuario> usuarios = new ArrayList<>();
         while(rs.next()){
