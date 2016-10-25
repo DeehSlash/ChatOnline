@@ -37,7 +37,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                     }
                 }).start();
                 lblStatus.setText("Rodando");
-                lblStatus.setForeground(Color.GREEN);
+                lblStatus.setForeground(new Color(31, 167, 9));
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);
                 txtPorta.setEnabled(false);
@@ -49,6 +49,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 Principal.pararServidor(); // chama a função que para o servidor e desvincula da porta usada
                 enviarLog("Servidor parado com sucesso");
                 lblStatus.setText("Parado");
+                lblUsuariosConectados.setText("0");
                 lblStatus.setForeground(Color.red);
                 btnIniciar.setEnabled(true);
                 btnParar.setEnabled(false);
@@ -92,7 +93,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblUsuariosConectados = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Servidor");
+        setTitle("Servidor - Mensageiro");
         setMaximumSize(new java.awt.Dimension(450, 500));
         setMinimumSize(new java.awt.Dimension(450, 500));
         setName("frmPrincipal"); // NOI18N

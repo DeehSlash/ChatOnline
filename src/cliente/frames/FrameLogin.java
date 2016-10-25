@@ -85,15 +85,13 @@ public class FrameLogin extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Login");
-        setMaximumSize(null);
+        setTitle("Login - Mensageiro");
         setMinimumSize(new java.awt.Dimension(400, 400));
         setName("frmLogin"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(400, 400));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         lblLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblLogin.setText("Login");
+        lblLogin.setText("Login - Mensageiro");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -101,7 +99,8 @@ public class FrameLogin extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 5);
         getContentPane().add(lblLogin, gridBagConstraints);
 
-        lblInfo.setText("Digite seu usuário e senha para acessar o chat");
+        lblInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblInfo.setText("<html>\n<center>\nDigite o endereço e porta do servidor,<br>\nalém de seu usuário e senha para acessar o mensageiro\n</center>\n</html>");
         lblInfo.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

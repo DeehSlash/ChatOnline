@@ -40,18 +40,22 @@ public class ConexaoServidor extends Thread {
     
     private void atualizarListaUsuarios() throws IOException{
         for (ConexaoServidor conexao : Principal.conexoes) {
-            if(conexao.getIdCliente() == getIdCliente())
-                conexao.enviarListaUsuarios();
+            if(conexao.getIdCliente() != getIdCliente())
+                conexao.enviarListaUsuarios(true); // envia a lista atualizada para o usuário
         }
     }
     
-    private void enviarListaUsuarios() throws IOException{
+    private void enviarListaUsuarios(boolean loop) throws IOException{
+        if(loop){ // se estiver no loop esperando um comando
+            saidaDados = new DataOutputStream(cliente.getOutputStream());
+            saidaDados.writeInt(1); // envia comando 1 para o cliente (preparação para atualizar a lista de usuários)
+        } // se ele não estiver no loop, automaticamente vai estar esperando só a lista
         saidaObjeto = new ObjectOutputStream(cliente.getOutputStream());
-        saidaObjeto.writeObject(Principal.usuarios);
+        saidaObjeto.writeObject(Principal.usuarios); // envia a lista de usuários para o cliente
     }
     
-    private void alterarStatus(boolean online){
-        Principal.usuarios.get(idCliente+1).setOnline(online);
+    private void setOnline(boolean online){
+        Principal.usuarios.get(idCliente - 1).setOnline(online);
     }
     
     private boolean autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
@@ -67,7 +71,7 @@ public class ConexaoServidor extends Thread {
         }
         if(existe) // se existe, faz o login
             autenticou = Principal.gerenciador.autenticarUsuario(usuario);
-        else{ // se não existe, faz o cadastro
+        else{ // se não existe, faz o cadastro e então o login
             Principal.gerenciador.cadastrarUsuario(usuario);
             Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado");
             Principal.usuarios.add(new Usuario(Principal.usuarios.size(), usuario.getUsuario(), null));
@@ -88,7 +92,8 @@ public class ConexaoServidor extends Thread {
         int comando;
         try {
             if(autenticarUsuario()){
-                alterarStatus(true);
+                setOnline(true);
+                enviarListaUsuarios(false);
                 atualizarListaUsuarios();
                 while(!cliente.isClosed()){
                     entradaDados = new DataInputStream(cliente.getInputStream());

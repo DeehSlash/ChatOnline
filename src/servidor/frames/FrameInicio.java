@@ -44,7 +44,7 @@ public class FrameInicio extends javax.swing.JFrame {
         lblTipo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Servidor");
+        setTitle("Servidor - Mensageiro");
         setLocationByPlatform(true);
         setMinimumSize(new java.awt.Dimension(350, 300));
         setName("frmInicio"); // NOI18N
@@ -73,7 +73,7 @@ public class FrameInicio extends javax.swing.JFrame {
         getContentPane().add(btnIniciar, gridBagConstraints);
 
         lblTitulo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblTitulo.setText("Servidor Chat Online");
+        lblTitulo.setText("Servidor - Mensageiro");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

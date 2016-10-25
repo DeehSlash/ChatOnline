@@ -3,6 +3,7 @@ package cliente.frames;
 import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
 import compartilhado.modelo.Usuario;
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -14,15 +15,17 @@ import javax.swing.ImageIcon;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    private ConexaoCliente conexao;
+    private final ConexaoCliente conexao;
     public ArrayList<FrameConversa> conversas;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
-        carregarInfoUsuario();
         carregarLista();
+        carregarInfoUsuario();
+        Thread t = conexao;
+        t.start();
     }
 
     private void addListeners(){
@@ -41,17 +44,26 @@ public class FramePrincipal extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-                    Usuario destino = Principal.usuarios.get(Principal.usuarios.indexOf(listUsuarios.getSelectedValue()));
-                    if(destino != null){
-                        conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente()), destino));
-                    }
+                    Usuario destino = null;
+                    if(!listUsuarios.getSelectedValue().equals("----------Offline----------") &&
+                            !listUsuarios.getSelectedValue().equals("----------Online----------"))
+                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1);                  
+                    if(destino != null)
+                        conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino));
                 }
             }
         });
     }
     
+    private int idPorNome(String nome){
+        for (Usuario usuario : Principal.usuarios) {
+            if(usuario.getUsuario().equals(nome))
+                return usuario.getId();
+        }
+        return -1;
+    }
+    
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        System.out.println(Principal.usuarios.size());
         Usuario usuario = Principal.usuarios.get(conexao.getIdCliente()-1);
         //lblFoto.setIcon(new ImageIcon(usuario.getFoto()));
         lblUsuario.setText(usuario.getUsuario());
@@ -61,18 +73,27 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void atualizarStatusConexao(){ // atualiza os labels com a informação da conexão
         if(conexao.getStatus()){
             lblStatusConexao.setText("Conectado");
+            lblStatusConexao.setForeground(new Color(31, 167, 9));
             lblStatus.setText("Online");
+            lblStatus.setForeground(new Color(31, 167, 9));
             lblIP.setText(conexao.getEndereco() + ":" + conexao.getPorta());
         }
     }
     
     public void carregarLista(){ // carrega a lista de usuários
+        try {
+            conexao.atualizarListaUsuarios();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
         DefaultListModel listModel = new DefaultListModel();
+        listModel.addElement("----------Online----------");
         for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
             if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
         }
+        listModel.addElement("----------Offline----------");
         for (Usuario usuario : Principal.usuarios) { // só então adiciona os usuários offline
             if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
@@ -97,7 +118,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<String>();
+        listUsuarios = new javax.swing.JList<>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();

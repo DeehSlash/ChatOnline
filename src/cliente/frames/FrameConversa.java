@@ -12,12 +12,14 @@ public class FrameConversa extends javax.swing.JFrame {
         initComponents();
         this.origem = origem;
         this.destino = destino;
+        carregarInfoUsuario();
+        setVisible(true);
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        lblFoto.setIcon(new ImageIcon(destino.getFoto()));
+        //lblFoto.setIcon(new ImageIcon(destino.getFoto()));
         lblUsuario.setText(destino.getUsuario());
-        setTitle(destino.getUsuario());
+        setTitle(destino.getUsuario() + " - Mensageiro");
         lblStatus.setText((destino.isOnline()? "Online" : "Offline"));
     }
     

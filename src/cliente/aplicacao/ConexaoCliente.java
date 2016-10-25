@@ -35,24 +35,21 @@ public class ConexaoCliente extends Thread {
     }
     
     public void desconectar() throws IOException{
-        saida.close();
         conexao.close();
     }
     
     public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
         entradaObjeto = new ObjectInputStream(conexao.getInputStream());
         Principal.usuarios = (ArrayList<Usuario>)entradaObjeto.readObject();
-        Principal.frmPrincipal.carregarLista();
     }
     
     public boolean autenticarUsuario(UsuarioAutenticacao usuario) throws IOException{ // serve tanto para cadastro quanto para autenticação
         saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
-        saidaObjeto.writeObject(usuario);
+        saidaObjeto.writeObject(usuario); // envia o usuário de autenticação para o servidor
         entradaDados = new DataInputStream(conexao.getInputStream());
-        boolean autenticou = entradaDados.readBoolean();
+        boolean autenticou = entradaDados.readBoolean(); // recebe do servidor se a autenticação falhou ou funcionou
         if(autenticou)
             idCliente = entradaDados.readInt(); // recupera o id do usuário
-        System.out.println(idCliente);
         return autenticou;
     }
     
@@ -64,7 +61,6 @@ public class ConexaoCliente extends Thread {
     @Override
     public void run(){
         try{
-            atualizarListaUsuarios();
             int comando;
             while(!conexao.isClosed()){
                 entradaDados = new DataInputStream(conexao.getInputStream());
@@ -73,11 +69,14 @@ public class ConexaoCliente extends Thread {
                     case 0: // caso mensagem recebida
                         break;
                     case 1: // caso atualização da lista de usuários
-                        atualizarListaUsuarios();
+                        Principal.frmPrincipal.carregarLista();
+                        break;
+                    default:
+                        desconectar();
                         break;
                 }
             }
-        } catch (ClassNotFoundException | IOException ex){
+        } catch (/*ClassNotFoundException |*/ IOException ex){
             ex.printStackTrace();
         }
     }
