@@ -2,6 +2,7 @@ package cliente.aplicacao;
 
 import compartilhado.modelo.*;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,6 +20,7 @@ public class ConexaoCliente extends Thread {
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
     private DataInputStream entradaDados;
+    private DataOutputStream saidaDados;
 
     public ConexaoCliente(String endereco, int porta){
         this.endereco = endereco;
@@ -43,14 +45,16 @@ public class ConexaoCliente extends Thread {
         Principal.usuarios = (ArrayList<Usuario>)entradaObjeto.readObject();
     }
     
-    public boolean autenticarUsuario(UsuarioAutenticacao usuario) throws IOException{ // serve tanto para cadastro quanto para autenticação
-        saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
-        saidaObjeto.writeObject(usuario); // envia o usuário de autenticação para o servidor
+    public int autenticarUsuario(UsuarioAutenticacao usuario, boolean cadastro) throws IOException{ // serve tanto para cadastro quanto para autenticação
         entradaDados = new DataInputStream(conexao.getInputStream());
-        boolean autenticou = entradaDados.readBoolean(); // recebe do servidor se a autenticação falhou ou funcionou
-        if(autenticou)
+        saidaDados = new DataOutputStream(conexao.getOutputStream());
+        saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
+        saidaDados.writeBoolean(cadastro); // envia para o servidor se é cadastro ou login
+        saidaObjeto.writeObject(usuario); // envia o usuário de autenticação para o servidor
+        int status = entradaDados.readInt(); // recebe do servidor o status da autenticação
+        if(status == 3)
             idCliente = entradaDados.readInt(); // recupera o id do usuário
-        return autenticou;
+        return status;
     }
     
     private void receberMensagem() throws IOException, ClassNotFoundException{

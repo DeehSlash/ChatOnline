@@ -61,11 +61,16 @@ public class GerenciadorBD {
     }
     
     
-    public boolean autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
+    public int autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
         Statement st = conexao().createStatement();
         String SQL = "SELECT * FROM usuario WHERE usuario = '" + userAuth.getUsuario() + "'";
         ResultSet rs = st.executeQuery(SQL);
-        return rs.next() && rs.getString("senha").equals(userAuth.getSenha());
+        if(!rs.next())
+            return 1; // retorna 1 caso não achou registro desse usuário
+        if(rs.getString("senha").equals(userAuth.getSenha()))
+            return 3; // retorna 3 caso as senhas batem
+        else
+            return 0; // ou então retorna 0 caso os dados estejam incorretos
     }
      
     public boolean alterarUsuario(Usuario usuario) throws SQLException, IOException{

@@ -35,7 +35,7 @@ public class Principal {
         conexoes = new ArrayList<>();
         Principal.frmPrincipal.enviarLog("O servidor está sendo iniciado...");
         gerenciador = new GerenciadorBD("localhost/mensageiro", "root", "");
-        frmPrincipal.enviarLog("Gerenciador de banco de dados iniciado");
+        frmPrincipal.enviarLog("Iniciando gerenciador de banco de dados...");
         usuarios = gerenciador.getListaUsuarios();
         frmPrincipal.enviarLog("Lista de usuários recuperada");
         executando = true;

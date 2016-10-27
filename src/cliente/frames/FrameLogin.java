@@ -33,19 +33,38 @@ public class FrameLogin extends javax.swing.JFrame {
                 lblStatus.setText("Conectando ao servidor...");
                 conexao.conectar(); // conecta com o servidor
                 lblStatus.setText(cadastro? "Cadastrando usuário..." : "Autenticando usuário...");
-                if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
-                    if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
-                        Principal.frmPrincipal = new FramePrincipal(conexao);
-                        Principal.frmPrincipal.setVisible(true);
-                        dispose();
-                    }else
-                        JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
-                }else
-                    JOptionPane.showMessageDialog(this, "A autenticação falhou, verifique seus dados e tente novamente",
-                                                        "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                int status = conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword())), cadastro); // verifica se os dados do usuário são válidos
+                switch(status){
+                    case -1: // erro não definido
+                        JOptionPane.showMessageDialog(null, "Um erro ocorreu, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;                        
+                    case 0: // dados incorretos (login)
+                        JOptionPane.showMessageDialog(null, "Seus dados estão incorretos, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 1: // usuário não encontrado (login)
+                        JOptionPane.showMessageDialog(null, "Usuário não encontrado na base de dados, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 2: // usuário já existe (cadastro)
+                        JOptionPane.showMessageDialog(null, "Já existe uma pessoa cadastrada com esse nome de usuário, escolha outro nome", 
+                                "Falha no cadastro", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 3: // autenticação funcionou
+                        if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
+                            Principal.frmPrincipal = new FramePrincipal(conexao);
+                            Principal.frmPrincipal.setVisible(true);
+                            dispose();
+                        }else
+                            JOptionPane.showMessageDialog(null, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
+                        break;
+                }
+                if(status != 3)
+                    lblStatus.setText("Esperando conexão");
             } catch (IOException ex){
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
+                JOptionPane.showMessageDialog(null, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
             }
         }
     }
@@ -53,7 +72,7 @@ public class FrameLogin extends javax.swing.JFrame {
     private boolean verificarCampos(){ // verifica se todos os campos foram preenchidos
         if(txtEndereco.getText().isEmpty() || txtPorta.getText().isEmpty() ||
            txtUsuario.getText().isEmpty() || new String(txtSenha.getPassword()).isEmpty()){
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos e tente novamente", "Campos em branco", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos e tente novamente", "Campos em branco", JOptionPane.ERROR_MESSAGE);
             return false;
         }else{
             return true;

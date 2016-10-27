@@ -57,33 +57,40 @@ public class ConexaoServidor extends Thread {
         Principal.usuarios.get(idCliente - 1).setOnline(online);
     }
     
-    private boolean autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
-        boolean existe = false, autenticou = false;
+    private int autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
         entradaObjeto = new ObjectInputStream(cliente.getInputStream());
+        entradaDados = new DataInputStream(cliente.getInputStream());
         saidaDados = new DataOutputStream(cliente.getOutputStream());
-        UsuarioAutenticacao usuario = (UsuarioAutenticacao)entradaObjeto.readObject(); // recebe o objeto do cliente
+        boolean existe = false, cadastro;
+        int status = -1;
+        cadastro = entradaDados.readBoolean(); // recebe se é um cadastro
+        UsuarioAutenticacao usuario = (UsuarioAutenticacao)entradaObjeto.readObject(); // recebe o objeto de autenticação do cliente
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
             if(u.getUsuario().equals(usuario.getUsuario())){
                 existe = true;
                 setIdCliente(u.getId());
             }
         }
-        if(existe) // se existe, faz o login
-            autenticou = Principal.gerenciador.autenticarUsuario(usuario);
-        else{ // se não existe, faz o cadastro e então o login
-            Principal.gerenciador.cadastrarUsuario(usuario);
-            Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado");
-            Principal.usuarios.add(new Usuario(Principal.usuarios.size(), usuario.getUsuario(), null));
-            autenticou = Principal.gerenciador.autenticarUsuario(usuario);
-            setIdCliente(Principal.usuarios.size());
+        if(!cadastro) // se não for cadastro, faz o login
+            status = Principal.gerenciador.autenticarUsuario(usuario);
+        else{ // se for cadastro, primeiro cadastra e então faz o login
+            if(!existe){ // verifica se o usuário não existe já
+                if(Principal.gerenciador.cadastrarUsuario(usuario)){ // se o cadastro funcionou
+                    Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado"); // envia o log
+                    Principal.usuarios.add(new Usuario(Principal.usuarios.size(), usuario.getUsuario(), null)); // adiciona na lista de usuários
+                    status = Principal.gerenciador.autenticarUsuario(usuario); // tenta autenticar
+                    setIdCliente(Principal.usuarios.size()); // define a id desse usuário
+                }
+            }else // caso usuário exista, retorna 2: usuário já existe e não pode ser cadastrado
+                status = 2;
         }
-        saidaDados.writeBoolean(autenticou); // envia para o cliente se a autenticação funcionou
-        if(autenticou){
+        saidaDados.writeInt(status); // envia para o cliente o status da autenticação
+        if(status == 3){ // se status for 3 (autenticou)
             saidaDados.writeInt(idCliente); // envia a id do cliente
             Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " (" + idCliente + ") se conectou");
             Principal.frmPrincipal.alterarUsuarios(true);
         }
-        return autenticou;
+        return status;
     }
     
     private void receberMensagem(Mensagem mensagem) throws IOException{
@@ -108,7 +115,7 @@ public class ConexaoServidor extends Thread {
     public void run(){
         int comando;
         try {
-            if(autenticarUsuario()){
+            if(autenticarUsuario() == 3){
                 setOnline(true);
                 enviarListaUsuarios(false);
                 atualizarListaUsuarios();
@@ -125,8 +132,7 @@ public class ConexaoServidor extends Thread {
                             break;
                     }
                 }
-            }else
-                fecharConexao();
+            }
         } catch (IOException | ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();
             Principal.frmPrincipal.enviarLog("Exceção: " + ex.getMessage());
