@@ -5,17 +5,18 @@ import cliente.aplicacao.Principal;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
@@ -55,7 +56,31 @@ public class FramePrincipal extends javax.swing.JFrame {
                             !listUsuarios.getSelectedValue().equals("----------Online----------"))
                         destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1);
                     if(destino != null)
+                        // verificar se a conversa já está aberta
                         conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino));
+                }
+            }
+        });
+        
+        itemAlterarFoto.addActionListener((ActionEvent e) -> {
+            ImageIcon foto = null;
+            JFileChooser fs = new JFileChooser();
+            fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int val = fs.showOpenDialog(this);
+            if(val == JFileChooser.APPROVE_OPTION){
+                File caminhoFoto = fs.getSelectedFile();
+                Image imagem = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
+                foto = new ImageIcon(imagem);
+            }
+            for (Usuario usuario : Principal.usuarios) {
+                if(usuario.getId() == conexao.getIdCliente()){
+                    try {
+                        lblFoto.setIcon(foto);
+                        usuario.setFoto(foto);
+                        conexao.alterarUsuario(usuario);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
@@ -133,6 +158,23 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
+    public void atualizarConversas() {
+        int id;
+        for (FrameConversa conversa : conversas) {
+            id = conversa.getIdDestino();
+            System.out.println("idDestino: " + id);
+            for (Usuario usuario : Principal.usuarios) {
+                System.out.println(usuario.getId());
+                if(usuario.getId() == id){
+                    System.out.println("setou destino");
+                    conversa.setDestino(usuario);
+                }
+            }
+            System.out.println("chamou carregarinfo");
+            conversa.carregarInfoUsuario();
+        }
+    }
+    
     public void carregarLista(){ // carrega a lista de usuários
         try {
             conexao.atualizarListaUsuarios();
@@ -179,7 +221,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblIP = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         mnuArquivo = new javax.swing.JMenu();
-        itemAlterarFoto = new javax.swing.JMenu();
+        itemAlterarFoto = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         itemSair = new javax.swing.JMenuItem();
         mnuConversa = new javax.swing.JMenu();
@@ -291,7 +333,7 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         mnuArquivo.setText("Arquivo");
 
-        itemAlterarFoto.setText("Alterar foto");
+        itemAlterarFoto.setText("Alterar foto...");
         mnuArquivo.add(itemAlterarFoto);
         mnuArquivo.add(jSeparator1);
 
@@ -316,13 +358,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu itemAlterarFoto;
+    private javax.swing.JMenuItem itemAlterarFoto;
     private javax.swing.JMenuItem itemSair;
     private javax.swing.JMenuItem itemTransmissao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblStatus;
@@ -337,5 +379,4 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel pnlInfo;
     private javax.swing.JPanel pnlListaUsuarios;
     // End of variables declaration//GEN-END:variables
-
 }
