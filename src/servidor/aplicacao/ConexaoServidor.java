@@ -94,7 +94,7 @@ public class ConexaoServidor extends Thread {
             if(!existe){ // verifica se o usuário não existe já
                 if(Principal.gerenciador.cadastrarUsuario(usuario)){ // se o cadastro funcionou
                     Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado"); // envia o log
-                    File caminhoFoto = new File("src/compartilhado/imagens/usuario.png");
+                    File caminhoFoto = new File(getClass().getResource("/compartilhado.imagens/usuario.png").getPath());
                     Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
                     Principal.usuarios.add(new Usuario(Principal.usuarios.size() + 1, usuario.getUsuario(), new ImageIcon(foto))); // adiciona na lista de usuários
                     status = Principal.gerenciador.autenticarUsuario(usuario); // tenta autenticar

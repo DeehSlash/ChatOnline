@@ -105,7 +105,7 @@ public class GerenciadorBD {
     }
     
     public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException{
-        File caminhoFoto = new File("src/compartilhado/imagens/usuario.png");
+        File caminhoFoto = new File(getClass().getResource("/compartilhado.imagens/usuario.png").getPath());
         Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
         PreparedStatement ps = conexao().prepareStatement("INSERT INTO usuario (usuario, senha, foto) VALUES (?, ?, ?)");
         ps.setString(1, usuario.getUsuario());

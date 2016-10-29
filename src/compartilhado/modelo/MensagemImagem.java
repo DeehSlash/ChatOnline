@@ -1,7 +1,6 @@
 package compartilhado.modelo;
 
 import java.awt.Image;
-import java.io.File;
 import java.util.Date;
 
 public class MensagemImagem extends Mensagem<Image> implements java.io.Serializable {
