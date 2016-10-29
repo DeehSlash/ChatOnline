@@ -5,12 +5,15 @@ import cliente.aplicacao.Principal;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
@@ -56,6 +59,22 @@ public class FramePrincipal extends javax.swing.JFrame {
                 }
             }
         });
+        
+        itemSair.addActionListener((ActionEvent e) -> {
+            try {
+                fecharConversas();
+                conexao.desconectar();
+                dispose();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+    
+    private void fecharConversas(){
+        for (FrameConversa conversa : conversas) {
+            conversa.dispose();
+        }
     }
     
     protected void enviarMensagem(Mensagem mensagem){
@@ -160,10 +179,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblIP = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         mnuArquivo = new javax.swing.JMenu();
+        itemAlterarFoto = new javax.swing.JMenu();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         itemSair = new javax.swing.JMenuItem();
-        mnuContatos = new javax.swing.JMenu();
-        itemAddContato = new javax.swing.JMenuItem();
-        itemDelContato = new javax.swing.JMenuItem();
+        mnuConversa = new javax.swing.JMenu();
+        itemTransmissao = new javax.swing.JMenuItem();
         mnuSobre = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -271,20 +291,21 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         mnuArquivo.setText("Arquivo");
 
+        itemAlterarFoto.setText("Alterar foto");
+        mnuArquivo.add(itemAlterarFoto);
+        mnuArquivo.add(jSeparator1);
+
         itemSair.setText("Sair");
         mnuArquivo.add(itemSair);
 
         menuBar.add(mnuArquivo);
 
-        mnuContatos.setText("Contatos");
+        mnuConversa.setText("Conversa");
 
-        itemAddContato.setText("Adicionar contato");
-        mnuContatos.add(itemAddContato);
+        itemTransmissao.setText("Enviar transmissão");
+        mnuConversa.add(itemTransmissao);
 
-        itemDelContato.setText("Excluir contato");
-        mnuContatos.add(itemDelContato);
-
-        menuBar.add(mnuContatos);
+        menuBar.add(mnuConversa);
 
         mnuSobre.setText("Sobre");
         menuBar.add(mnuSobre);
@@ -295,12 +316,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem itemAddContato;
-    private javax.swing.JMenuItem itemDelContato;
+    private javax.swing.JMenu itemAlterarFoto;
     private javax.swing.JMenuItem itemSair;
+    private javax.swing.JMenuItem itemTransmissao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblStatus;
@@ -309,7 +331,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JList<String> listUsuarios;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu mnuArquivo;
-    private javax.swing.JMenu mnuContatos;
+    private javax.swing.JMenu mnuConversa;
     private javax.swing.JMenu mnuSobre;
     private javax.swing.JPanel pnlHeader;
     private javax.swing.JPanel pnlInfo;

@@ -9,6 +9,13 @@
             <Property name="text" type="java.lang.String" value="Arquivo"/>
           </Properties>
           <SubComponents>
+            <Menu class="javax.swing.JMenu" name="itemAlterarFoto">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Alterar foto"/>
+              </Properties>
+            </Menu>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="itemSair">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Sair"/>
@@ -16,19 +23,14 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="mnuContatos">
+        <Menu class="javax.swing.JMenu" name="mnuConversa">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Contatos"/>
+            <Property name="text" type="java.lang.String" value="Conversa"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="itemAddContato">
+            <MenuItem class="javax.swing.JMenuItem" name="itemTransmissao">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Adicionar contato"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="itemDelContato">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Excluir contato"/>
+                <Property name="text" type="java.lang.String" value="Enviar transmiss&#xe3;o"/>
               </Properties>
             </MenuItem>
           </SubComponents>
