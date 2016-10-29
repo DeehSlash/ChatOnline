@@ -66,6 +66,11 @@ public class ConexaoCliente extends Thread {
         return status;
     }
     
+    public void alterarUsuario(Usuario usuario) throws IOException{
+        getSaidaDado().writeInt(1);
+        getSaidaObjeto().writeObject(usuario);
+    }
+    
     private void receberMensagem() throws IOException, ClassNotFoundException{
         Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
         Principal.frmPrincipal.receberMensagem(mensagem);
@@ -88,6 +93,7 @@ public class ConexaoCliente extends Thread {
                         break;
                     case 1: // caso atualização da lista de usuários
                         Principal.frmPrincipal.carregarLista();
+                        Principal.frmPrincipal.atualizarConversas();
                         break;
                     default:
                         desconectar();

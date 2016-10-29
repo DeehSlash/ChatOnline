@@ -112,6 +112,13 @@ public class ConexaoServidor extends Thread {
         return status;
     }
     
+    private void alterarUsuario() throws IOException, ClassNotFoundException, SQLException{
+        Usuario usuario = (Usuario)getEntradaObjeto().readObject();
+        Principal.gerenciador.alterarUsuario(usuario);
+        Principal.usuarios.set(usuario.getId() - 1, usuario);
+        atualizarListaUsuarios();
+    }
+    
     private void receberMensagem(Mensagem mensagem) throws IOException{
         getSaidaDado().writeInt(0); // envia comando 0 (receber mensagem)
         getSaidaObjeto().writeObject(mensagem); // envia a mensagem
@@ -142,7 +149,8 @@ public class ConexaoServidor extends Thread {
                         case 0: // caso mensagem enviada
                             enviarMensagem();
                             break;
-                        case 1: 
+                        case 1: // caso usuário alterado
+                            alterarUsuario();
                             break;
                         default:
                             fecharConexao();

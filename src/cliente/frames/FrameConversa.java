@@ -16,8 +16,8 @@ import java.text.DateFormat;
 
 public class FrameConversa extends javax.swing.JFrame {
 
-    private final Usuario origem;
-    private final Usuario destino;
+    private Usuario origem;
+    private Usuario destino;
     private boolean carregado;
     private StyledDocument doc;
     private final MensagemBuilder mensagemBuilder;
@@ -35,6 +35,7 @@ public class FrameConversa extends javax.swing.JFrame {
     }
     
     public int getIdDestino(){ return destino.getId(); }
+    public void setDestino(Usuario usuario) { destino = usuario; }
     
     private void addListeners(){
         btnEnviar.addActionListener((ActionEvent e) -> {
@@ -96,7 +97,7 @@ public class FrameConversa extends javax.swing.JFrame {
         return formatacao;
     }
     
-    private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
+    public void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
         lblFoto.setIcon(destino.getFoto());
         lblUsuario.setText(destino.getUsuario());
         setTitle(destino.getUsuario() + " - Mensageiro");

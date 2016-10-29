@@ -9,11 +9,11 @@
             <Property name="text" type="java.lang.String" value="Arquivo"/>
           </Properties>
           <SubComponents>
-            <Menu class="javax.swing.JMenu" name="itemAlterarFoto">
+            <MenuItem class="javax.swing.JMenuItem" name="itemAlterarFoto">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Alterar foto"/>
+                <Property name="text" type="java.lang.String" value="Alterar foto..."/>
               </Properties>
-            </Menu>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="itemSair">

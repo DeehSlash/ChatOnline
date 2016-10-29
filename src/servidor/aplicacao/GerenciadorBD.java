@@ -53,9 +53,11 @@ public class GerenciadorBD {
     }
      
     public boolean alterarUsuario(Usuario usuario) throws SQLException, IOException{
-        Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET usuario = '" + usuario.getUsuario() + "' , foto = '" + compartilhado.aplicacao.Foto.imageToBlob(usuario.getFoto().getImage()) + "' WHERE id = '" + Integer.toString(usuario.getId()) + "'";
-        int result = st.executeUpdate(SQL);
+        PreparedStatement ps = conexao().prepareStatement("UPDATE usuario SET usuario = ?, foto = ? WHERE id = ?");
+        ps.setString(1, usuario.getUsuario());
+        ps.setBlob(2, compartilhado.aplicacao.Foto.imageToBlob(usuario.getFoto().getImage()));
+        ps.setInt(3, usuario.getId());
+        int result = ps.executeUpdate();
         return result == 1;
     }
     
