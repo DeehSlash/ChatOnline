@@ -74,7 +74,6 @@ public class ConexaoCliente extends Thread {
     public void enviarMensagem(Mensagem mensagem) throws IOException{
         getSaidaDado().writeInt(0); // envia para o servidor comando 0 (enviar mensagem)
         getSaidaObjeto().writeObject(mensagem); // envia para o servidor a mensagem
-        System.out.println(mensagem.getIdDestino());
     }
     
     @Override

@@ -20,7 +20,7 @@ public class FrameConversa extends javax.swing.JFrame {
     private final Usuario destino;
     private boolean carregado;
     private StyledDocument doc;
-    private MensagemBuilder mensagemBuilder;
+    private final MensagemBuilder mensagemBuilder;
     private ArrayList<Mensagem> mensagens;
     
     public FrameConversa(Usuario origem, Usuario destino) {
@@ -28,52 +28,72 @@ public class FrameConversa extends javax.swing.JFrame {
         addListeners();
         this.origem = origem;
         this.destino = destino;
-        doc = txtConversa.getStyledDocument();
-        mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
         mensagens = new ArrayList<>();
+        mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
         carregarInfoUsuario();
         setVisible(true);
     }
     
+    public int getIdDestino(){ return destino.getId(); }
+    
     private void addListeners(){
         btnEnviar.addActionListener((ActionEvent e) -> {
-            if(!txtMensagem.getText().isEmpty()){ // se o texto não estiver vazio
-                try {
-                    Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size(), 'U', 'T', txtMensagem.getText()); // cria a mensagem
-                    enviarMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
-                    txtMensagem.setText(""); // limpa o campo de mensagem
-                    Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
-                } catch (BadLocationException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            enviarMensagem();
+            txtMensagem.grabFocus();
+        });
+        
+        txtMensagem.addActionListener((ActionEvent e) -> {
+            enviarMensagem();
+            txtMensagem.grabFocus();
         });
     }
     
-    public int getIdDestino(){ return destino.getId(); }
+    private void enviarMensagem(){
+        if(!txtMensagem.getText().isEmpty()){ // se o texto não estiver vazio
+            try {
+                Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size(), 'U', 'T', txtMensagem.getText()); // cria a mensagem
+                escreverMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
+                txtMensagem.setText(""); // limpa o campo de mensagem
+                Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
+            } catch (BadLocationException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
     
-    private void enviarMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
+    private void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
         doc = txtConversa.getStyledDocument();
-        SimpleAttributeSet formatacao = new SimpleAttributeSet();
-        StyleConstants.setBold(formatacao, true);
-        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao);
-        StyleConstants.setBold(formatacao, false);
-        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao);
-        doc.insertString(doc.getLength(), mensagem.getMensagem().toString() + "\n\n", null);
+        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
+        doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("normal"));
+        doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
         txtConversa.setStyledDocument(doc);
     }
     
     public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
         doc = txtConversa.getStyledDocument();
-        SimpleAttributeSet formatacao = new SimpleAttributeSet();
-        StyleConstants.setBold(formatacao, true);
-        StyleConstants.setForeground(formatacao, Color.blue);
-        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao);
-        StyleConstants.setBold(formatacao, false);
-        StyleConstants.setForeground(formatacao, Color.black);
-        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao);
-        doc.insertString(doc.getLength(), mensagem.getMensagem().toString() + "\n\n", null);
+        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("nome"));
+        doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("nome"));
+        doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
         txtConversa.setStyledDocument(doc);
+    }
+    
+    private SimpleAttributeSet formatacao(String tipo){
+        SimpleAttributeSet formatacao = new SimpleAttributeSet();
+        StyleConstants.setFontFamily(formatacao, "Tahoma");
+        StyleConstants.setFontSize(formatacao, 11);
+        StyleConstants.setLeftIndent(formatacao, 10);
+        StyleConstants.setRightIndent(formatacao, 10);
+        if(tipo.equals("destinoNome")){
+            StyleConstants.setBold(formatacao, true);
+            StyleConstants.setForeground(formatacao, Color.blue);
+        }else if(tipo.equals("origemNome"))
+            StyleConstants.setBold(formatacao, true);
+        else if(tipo.equals("normal")){
+            // não faz nada
+        }
+        return formatacao;
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
@@ -81,6 +101,7 @@ public class FrameConversa extends javax.swing.JFrame {
         lblUsuario.setText(destino.getUsuario());
         setTitle(destino.getUsuario() + " - Mensageiro");
         lblStatus.setText((destino.isOnline()? "Online" : "Offline"));
+        lblStatus.setForeground((destino.isOnline()? new Color(31, 167, 9) : Color.red));
     }
     
     /** This method is called from within the constructor to
@@ -155,6 +176,7 @@ public class FrameConversa extends javax.swing.JFrame {
 
         txtConversa.setEditable(false);
         txtConversa.setBorder(null);
+        txtConversa.setMargin(new java.awt.Insets(5, 10, 5, 10));
         jScrollPane1.setViewportView(txtConversa);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
