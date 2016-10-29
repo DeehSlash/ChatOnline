@@ -152,10 +152,10 @@ public class GerenciadorBD {
         Statement st = conexao().createStatement();
         if(mensagem.getTipoMensagem() == 'T'){
             SQL = "INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, timeMensagem, tipoMens, idMensagem, idGrupoDestino) "
-        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', " + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdGrupo() + " ')";
+        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', " + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdDestino()+ " ')";
         } else {
             SQL = "INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, arquivo, timeMensagem, tipoMens, idMensagem, idGrupoDestino) "
-        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', ' ', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdGrupo() + " ')";
+        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', ' ', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdDestino()+ " ')";
         }
         int result = st.executeUpdate(SQL);
         return result == 1;

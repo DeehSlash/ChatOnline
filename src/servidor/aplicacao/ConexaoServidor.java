@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -13,24 +12,39 @@ import java.sql.SQLException;
 
 public class ConexaoServidor extends Thread {
     
-    private Socket cliente;
+    private final Socket conexao;
     private int idCliente;
-    private BufferedReader entrada;
+    private BufferedReader entradaString;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
-    private DataInputStream entradaDados;
-    private DataOutputStream saidaDados;
+    private DataInputStream entradaDado;
+    private DataOutputStream saidaDado;
     
     public ConexaoServidor(int porta, Socket cliente) throws IOException{
-        this.cliente = cliente;
+        this.conexao = cliente;
     }
     
     public int getIdCliente(){ return this.idCliente; }
     private void setIdCliente(int id) throws IOException{ this.idCliente = id; } 
-    public boolean getStatus(){ return cliente.isConnected(); }
+    public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
+    
+    private ObjectInputStream getEntradaObjeto() throws IOException{
+        return entradaObjeto = new ObjectInputStream(conexao.getInputStream());
+    }
+    private ObjectOutputStream getSaidaObjeto() throws IOException{
+        return saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
+    }
+    
+    private DataInputStream getEntradaDado() throws IOException{
+        return entradaDado = new DataInputStream(conexao.getInputStream());
+    }
+    
+    private DataOutputStream getSaidaDado() throws IOException{
+        return saidaDado = new DataOutputStream(conexao.getOutputStream());
+    }
     
     public void fecharConexao() throws IOException{
-        cliente.close();
+        conexao.close();
         Principal.frmPrincipal.enviarLog("Usuário " + Principal.usuarios.get(idCliente).getUsuario() + " (" + idCliente + ") se desconectou");
         Principal.frmPrincipal.alterarUsuarios(false);
         Principal.usuarios.remove(idCliente);
@@ -46,11 +60,9 @@ public class ConexaoServidor extends Thread {
     
     private void enviarListaUsuarios(boolean loop) throws IOException{
         if(loop){ // se estiver no loop esperando um comando
-            saidaDados = new DataOutputStream(cliente.getOutputStream());
-            saidaDados.writeInt(1); // envia comando 1 para o cliente (preparação para atualizar a lista de usuários)
+            getSaidaDado().writeInt(1); // envia comando 1 para o cliente (preparação para atualizar a lista de usuários)
         } // se ele não estiver no loop, automaticamente vai estar esperando só a lista
-        saidaObjeto = new ObjectOutputStream(cliente.getOutputStream());
-        saidaObjeto.writeObject(Principal.usuarios); // envia a lista de usuários para o cliente
+        getSaidaObjeto().writeObject(Principal.usuarios); // envia a lista de usuários para o cliente
     }
     
     private void setOnline(boolean online){
@@ -58,13 +70,10 @@ public class ConexaoServidor extends Thread {
     }
     
     private int autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
-        entradaObjeto = new ObjectInputStream(cliente.getInputStream());
-        entradaDados = new DataInputStream(cliente.getInputStream());
-        saidaDados = new DataOutputStream(cliente.getOutputStream());
         boolean existe = false, cadastro;
         int status = -1;
-        cadastro = entradaDados.readBoolean(); // recebe se é um cadastro
-        UsuarioAutenticacao usuario = (UsuarioAutenticacao)entradaObjeto.readObject(); // recebe o objeto de autenticação do cliente
+        cadastro = getEntradaDado().readBoolean(); // recebe se é um cadastro
+        UsuarioAutenticacao usuario = (UsuarioAutenticacao)getEntradaObjeto().readObject(); // recebe o objeto de autenticação do cliente
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
             if(u.getUsuario().equals(usuario.getUsuario())){
                 existe = true;
@@ -84,9 +93,9 @@ public class ConexaoServidor extends Thread {
             }else // caso usuário exista, retorna 2: usuário já existe e não pode ser cadastrado
                 status = 2;
         }
-        saidaDados.writeInt(status); // envia para o cliente o status da autenticação
+        getSaidaDado().writeInt(status); // envia para o cliente o status da autenticação
         if(status == 3){ // se status for 3 (autenticou)
-            saidaDados.writeInt(idCliente); // envia a id do cliente
+            getSaidaDado().writeInt(idCliente); // envia a id do cliente
             Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " (" + idCliente + ") se conectou");
             Principal.frmPrincipal.alterarUsuarios(true);
         }
@@ -94,17 +103,15 @@ public class ConexaoServidor extends Thread {
     }
     
     private void receberMensagem(Mensagem mensagem) throws IOException{
-        saidaDados = new DataOutputStream(cliente.getOutputStream());
-        saidaDados.writeInt(0);
-        saidaObjeto = new ObjectOutputStream(cliente.getOutputStream());
-        saidaObjeto.writeObject(mensagem);
+        getSaidaDado().writeInt(0); // envia comando 0 (receber mensagem)
+        getSaidaObjeto().writeObject(mensagem); // envia a mensagem
     }
     
-    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{
-        entradaObjeto = new ObjectInputStream(cliente.getInputStream());
-        Mensagem mensagem = (Mensagem)entradaObjeto.readObject();
-        Principal.gerenciador.enviarMensagem(mensagem);
+    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{;
+        Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
+        //Principal.gerenciador.enviarMensagem(mensagem);
         for (ConexaoServidor conexao : Principal.conexoes) {
+            System.out.println(conexao.getIdCliente() + " - " + mensagem.getIdDestino());
             if(conexao.getIdCliente() == mensagem.getIdDestino()){
                 conexao.receberMensagem(mensagem);
             }     
@@ -119,11 +126,11 @@ public class ConexaoServidor extends Thread {
                 setOnline(true);
                 enviarListaUsuarios(false);
                 atualizarListaUsuarios();
-                while(!cliente.isClosed()){
-                    entradaDados = new DataInputStream(cliente.getInputStream());
-                    comando = entradaDados.readInt();
+                while(!conexao.isClosed()){
+                    comando = getEntradaDado().readInt();
                     switch(comando){
                         case 0: // caso mensagem enviada
+                            enviarMensagem();
                             break;
                         case 1: 
                             break;

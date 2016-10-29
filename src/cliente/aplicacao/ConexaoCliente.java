@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -16,11 +15,10 @@ public class ConexaoCliente extends Thread {
     private int porta;
     private Socket conexao;
     private int idCliente;
-    private PrintStream saida;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
-    private DataInputStream entradaDados;
-    private DataOutputStream saidaDados;
+    private DataInputStream entradaDado;
+    private DataOutputStream saidaDado;
 
     public ConexaoCliente(String endereco, int porta){
         this.endereco = endereco;
@@ -32,6 +30,21 @@ public class ConexaoCliente extends Thread {
     public int getPorta(){ return porta; }
     public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
     
+    private ObjectInputStream getEntradaObjeto() throws IOException{
+        return entradaObjeto = new ObjectInputStream(conexao.getInputStream());
+    }
+    private ObjectOutputStream getSaidaObjeto() throws IOException{
+        return saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
+    }
+    
+    private DataInputStream getEntradaDado() throws IOException{
+        return entradaDado = new DataInputStream(conexao.getInputStream());
+    }
+    
+    private DataOutputStream getSaidaDado() throws IOException{
+        return saidaDado = new DataOutputStream(conexao.getOutputStream());
+    }
+    
     public void conectar() throws IOException{
         conexao = new Socket(endereco, porta);
     }
@@ -41,30 +54,27 @@ public class ConexaoCliente extends Thread {
     }
     
     public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
-        entradaObjeto = new ObjectInputStream(conexao.getInputStream());
-        Principal.usuarios = (ArrayList<Usuario>)entradaObjeto.readObject();
+        Principal.usuarios = (ArrayList<Usuario>)getEntradaObjeto().readObject();
     }
     
     public int autenticarUsuario(UsuarioAutenticacao usuario, boolean cadastro) throws IOException{ // serve tanto para cadastro quanto para autenticação
-        entradaDados = new DataInputStream(conexao.getInputStream());
-        saidaDados = new DataOutputStream(conexao.getOutputStream());
-        saidaObjeto = new ObjectOutputStream(conexao.getOutputStream());
-        saidaDados.writeBoolean(cadastro); // envia para o servidor se é cadastro ou login
-        saidaObjeto.writeObject(usuario); // envia o usuário de autenticação para o servidor
-        int status = entradaDados.readInt(); // recebe do servidor o status da autenticação
+        getSaidaDado().writeBoolean(cadastro); // envia para o servidor se é cadastro ou login
+        getSaidaObjeto().writeObject(usuario); // envia o usuário de autenticação para o servidor
+        int status = getEntradaDado().readInt(); // recebe do servidor o status da autenticação
         if(status == 3)
-            idCliente = entradaDados.readInt(); // recupera o id do usuário
+            idCliente = getEntradaDado().readInt(); // recupera o id do usuário
         return status;
     }
     
     private void receberMensagem() throws IOException, ClassNotFoundException{
-        entradaObjeto = new ObjectInputStream(conexao.getInputStream());
-        Mensagem mensagem = (Mensagem)entradaObjeto.readObject();
+        Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
+        Principal.frmPrincipal.receberMensagem(mensagem);
     }
     
-    public void enviarMensagem(String msg) throws IOException{
-        saida = new PrintStream(conexao.getOutputStream());
-        saida.println(msg);
+    public void enviarMensagem(Mensagem mensagem) throws IOException{
+        getSaidaDado().writeInt(0); // envia para o servidor comando 0 (enviar mensagem)
+        getSaidaObjeto().writeObject(mensagem); // envia para o servidor a mensagem
+        System.out.println(mensagem.getIdDestino());
     }
     
     @Override
@@ -72,10 +82,10 @@ public class ConexaoCliente extends Thread {
         try{
             int comando;
             while(!conexao.isClosed()){
-                entradaDados = new DataInputStream(conexao.getInputStream());
-                comando = entradaDados.readInt();
+                comando = getEntradaDado().readInt();
                 switch(comando){
                     case 0: // caso mensagem recebida
+                        receberMensagem();
                         break;
                     case 1: // caso atualização da lista de usuários
                         Principal.frmPrincipal.carregarLista();
@@ -85,7 +95,7 @@ public class ConexaoCliente extends Thread {
                         break;
                 }
             }
-        } catch (/*ClassNotFoundException |*/ IOException ex){
+        } catch (ClassNotFoundException | IOException ex){
             ex.printStackTrace();
         }
     }

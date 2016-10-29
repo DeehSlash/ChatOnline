@@ -2,11 +2,10 @@ package compartilhado.modelo;
 
 import java.util.Date;
 
-public abstract class Mensagem<T>{
+public abstract class Mensagem<T> implements java.io.Serializable {
     
     protected int idOrigem;
     protected int idDestino;
-    protected int idGrupo;
     protected int idMensagem;
     protected char destinoTipo;
     protected Date dataMensagem;
@@ -26,6 +25,4 @@ public abstract class Mensagem<T>{
     public abstract void setMensagem(T mensagem);
     public abstract char getTipoMensagem();
     public abstract void setTipoMensagem(char tipoMensagem);
-    public abstract int getIdGrupo();
-    public abstract void setIdGrupo(int idGrupo);
 }

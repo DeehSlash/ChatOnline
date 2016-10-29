@@ -31,8 +31,8 @@ public class Principal {
     }
     
     public static void iniciarServidor(int porta) throws IOException, SQLException{
-        servidor = new ServerSocket(porta);
         conexoes = new ArrayList<>();
+        servidor = new ServerSocket(porta);
         Principal.frmPrincipal.enviarLog("O servidor está sendo iniciado...");
         gerenciador = new GerenciadorBD("localhost/mensageiro", "root", "");
         frmPrincipal.enviarLog("Iniciando gerenciador de banco de dados...");

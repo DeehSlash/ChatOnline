@@ -1,47 +1,79 @@
 package cliente.frames;
 
-import compartilhado.aplicacao.MensagemFactory;
+import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import cliente.aplicacao.Principal;
+import java.awt.Color;
+import java.text.DateFormat;
 
 public class FrameConversa extends javax.swing.JFrame {
 
-    private Usuario origem;
-    private Usuario destino;
+    private final Usuario origem;
+    private final Usuario destino;
+    private boolean carregado;
     private StyledDocument doc;
+    private MensagemBuilder mensagemBuilder;
+    private ArrayList<Mensagem> mensagens;
     
     public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
+        addListeners();
         this.origem = origem;
         this.destino = destino;
         doc = txtConversa.getStyledDocument();
+        mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
+        mensagens = new ArrayList<>();
         carregarInfoUsuario();
         setVisible(true);
     }
     
     private void addListeners(){
         btnEnviar.addActionListener((ActionEvent e) -> {
-            if(!txtMensagem.getText().isEmpty()){
-                Mensagem mensagem = MensagemFactory.criarMensagem('T');
-                // falta construtor de mensagem para montar o objeto e enviar
+            if(!txtMensagem.getText().isEmpty()){ // se o texto não estiver vazio
+                try {
+                    Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size(), 'U', 'T', txtMensagem.getText()); // cria a mensagem
+                    enviarMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
+                    txtMensagem.setText(""); // limpa o campo de mensagem
+                    Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
+                } catch (BadLocationException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
     }
     
     public int getIdDestino(){ return destino.getId(); }
     
-    public void receberMensagem(Mensagem mensagem) throws BadLocationException{
+    private void enviarMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
+        doc = txtConversa.getStyledDocument();
         SimpleAttributeSet formatacao = new SimpleAttributeSet();
         StyleConstants.setBold(formatacao, true);
+        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao);
+        StyleConstants.setBold(formatacao, false);
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao);
+        doc.insertString(doc.getLength(), mensagem.getMensagem().toString() + "\n\n", null);
+        txtConversa.setStyledDocument(doc);
+    }
+    
+    public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
+        doc = txtConversa.getStyledDocument();
+        SimpleAttributeSet formatacao = new SimpleAttributeSet();
+        StyleConstants.setBold(formatacao, true);
+        StyleConstants.setForeground(formatacao, Color.blue);
         doc.insertString(doc.getLength(), destino.getUsuario(), formatacao);
         StyleConstants.setBold(formatacao, false);
-        doc.insertString(doc.getLength(), mensagem.getMensagem().toString(), null);
+        StyleConstants.setForeground(formatacao, Color.black);
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao);
+        doc.insertString(doc.getLength(), mensagem.getMensagem().toString() + "\n\n", null);
+        txtConversa.setStyledDocument(doc);
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)

@@ -2,13 +2,13 @@ package compartilhado.modelo;
 
 import java.util.Date;
 
-public class MensagemTexto extends Mensagem<String> {
+public class MensagemTexto extends Mensagem<String> implements java.io.Serializable {
+    
+    private String mensagem;
     
     public MensagemTexto(){
         super.tipoMensagem = 'T';
     }
-    
-    private String mensagem;
     
     @Override
     public int getIdOrigem(){ return idOrigem; }
@@ -64,13 +64,5 @@ public class MensagemTexto extends Mensagem<String> {
     @Override
     public void setTipoMensagem(char tipoMensagem) {
         this.tipoMensagem = tipoMensagem;
-    }
-    
-    @Override
-    public int getIdGrupo() {return idGrupo;}
-    
-    @Override
-    public void setIdGrupo(int idGrupo) {
-        this.idGrupo = idGrupo;
     }
 }

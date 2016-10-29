@@ -11,8 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
@@ -52,7 +50,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                     Usuario destino = null;
                     if(!listUsuarios.getSelectedValue().equals("----------Offline----------") &&
                             !listUsuarios.getSelectedValue().equals("----------Online----------"))
-                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1);                  
+                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1);
                     if(destino != null)
                         conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino));
                 }
@@ -60,11 +58,19 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
     }
     
+    protected void enviarMensagem(Mensagem mensagem){
+        try {
+            conexao.enviarMensagem(mensagem);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public void receberMensagem(Mensagem mensagem){
         boolean conversaAberta = false;
         int id = -1;
         for (FrameConversa conversa : conversas) {
-            if(conversa.getIdDestino() == mensagem.getIdDestino()){
+            if(conversa.getIdDestino() == mensagem.getIdOrigem()){
                 conversaAberta = true;
                 id = conversas.indexOf(conversa);
             }
@@ -72,9 +78,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         try {
             if(conversaAberta)
                 conversas.get(id).receberMensagem(mensagem);
-            else
+            else{
                 conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
-                        Principal.usuarios.get(mensagem.getIdDestino() - 1)));
+                        Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
+                conversas.get(conversas.size() - 1).receberMensagem(mensagem);
+            }
         } catch (BadLocationException ex) {
             ex.printStackTrace();
         }
@@ -82,8 +90,9 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     private int idPorNome(String nome){
         for (Usuario usuario : Principal.usuarios) {
-            if(usuario.getUsuario().equals(nome))
+            if(usuario.getUsuario().equals(nome)){
                 return usuario.getId();
+            }
         }
         return -1;
     }
@@ -143,7 +152,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<String>();
+        listUsuarios = new javax.swing.JList<>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();

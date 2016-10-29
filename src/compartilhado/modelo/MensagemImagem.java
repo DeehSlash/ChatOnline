@@ -4,7 +4,7 @@ import java.awt.Image;
 import java.io.File;
 import java.util.Date;
 
-public class MensagemImagem extends Mensagem<Image> {
+public class MensagemImagem extends Mensagem<Image> implements java.io.Serializable {
     
     public MensagemImagem(){
         super.tipoMensagem = 'I';
@@ -66,13 +66,5 @@ public class MensagemImagem extends Mensagem<Image> {
     @Override
     public void setTipoMensagem(char tipoMensagem) {
         this.tipoMensagem = tipoMensagem;
-    }
-    
-    @Override
-    public int getIdGrupo() {return idGrupo;}
-    
-    @Override
-    public void setIdGrupo(int idGrupo) {
-        this.idGrupo = idGrupo;
     }
 }

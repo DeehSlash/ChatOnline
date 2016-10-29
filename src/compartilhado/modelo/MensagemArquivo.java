@@ -3,7 +3,7 @@ package compartilhado.modelo;
 import java.io.File;
 import java.util.Date;
 
-public class MensagemArquivo extends Mensagem<File> {
+public class MensagemArquivo extends Mensagem<File> implements java.io.Serializable {
 
     public MensagemArquivo(){
         super.tipoMensagem = 'A';
@@ -66,13 +66,4 @@ public class MensagemArquivo extends Mensagem<File> {
     public void setTipoMensagem(char tipoMensagem) {
         this.tipoMensagem = tipoMensagem;
     }
-    
-    @Override
-    public int getIdGrupo() {return idGrupo;}
-    
-    @Override
-    public void setIdGrupo(int idGrupo) {
-        this.idGrupo = idGrupo;
-    }
-
 }
