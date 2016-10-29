@@ -88,7 +88,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
-    private int idPorNome(String nome){
+    public int idPorNome(String nome){
         for (Usuario usuario : Principal.usuarios) {
             if(usuario.getUsuario().equals(nome)){
                 return usuario.getId();
@@ -98,7 +98,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente()-1);
+        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente() - 1);
         lblFoto.setIcon(usuario.getFoto());
         lblUsuario.setText(usuario.getUsuario());
         atualizarStatusConexao();

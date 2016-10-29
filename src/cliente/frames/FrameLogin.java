@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
-
+    
     private ConexaoCliente conexao;
     
     public FrameLogin() {

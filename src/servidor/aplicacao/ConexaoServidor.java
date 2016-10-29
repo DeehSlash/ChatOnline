@@ -1,14 +1,17 @@
 package servidor.aplicacao;
 
 import compartilhado.modelo.*;
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 
 public class ConexaoServidor extends Thread {
     
@@ -83,15 +86,17 @@ public class ConexaoServidor extends Thread {
             }
         }
         if(!cadastro) // se não for cadastro, faz o login
-            if(!online)
-                status = Principal.gerenciador.autenticarUsuario(usuario);
-            else
+            if(online)
                 status = 4;
+            else
+                status = Principal.gerenciador.autenticarUsuario(usuario);
         else{ // se for cadastro, primeiro cadastra e então faz o login
             if(!existe){ // verifica se o usuário não existe já
                 if(Principal.gerenciador.cadastrarUsuario(usuario)){ // se o cadastro funcionou
                     Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado"); // envia o log
-                    Principal.usuarios.add(new Usuario(Principal.usuarios.size(), usuario.getUsuario(), null)); // adiciona na lista de usuários
+                    File caminhoFoto = new File("src/compartilhado/imagens/usuario.png");
+                    Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
+                    Principal.usuarios.add(new Usuario(Principal.usuarios.size() + 1, usuario.getUsuario(), new ImageIcon(foto))); // adiciona na lista de usuários
                     status = Principal.gerenciador.autenticarUsuario(usuario); // tenta autenticar
                     setIdCliente(Principal.usuarios.size()); // define a id desse usuário
                 }
