@@ -109,8 +109,9 @@ public class FrameLogin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login - Mensageiro");
-        setMinimumSize(new java.awt.Dimension(400, 400));
+        setMinimumSize(new java.awt.Dimension(450, 450));
         setName("frmLogin"); // NOI18N
+        setPreferredSize(new java.awt.Dimension(450, 450));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         lblLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
