@@ -1,16 +1,15 @@
 package servidor.aplicacao;
 
 import compartilhado.modelo.*;
-import java.awt.Graphics2D;
+import compartilhado.aplicacao.*;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class GerenciadorBD {
         
@@ -36,30 +36,9 @@ public class GerenciadorBD {
         return DriverManager.getConnection(url, usuario, senha);
     }
     
-    
     private String convData(Date dt){
         return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss:SSS").format(dt);
     }    
-    
-    private ByteArrayInputStream imageToBlob(Image imagem) throws IOException{
-        BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = bi.createGraphics();
-        g2d.drawImage(imagem, 0, 0, null);
-        g2d.dispose();
-        ByteArrayOutputStream baos = null;
-        try {
-            baos = new ByteArrayOutputStream();
-            ImageIO.write(bi, "png", baos);
-        } finally {
-            try {
-                baos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return new ByteArrayInputStream(baos.toByteArray());
-    }
-    
     
     public int autenticarUsuario(UsuarioAutenticacao userAuth) throws SQLException{
         Statement st = conexao().createStatement();
@@ -75,7 +54,7 @@ public class GerenciadorBD {
      
     public boolean alterarUsuario(Usuario usuario) throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "UPDATE usuario SET usuario = '" + usuario.getUsuario() + "' , foto = '" + imageToBlob(usuario.getFoto()) + "' WHERE id = '" + Integer.toString(usuario.getId()) + "'";
+        String SQL = "UPDATE usuario SET usuario = '" + usuario.getUsuario() + "' , foto = '" + compartilhado.aplicacao.Foto.imageToBlob(usuario.getFoto().getImage()) + "' WHERE id = '" + Integer.toString(usuario.getId()) + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -84,7 +63,7 @@ public class GerenciadorBD {
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
         String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
-                + grupo.getId() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + imageToBlob(grupo.getFoto()) + "')";
+                + grupo.getId() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto()) + "')";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -93,7 +72,7 @@ public class GerenciadorBD {
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
         String SQL = "UPDATE grupo SET nomeGrupo = '" + grupo.getNome() + "', idMembro1 = '" + m[0] + "', idMembro2 = '" + m[1] + "', idMembro3 = '" + m[2] + "', idMembro4 = '" + m[3] + "', idMembro5 = '" + m[4] + "', idMembro6 = '" + m[5]
-                     + "', idMembro7 = '" + m[6] + "', idMembro8 = '" + m[7] + "', idMembro9 = '" + m[8] + "', idMembro10 = '" + m[9] + "', foto = '" + imageToBlob(grupo.getFoto()) + "' WHERE id = '" + grupo.getId() + "'";
+                     + "', idMembro7 = '" + m[6] + "', idMembro8 = '" + m[7] + "', idMembro9 = '" + m[8] + "', idMembro10 = '" + m[9] + "', foto = '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto()) + "' WHERE id = '" + grupo.getId() + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -124,10 +103,13 @@ public class GerenciadorBD {
     }
     
     public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException{
-        Statement st = conexao().createStatement();
-        String SQL = "INSERT INTO usuario (usuario, senha, foto) "
-                + "VALUES ('" + usuario.getUsuario() + "', '" + usuario.getSenha() + "', ' ')";
-        int result = st.executeUpdate(SQL);
+        File caminhoFoto = new File("src/compartilhado/imagens/usuario.png");
+        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
+        PreparedStatement ps = conexao().prepareStatement("INSERT INTO usuario (usuario, senha, foto) VALUES (?, ?, ?)");
+        ps.setString(1, usuario.getUsuario());
+        ps.setString(2, usuario.getSenha());
+        ps.setBlob(3, compartilhado.aplicacao.Foto.imageToBlob(foto));
+        int result = ps.executeUpdate();
         return result == 1;
     }
     
@@ -141,7 +123,8 @@ public class GerenciadorBD {
             String usuario = rs.getString("usuario");
             Blob blob = rs.getBlob("foto");
             InputStream is = blob.getBinaryStream();
-            Image foto = ImageIO.read(is);
+            Image imagem = ImageIO.read(is);
+            ImageIcon foto = new ImageIcon(imagem);
             usuarios.add(new Usuario(id, usuario, foto));
         }
         return usuarios;

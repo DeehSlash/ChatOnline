@@ -97,7 +97,7 @@ public class FrameConversa extends javax.swing.JFrame {
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        //lblFoto.setIcon(new ImageIcon(destino.getFoto()));
+        lblFoto.setIcon(destino.getFoto());
         lblUsuario.setText(destino.getUsuario());
         setTitle(destino.getUsuario() + " - Mensageiro");
         lblStatus.setText((destino.isOnline()? "Online" : "Offline"));

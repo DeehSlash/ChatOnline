@@ -99,7 +99,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
         Usuario usuario = Principal.usuarios.get(conexao.getIdCliente()-1);
-        //lblFoto.setIcon(new ImageIcon(usuario.getFoto()));
+        lblFoto.setIcon(usuario.getFoto());
         lblUsuario.setText(usuario.getUsuario());
         atualizarStatusConexao();
     }
