@@ -70,7 +70,7 @@ public class ConexaoServidor extends Thread {
     }
     
     private int autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
-        boolean existe = false, cadastro;
+        boolean existe = false, online = false , cadastro;
         int status = -1;
         cadastro = getEntradaDado().readBoolean(); // recebe se é um cadastro
         UsuarioAutenticacao usuario = (UsuarioAutenticacao)getEntradaObjeto().readObject(); // recebe o objeto de autenticação do cliente
@@ -78,10 +78,15 @@ public class ConexaoServidor extends Thread {
             if(u.getUsuario().equals(usuario.getUsuario())){
                 existe = true;
                 setIdCliente(u.getId());
+                if(u.isOnline())
+                    online = true;
             }
         }
         if(!cadastro) // se não for cadastro, faz o login
-            status = Principal.gerenciador.autenticarUsuario(usuario);
+            if(!online)
+                status = Principal.gerenciador.autenticarUsuario(usuario);
+            else
+                status = 4;
         else{ // se for cadastro, primeiro cadastra e então faz o login
             if(!existe){ // verifica se o usuário não existe já
                 if(Principal.gerenciador.cadastrarUsuario(usuario)){ // se o cadastro funcionou

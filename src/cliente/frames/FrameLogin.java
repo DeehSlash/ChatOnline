@@ -51,6 +51,10 @@ public class FrameLogin extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Já existe uma pessoa cadastrada com esse nome de usuário, escolha outro nome", 
                                 "Falha no cadastro", JOptionPane.ERROR_MESSAGE);
                         break;
+                    case 4: // usuário já está logado
+                        JOptionPane.showMessageDialog(null, "Este usuário já está conectado ao chat, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;
                     case 3: // autenticação funcionou
                         if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
                             Principal.frmPrincipal = new FramePrincipal(conexao);
