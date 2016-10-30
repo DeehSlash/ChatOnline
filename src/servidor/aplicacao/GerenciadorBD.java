@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -104,9 +105,9 @@ public class GerenciadorBD {
         return result == 1;
     }
     
-    public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException{
-        File caminhoFoto = new File(getClass().getResource("/compartilhado.imagens/usuario.png").getPath());
-        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
+    public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException, URISyntaxException{
+        ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png"));
+        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50);
         PreparedStatement ps = conexao().prepareStatement("INSERT INTO usuario (usuario, senha, foto) VALUES (?, ?, ?)");
         ps.setString(1, usuario.getUsuario());
         ps.setString(2, usuario.getSenha());

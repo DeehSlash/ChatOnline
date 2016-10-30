@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ConexaoServidor extends Thread {
@@ -72,7 +75,7 @@ public class ConexaoServidor extends Thread {
         Principal.usuarios.get(idCliente - 1).setOnline(online);
     }
     
-    private int autenticarUsuario() throws IOException, SQLException, ClassNotFoundException{
+    private int autenticarUsuario() throws IOException, SQLException, ClassNotFoundException, URISyntaxException{
         boolean existe = false, online = false , cadastro;
         int status = -1;
         cadastro = getEntradaDado().readBoolean(); // recebe se é um cadastro
@@ -94,8 +97,9 @@ public class ConexaoServidor extends Thread {
             if(!existe){ // verifica se o usuário não existe já
                 if(Principal.gerenciador.cadastrarUsuario(usuario)){ // se o cadastro funcionou
                     Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado"); // envia o log
-                    File caminhoFoto = new File(getClass().getResource("/compartilhado.imagens/usuario.png").getPath());
-                    Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
+                    ClassLoader classLoader = getClass().getClassLoader();
+                    ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png"));
+                    Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50);
                     Principal.usuarios.add(new Usuario(Principal.usuarios.size() + 1, usuario.getUsuario(), new ImageIcon(foto))); // adiciona na lista de usuários
                     status = Principal.gerenciador.autenticarUsuario(usuario); // tenta autenticar
                     setIdCliente(Principal.usuarios.size()); // define a id desse usuário
@@ -158,7 +162,7 @@ public class ConexaoServidor extends Thread {
                     }
                 }
             }
-        } catch (IOException | ClassNotFoundException | SQLException ex) {
+        } catch (URISyntaxException | IOException | ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();
             Principal.frmPrincipal.enviarLog("Exceção: " + ex.getMessage());
         }

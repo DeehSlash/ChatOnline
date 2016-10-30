@@ -13,7 +13,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -69,8 +73,9 @@ public class FramePrincipal extends javax.swing.JFrame {
             int val = fs.showOpenDialog(this);
             if(val == JFileChooser.APPROVE_OPTION){
                 File caminhoFoto = fs.getSelectedFile();
-                Image imagem = compartilhado.aplicacao.Foto.redimensionarFoto(caminhoFoto, 50);
-                foto = new ImageIcon(imagem);
+                foto = new ImageIcon(caminhoFoto.getPath());
+                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50);
+                foto = new ImageIcon(imagemRedimensionada);
             }
             for (Usuario usuario : Principal.usuarios) {
                 if(usuario.getId() == conexao.getIdCliente()){

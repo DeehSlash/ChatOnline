@@ -5,22 +5,19 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Foto {
     
-    public static Image redimensionarFoto(File arquivo, int tam){
-        BufferedImage bi;
-        Image imagem = null;
-        try {
-            bi = ImageIO.read(arquivo);
-            imagem = bi.getScaledInstance(tam, tam, Image.SCALE_SMOOTH);
-        } catch (IOException ex) {
-            ex.getMessage();
-        }
-        return imagem;
+    public static Image redimensionarFoto(Image imagem, int tam){
+        Image imagemRedimensionada;
+        BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bGr = bi.createGraphics();
+        bGr.drawImage(imagem, 0, 0, null);
+        bGr.dispose();
+        imagemRedimensionada = bi.getScaledInstance(tam, tam, Image.SCALE_SMOOTH);
+        return imagemRedimensionada;
     }
     
     public static ByteArrayInputStream imageToBlob(Image imagem) throws IOException{
