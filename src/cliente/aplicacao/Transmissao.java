@@ -11,8 +11,7 @@ public class Transmissao {
         for (Usuario usuario : usuarios) {
             if(usuario.getId() != mensagem.getIdOrigem()){
                 mensagem.setIdDestino(usuario.getId());
-                //mensagem.setIdMensagem(Principal.frmPrincipal.conexao.recuperarUltimaId(mensagem.getIdOrigem(), mensagem.getIdDestino(), mensagem.getDestinoTipo()));
-                // falta implementar método pra recuperar a última id da conversação entre origem e destino;
+                mensagem.setIdMensagem(Principal.frmPrincipal.conexao.recuperarUltimaId(mensagem.getIdOrigem(), mensagem.getIdDestino(), mensagem.getDestinoTipo()));
                 Principal.frmPrincipal.conexao.enviarMensagem(mensagem);   
             }
         }

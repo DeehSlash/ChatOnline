@@ -143,6 +143,14 @@ public class ConexaoServidor extends Thread {
         }
     }
     
+    private void recuperarUltimaId() throws IOException, SQLException{
+        int idOrigem = getEntradaDado().readInt();
+        int idDestino = getEntradaDado().readInt();
+        char destinoTipo = getEntradaDado().readChar();
+        int id = Principal.gerenciador.recuperarUltimaId(idOrigem, idDestino, destinoTipo);
+        getSaidaDado().writeInt(id);
+    }
+    
     @Override
     public void run(){
         int comando;
@@ -162,6 +170,9 @@ public class ConexaoServidor extends Thread {
                             break;
                         case 2: // caso encerrar conexão;
                             fecharConexao();
+                            break;
+                        case 3:
+                            recuperarUltimaId();
                             break;
                         default:
                             fecharConexao();

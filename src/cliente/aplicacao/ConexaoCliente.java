@@ -81,6 +81,15 @@ public class ConexaoCliente extends Thread {
         getSaidaObjeto().writeObject(mensagem); // envia para o servidor a mensagem
     }
     
+    public int recuperarUltimaId(int idOrigem, int idDestino, char destinoTipo) throws IOException{
+        getSaidaDado().writeInt(3);
+        getSaidaDado().writeInt(idOrigem);
+        getSaidaDado().writeInt(idDestino);
+        getSaidaDado().writeChar(destinoTipo);
+        int id = getEntradaDado().readInt();
+        return id;
+    }
+    
     @Override
     public void run(){
         try{

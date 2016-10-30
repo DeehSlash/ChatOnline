@@ -146,4 +146,16 @@ public class GerenciadorBD {
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
+    
+    public int recuperarUltimaId(int idOrigem, int idDestino, char destinoTipo) throws SQLException{
+        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE idUsuarioOrigem = ?, idUsuarioDestino = ?, destinoTipo = ? ORDER by idMensagem");
+        ps.setInt(1, idOrigem);
+        ps.setInt(2, idDestino);
+        ps.setString(3, Character.toString(destinoTipo));
+        ResultSet rs = ps.executeQuery();
+        rs.last();
+        int id = rs.getInt("idMensagem");
+        id++;
+        return id;
+    }
 }
