@@ -12,13 +12,15 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.text.DateFormat;
 
 public class FrameConversa extends javax.swing.JFrame {
 
     private Usuario origem;
     private Usuario destino;
-    private boolean carregado;
     private StyledDocument doc;
     private final MensagemBuilder mensagemBuilder;
     private ArrayList<Mensagem> mensagens;
@@ -38,6 +40,14 @@ public class FrameConversa extends javax.swing.JFrame {
     public void setDestino(Usuario usuario) { destino = usuario; }
     
     private void addListeners(){
+        
+        this.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                setVisible(false);
+            }
+        });
+        
         btnEnviar.addActionListener((ActionEvent e) -> {
             enviarMensagem();
             txtMensagem.grabFocus();

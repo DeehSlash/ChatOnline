@@ -50,11 +50,19 @@ public class ConexaoServidor extends Thread {
     }
     
     public void fecharConexao() throws IOException{
-        conexao.close();
-        Principal.frmPrincipal.enviarLog("Usuário " + Principal.usuarios.get(idCliente).getUsuario() + " (" + idCliente + ") se desconectou");
+        Principal.frmPrincipal.enviarLog("Usuário " + Principal.usuarios.get(idCliente - 1).getUsuario() + " (" + idCliente + ") se desconectou");
         Principal.frmPrincipal.alterarUsuarios(false);
-        Principal.usuarios.remove(idCliente);
+        int i = 0;
+        for (ConexaoServidor conexao : Principal.conexoes) {
+            if(conexao.getIdCliente() == getIdCliente())
+                break;
+            i++;
+        }
+        Principal.conexoes.remove(i);
+        setOnline(false);
         atualizarListaUsuarios();
+        getSaidaDado().writeInt(2);
+        conexao.close();
     }
     
     private void atualizarListaUsuarios() throws IOException{
@@ -155,6 +163,9 @@ public class ConexaoServidor extends Thread {
                             break;
                         case 1: // caso usuário alterado
                             alterarUsuario();
+                            break;
+                        case 2: // caso encerrar conexão;
+                            fecharConexao();
                             break;
                         default:
                             fecharConexao();

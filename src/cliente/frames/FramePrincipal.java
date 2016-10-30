@@ -13,11 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -25,7 +21,7 @@ import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    private final ConexaoCliente conexao;
+    public final ConexaoCliente conexao;
     public ArrayList<FrameConversa> conversas;
     
     public FramePrincipal(ConexaoCliente conexao) {
@@ -40,6 +36,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     }
 
     private void addListeners(){
+        
         this.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e){ // caso a janela tenha sido fechada, encerra a conexão com o servidor

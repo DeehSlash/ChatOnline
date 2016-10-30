@@ -50,7 +50,7 @@ public class ConexaoCliente extends Thread {
     }
     
     public void desconectar() throws IOException{
-        conexao.close();
+        getSaidaDado().writeInt(2); // envia pedido para desconectar
     }
     
     public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
@@ -94,6 +94,9 @@ public class ConexaoCliente extends Thread {
                     case 1: // caso atualização da lista de usuários
                         Principal.frmPrincipal.carregarLista();
                         Principal.frmPrincipal.atualizarConversas();
+                        break;
+                    case 2: // encerrar conexão
+                        conexao.close();
                         break;
                     default:
                         desconectar();
