@@ -183,15 +183,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         int id;
         for (FrameConversa conversa : conversas) {
             id = conversa.getIdDestino();
-            System.out.println("idDestino: " + id);
             for (Usuario usuario : Principal.usuarios) {
-                System.out.println(usuario.getId());
                 if(usuario.getId() == id){
-                    System.out.println("setou destino");
                     conversa.setDestino(usuario);
                 }
             }
-            System.out.println("chamou carregarinfo");
             conversa.carregarInfoUsuario();
         }
     }
@@ -295,6 +291,9 @@ public class FramePrincipal extends javax.swing.JFrame {
         getContentPane().add(pnlHeader, gridBagConstraints);
 
         pnlListaUsuarios.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane1.setToolTipText("");
+        jScrollPane1.setAutoscrolls(true);
 
         jScrollPane1.setViewportView(listUsuarios);
 

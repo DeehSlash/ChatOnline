@@ -5,15 +5,12 @@ import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ConexaoServidor extends Thread {
@@ -140,7 +137,6 @@ public class ConexaoServidor extends Thread {
         Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
         //Principal.gerenciador.enviarMensagem(mensagem);
         for (ConexaoServidor conexao : Principal.conexoes) {
-            System.out.println(conexao.getIdCliente() + " - " + mensagem.getIdDestino());
             if(conexao.getIdCliente() == mensagem.getIdDestino()){
                 conexao.receberMensagem(mensagem);
             }     

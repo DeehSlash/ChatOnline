@@ -17,6 +17,8 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.DateFormat;
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
 
 public class FrameConversa extends javax.swing.JFrame {
 
@@ -74,24 +76,41 @@ public class FrameConversa extends javax.swing.JFrame {
         }
     }
     
+    private boolean testeScroll(){
+        JScrollBar sb = scroll.getVerticalScrollBar();
+        int min = sb.getValue() + sb.getVisibleAmount();
+        int max = sb.getMaximum();
+        return min == max;
+    }
+    
+    private void descerScroll(){
+        SwingUtilities.invokeLater(() -> {
+            scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
+        });
+    }
+    
     private void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
         doc = txtConversa.getStyledDocument();
+        boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
         doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("normal"));
         doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
         txtConversa.setStyledDocument(doc);
-        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
+        if(deveDarScroll)
+            descerScroll();
     }
     
     public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
         doc = txtConversa.getStyledDocument();
+        boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("nome"));
         doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("nome"));
         doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
         txtConversa.setStyledDocument(doc);
-        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
+        if(deveDarScroll)
+            descerScroll();
     }
     
     private SimpleAttributeSet formatacao(String tipo){
