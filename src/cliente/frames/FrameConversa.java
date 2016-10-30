@@ -81,6 +81,7 @@ public class FrameConversa extends javax.swing.JFrame {
         doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("normal"));
         doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
         txtConversa.setStyledDocument(doc);
+        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
     }
     
     public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
@@ -90,6 +91,7 @@ public class FrameConversa extends javax.swing.JFrame {
         doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("nome"));
         doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
         txtConversa.setStyledDocument(doc);
+        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
     }
     
     private SimpleAttributeSet formatacao(String tipo){
@@ -133,7 +135,7 @@ public class FrameConversa extends javax.swing.JFrame {
         lblUsuario = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
         pnlConversa = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scroll = new javax.swing.JScrollPane();
         txtConversa = new javax.swing.JTextPane();
         pnlEnviarMsg = new javax.swing.JPanel();
         txtMensagem = new javax.swing.JTextField();
@@ -141,10 +143,8 @@ public class FrameConversa extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Usuário");
-        setMaximumSize(null);
         setMinimumSize(new java.awt.Dimension(600, 500));
         setName("frmConversa"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(600, 500));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.rowWeights = new double[] {2.0, 50.0, 1.0};
         getContentPane().setLayout(layout);
@@ -190,7 +190,7 @@ public class FrameConversa extends javax.swing.JFrame {
         txtConversa.setEditable(false);
         txtConversa.setBorder(null);
         txtConversa.setMargin(new java.awt.Insets(5, 10, 5, 10));
-        jScrollPane1.setViewportView(txtConversa);
+        scroll.setViewportView(txtConversa);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -198,7 +198,7 @@ public class FrameConversa extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        pnlConversa.add(jScrollPane1, gridBagConstraints);
+        pnlConversa.add(scroll, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -234,13 +234,13 @@ public class FrameConversa extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;
     private javax.swing.JScrollBar jScrollBar1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblUsuario;
     private javax.swing.JPanel pnlConversa;
     private javax.swing.JPanel pnlEnviarMsg;
     private javax.swing.JPanel pnlHeader;
+    private javax.swing.JScrollPane scroll;
     private javax.swing.JTextPane txtConversa;
     private javax.swing.JTextField txtMensagem;
     // End of variables declaration//GEN-END:variables
