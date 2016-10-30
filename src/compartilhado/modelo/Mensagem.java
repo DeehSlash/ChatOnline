@@ -2,11 +2,27 @@ package compartilhado.modelo;
 
 import java.util.Date;
 
-public interface Mensagem {
+public abstract class Mensagem<T> implements java.io.Serializable {
     
-    public int getIdMensagem();
-    public int getIdOrigem();
-    public int getIdDestino();
-    public char getDestinoTipo();
-    public Date getDataMensagem();
+    protected int idOrigem;
+    protected int idDestino;
+    protected int idMensagem;
+    protected char destinoTipo;
+    protected Date dataMensagem;
+    protected char tipoMensagem;
+    
+    public abstract int getIdOrigem();
+    public abstract void setIdOrigem(int idOrigem);
+    public abstract int getIdDestino();
+    public abstract void setIdDestino(int idDestino);
+    public abstract int getIdMensagem();
+    public abstract void setIdMensagem(int idMensagem);
+    public abstract char getDestinoTipo();
+    public abstract void setDestinoTipo(char destinoTipo);
+    public abstract Date getDataMensagem();
+    public abstract void setDataMensagem(Date dataMensagem);
+    public abstract T getMensagem();
+    public abstract void setMensagem(T mensagem);
+    public abstract char getTipoMensagem();
+    public abstract void setTipoMensagem(char tipoMensagem);
 }

@@ -3,6 +3,7 @@ package servidor.frames;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import servidor.aplicacao.Principal;
 
@@ -24,29 +25,22 @@ public class FramePrincipal extends javax.swing.JFrame {
                 txtLog.setText(null);
                 lblStatus.setText("Iniciando...");
                 lblStatus.setForeground(Color.yellow);
-                enviarLog("Iniciando servidor...");
                 new Thread(() -> {
                     try {
                         Principal.iniciarServidor(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
-                    } catch (IOException ex) {
+                        Principal.pararServidor();
+                        lblStatus.setText("Parado");
+                        lblStatus.setForeground(Color.red);
+                    } catch (IOException | SQLException ex) {
                         ex.printStackTrace();
-                        try {
-                            Principal.pararServidor();
-                            enviarLog("Exceção: " + ex.getMessage());
-                            lblStatus.setText("Parado");
-                            lblStatus.setForeground(Color.red);
-                        } catch (IOException ex1) {
-                            ex1.printStackTrace();
-                            enviarLog("Exceção: " + ex1.getMessage());
-                        }
+                        enviarLog("Exceção: " + ex.getMessage());
                     }
                 }).start();
                 lblStatus.setText("Rodando");
-                lblStatus.setForeground(Color.GREEN);
+                lblStatus.setForeground(new Color(31, 167, 9));
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);
                 txtPorta.setEnabled(false);
-                enviarLog("Servidor iniciado com sucesso na porta " + txtPorta.getText());   
             }
         });
         
@@ -55,6 +49,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 Principal.pararServidor(); // chama a função que para o servidor e desvincula da porta usada
                 enviarLog("Servidor parado com sucesso");
                 lblStatus.setText("Parado");
+                lblUsuariosConectados.setText("0");
                 lblStatus.setForeground(Color.red);
                 btnIniciar.setEnabled(true);
                 btnParar.setEnabled(false);
@@ -98,7 +93,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblUsuariosConectados = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Servidor");
+        setTitle("Servidor - Mensageiro");
         setMaximumSize(new java.awt.Dimension(450, 500));
         setMinimumSize(new java.awt.Dimension(450, 500));
         setName("frmPrincipal"); // NOI18N

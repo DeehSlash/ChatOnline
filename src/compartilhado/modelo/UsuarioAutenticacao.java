@@ -1,6 +1,6 @@
 package compartilhado.modelo;
 
-public class UsuarioAutenticacao {
+public class UsuarioAutenticacao implements java.io.Serializable{
     
     private String usuario;
     private String senha;

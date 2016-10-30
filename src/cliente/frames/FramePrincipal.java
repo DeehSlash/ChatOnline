@@ -2,28 +2,41 @@ package cliente.frames;
 
 import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
+import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    private ConexaoCliente conexao;
+    public final ConexaoCliente conexao;
+    public ArrayList<FrameConversa> conversas;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
-        carregarInfoUsuario();
+        conversas = new ArrayList<>();
         carregarLista();
+        carregarInfoUsuario();
+        Thread t = conexao;
+        t.start();
     }
 
     private void addListeners(){
+        
         this.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e){ // caso a janela tenha sido fechada, encerra a conexão com o servidor
@@ -39,18 +52,119 @@ public class FramePrincipal extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-                    Usuario destino = Principal.usuarios.get(Principal.usuarios.indexOf(listUsuarios.getSelectedValue()));
+                    boolean aberta = false;
+                    Usuario destino = null;
+                    if(!listUsuarios.getSelectedValue().equals("----------Offline----------") && // ignora se foi clicado na mensagem de online/offline
+                            !listUsuarios.getSelectedValue().equals("----------Online----------"))
+                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1); // encontra o destino a partir do nome
                     if(destino != null){
-                        FrameConversa frame = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente()), destino);
+                        int i = 0;
+                        for (FrameConversa conversa : conversas) { // verifica se a conversa já foi aberta alguma vez e pega a id da lista
+                            if(conversa.getIdDestino() == destino.getId()){
+                                aberta = true;
+                                break;
+                            }
+                            i++;
+                        }
+                        if(aberta){ // se já foi aberta
+                            if(!conversas.get(i).isVisible()) // e não estiver visivel
+                                 conversas.get(i).setVisible(true); // torna visivel
+                        }else{ // se nunca foi aberta
+                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino)); // adiciona na lista
+                            conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
+                        }
                     }
                 }
             }
         });
+        
+        itemAlterarFoto.addActionListener((ActionEvent e) -> {
+            ImageIcon foto = null;
+            JFileChooser fs = new JFileChooser();
+            fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int val = fs.showOpenDialog(this);
+            if(val == JFileChooser.APPROVE_OPTION){
+                File caminhoFoto = fs.getSelectedFile();
+                foto = new ImageIcon(caminhoFoto.getPath());
+                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50);
+                foto = new ImageIcon(imagemRedimensionada);
+            }
+            for (Usuario usuario : Principal.usuarios) {
+                if(usuario.getId() == conexao.getIdCliente()){
+                    try {
+                        lblFoto.setIcon(foto);
+                        usuario.setFoto(foto);
+                        conexao.alterarUsuario(usuario);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+        
+        itemSair.addActionListener((ActionEvent e) -> {
+            try {
+                fecharConversas();
+                conexao.desconectar();
+                dispose();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+    
+    private void fecharConversas(){
+        for (FrameConversa conversa : conversas) {
+            conversa.dispose();
+        }
+    }
+    
+    protected void enviarMensagem(Mensagem mensagem){
+        try {
+            conexao.enviarMensagem(mensagem);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void receberMensagem(Mensagem mensagem){
+        boolean conversaAberta = false;
+        int i = 0;
+        for (FrameConversa conversa : conversas) {
+            if(conversa.getIdDestino() == mensagem.getIdOrigem()){
+                conversaAberta = true;
+                break;
+            }
+            i++;
+        }
+        try {
+            if(conversaAberta){
+                if(!conversas.get(i).isVisible())
+                    conversas.get(i).setVisible(true);
+                conversas.get(i).receberMensagem(mensagem);
+            }else{
+                conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
+                        Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
+                conversas.get(conversas.size() - 1).setVisible(true);
+                conversas.get(conversas.size() - 1).receberMensagem(mensagem);
+            }
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public int idPorNome(String nome){
+        for (Usuario usuario : Principal.usuarios) {
+            if(usuario.getUsuario().equals(nome)){
+                return usuario.getId();
+            }
+        }
+        return -1;
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente());;
-        lblFoto.setIcon(new ImageIcon(usuario.getFoto()));
+        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente() - 1);
+        lblFoto.setIcon(usuario.getFoto());
         lblUsuario.setText(usuario.getUsuario());
         atualizarStatusConexao();
     }
@@ -58,18 +172,40 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void atualizarStatusConexao(){ // atualiza os labels com a informação da conexão
         if(conexao.getStatus()){
             lblStatusConexao.setText("Conectado");
+            lblStatusConexao.setForeground(new Color(31, 167, 9));
             lblStatus.setText("Online");
+            lblStatus.setForeground(new Color(31, 167, 9));
             lblIP.setText(conexao.getEndereco() + ":" + conexao.getPorta());
         }
     }
     
-    private void carregarLista(){ // carrega a lista de usuários
+    public void atualizarConversas() {
+        int id;
+        for (FrameConversa conversa : conversas) {
+            id = conversa.getIdDestino();
+            for (Usuario usuario : Principal.usuarios) {
+                if(usuario.getId() == id){
+                    conversa.setDestino(usuario);
+                }
+            }
+            conversa.carregarInfoUsuario();
+        }
+    }
+    
+    public void carregarLista(){ // carrega a lista de usuários
+        try {
+            conexao.atualizarListaUsuarios();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
         DefaultListModel listModel = new DefaultListModel();
+        listModel.addElement("----------Online----------");
         for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
             if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
         }
+        listModel.addElement("----------Offline----------");
         for (Usuario usuario : Principal.usuarios) { // só então adiciona os usuários offline
             if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
@@ -102,10 +238,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblIP = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         mnuArquivo = new javax.swing.JMenu();
+        itemAlterarFoto = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         itemSair = new javax.swing.JMenuItem();
-        mnuContatos = new javax.swing.JMenu();
-        itemAddContato = new javax.swing.JMenuItem();
-        itemDelContato = new javax.swing.JMenuItem();
+        mnuConversa = new javax.swing.JMenu();
+        itemTransmissao = new javax.swing.JMenuItem();
         mnuSobre = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -154,6 +291,9 @@ public class FramePrincipal extends javax.swing.JFrame {
         getContentPane().add(pnlHeader, gridBagConstraints);
 
         pnlListaUsuarios.setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane1.setToolTipText("");
+        jScrollPane1.setAutoscrolls(true);
 
         jScrollPane1.setViewportView(listUsuarios);
 
@@ -213,20 +353,21 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         mnuArquivo.setText("Arquivo");
 
+        itemAlterarFoto.setText("Alterar foto...");
+        mnuArquivo.add(itemAlterarFoto);
+        mnuArquivo.add(jSeparator1);
+
         itemSair.setText("Sair");
         mnuArquivo.add(itemSair);
 
         menuBar.add(mnuArquivo);
 
-        mnuContatos.setText("Contatos");
+        mnuConversa.setText("Conversa");
 
-        itemAddContato.setText("Adicionar contato");
-        mnuContatos.add(itemAddContato);
+        itemTransmissao.setText("Enviar transmissão");
+        mnuConversa.add(itemTransmissao);
 
-        itemDelContato.setText("Excluir contato");
-        mnuContatos.add(itemDelContato);
-
-        menuBar.add(mnuContatos);
+        menuBar.add(mnuConversa);
 
         mnuSobre.setText("Sobre");
         menuBar.add(mnuSobre);
@@ -237,12 +378,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem itemAddContato;
-    private javax.swing.JMenuItem itemDelContato;
+    private javax.swing.JMenuItem itemAlterarFoto;
     private javax.swing.JMenuItem itemSair;
+    private javax.swing.JMenuItem itemTransmissao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblStatus;
@@ -251,11 +393,10 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JList<String> listUsuarios;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu mnuArquivo;
-    private javax.swing.JMenu mnuContatos;
+    private javax.swing.JMenu mnuConversa;
     private javax.swing.JMenu mnuSobre;
     private javax.swing.JPanel pnlHeader;
     private javax.swing.JPanel pnlInfo;
     private javax.swing.JPanel pnlListaUsuarios;
     // End of variables declaration//GEN-END:variables
-
 }

@@ -1,15 +1,15 @@
 package compartilhado.modelo;
 
-import java.awt.Image;
+import javax.swing.ImageIcon;
 
-public class Usuario {
+public class Usuario implements java.io.Serializable {
     
     private int id;
     private String usuario;
     private boolean online;
-    private Image foto;
+    private ImageIcon foto;
     
-    public Usuario(int id, String usuario, Image foto){
+    public Usuario(int id, String usuario, ImageIcon foto){
         this.id = id;
         this.usuario = usuario;
         this.foto = foto;
@@ -17,10 +17,8 @@ public class Usuario {
     
     public int getId(){ return id; }
     public String getUsuario(){ return usuario; }
-    public Image getFoto(){ return foto; }
-    public void setFoto(Image foto){ this.foto = foto; }
-    
-    public boolean isOnline(){
-        return online;
-    }
+    public ImageIcon getFoto(){ return foto; }
+    public void setOnline(boolean online){ this.online = online; }
+    public void setFoto(ImageIcon foto){ this.foto = foto; }
+    public boolean isOnline(){ return online; }
 }

@@ -1,24 +1,141 @@
 package cliente.frames;
 
+import compartilhado.aplicacao.MensagemBuilder;
+import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import cliente.aplicacao.Principal;
+import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.text.DateFormat;
+import javax.swing.JFrame;
+import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
 
 public class FrameConversa extends javax.swing.JFrame {
 
     private Usuario origem;
     private Usuario destino;
+    private StyledDocument doc;
+    private final MensagemBuilder mensagemBuilder;
+    private ArrayList<Mensagem> mensagens;
     
     public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
+        addListeners();
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.origem = origem;
         this.destino = destino;
+        mensagens = new ArrayList<>();
+        mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
+        carregarInfoUsuario();
     }
     
-    private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        lblFoto.setIcon(new ImageIcon(destino.getFoto()));
+    public int getIdDestino(){ return destino.getId(); }
+    public void setDestino(Usuario usuario) { destino = usuario; }
+    
+    private void addListeners(){
+        
+        this.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e){
+                setVisible(false);
+                Principal.frmPrincipal.requestFocus();
+            }
+        });
+        
+        btnEnviar.addActionListener((ActionEvent e) -> {
+            enviarMensagem();
+            txtMensagem.grabFocus();
+        });
+        
+        txtMensagem.addActionListener((ActionEvent e) -> {
+            enviarMensagem();
+            txtMensagem.grabFocus();
+        });
+    }
+    
+    private void enviarMensagem(){
+        if(!txtMensagem.getText().isEmpty()){ // se o texto não estiver vazio
+            try {
+                Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size(), 'U', 'T', txtMensagem.getText()); // cria a mensagem
+                escreverMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
+                txtMensagem.setText(""); // limpa o campo de mensagem
+                Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
+            } catch (BadLocationException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    
+    private boolean testeScroll(){
+        JScrollBar sb = scroll.getVerticalScrollBar();
+        int min = sb.getValue() + sb.getVisibleAmount();
+        int max = sb.getMaximum();
+        return min == max;
+    }
+    
+    private void descerScroll(){
+        SwingUtilities.invokeLater(() -> {
+            scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
+        });
+    }
+    
+    private void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
+        doc = txtConversa.getStyledDocument();
+        boolean deveDarScroll = testeScroll();
+        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
+        doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("normal"));
+        doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+        txtConversa.setStyledDocument(doc);
+        if(deveDarScroll)
+            descerScroll();
+    }
+    
+    public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
+        doc = txtConversa.getStyledDocument();
+        boolean deveDarScroll = testeScroll();
+        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("nome"));
+        doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("nome"));
+        doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+        txtConversa.setStyledDocument(doc);
+        if(deveDarScroll)
+            descerScroll();
+    }
+    
+    private SimpleAttributeSet formatacao(String tipo){
+        SimpleAttributeSet formatacao = new SimpleAttributeSet();
+        StyleConstants.setFontFamily(formatacao, "Tahoma");
+        StyleConstants.setFontSize(formatacao, 11);
+        StyleConstants.setLeftIndent(formatacao, 10);
+        StyleConstants.setRightIndent(formatacao, 10);
+        if(tipo.equals("destinoNome")){
+            StyleConstants.setBold(formatacao, true);
+            StyleConstants.setForeground(formatacao, Color.blue);
+        }else if(tipo.equals("origemNome"))
+            StyleConstants.setBold(formatacao, true);
+        else if(tipo.equals("normal")){
+            // não faz nada
+        }
+        return formatacao;
+    }
+    
+    public void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
+        lblFoto.setIcon(destino.getFoto());
         lblUsuario.setText(destino.getUsuario());
-        setTitle(destino.getUsuario());
+        setTitle(destino.getUsuario() + " - Mensageiro");
         lblStatus.setText((destino.isOnline()? "Online" : "Offline"));
+        lblStatus.setForeground((destino.isOnline()? new Color(31, 167, 9) : Color.red));
     }
     
     /** This method is called from within the constructor to
@@ -37,7 +154,7 @@ public class FrameConversa extends javax.swing.JFrame {
         lblUsuario = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
         pnlConversa = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scroll = new javax.swing.JScrollPane();
         txtConversa = new javax.swing.JTextPane();
         pnlEnviarMsg = new javax.swing.JPanel();
         txtMensagem = new javax.swing.JTextField();
@@ -93,7 +210,8 @@ public class FrameConversa extends javax.swing.JFrame {
 
         txtConversa.setEditable(false);
         txtConversa.setBorder(null);
-        jScrollPane1.setViewportView(txtConversa);
+        txtConversa.setMargin(new java.awt.Insets(5, 10, 5, 10));
+        scroll.setViewportView(txtConversa);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -101,7 +219,7 @@ public class FrameConversa extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        pnlConversa.add(jScrollPane1, gridBagConstraints);
+        pnlConversa.add(scroll, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -137,13 +255,13 @@ public class FrameConversa extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;
     private javax.swing.JScrollBar jScrollBar1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblUsuario;
     private javax.swing.JPanel pnlConversa;
     private javax.swing.JPanel pnlEnviarMsg;
     private javax.swing.JPanel pnlHeader;
+    private javax.swing.JScrollPane scroll;
     private javax.swing.JTextPane txtConversa;
     private javax.swing.JTextField txtMensagem;
     // End of variables declaration//GEN-END:variables

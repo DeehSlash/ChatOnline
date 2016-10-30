@@ -10,8 +10,6 @@ public class MensagemFactory {
                 return new MensagemTexto();
             case 'I':
                 return new MensagemImagem();
-            case 'V':
-                return new MensagemVideo();
             case 'A':
                 return new MensagemArquivo();
         }

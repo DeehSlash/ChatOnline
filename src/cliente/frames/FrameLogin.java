@@ -4,11 +4,10 @@ import cliente.aplicacao.*;
 import compartilhado.modelo.UsuarioAutenticacao;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
-
+    
     private ConexaoCliente conexao;
     
     public FrameLogin() {
@@ -18,60 +17,66 @@ public class FrameLogin extends javax.swing.JFrame {
 
     private void addListeners(){
         btnLogin.addActionListener((ActionEvent e) -> {
-            if(verificarCampos()){ // se os campos estiverem preenchidos, continua
-                lblStatus.setText("Criando conexão...");
-                conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText())); // cria a conexão
-                try {
-                    lblStatus.setText("Conectando ao servidor...");
-                    conexao.conectar(); // conecta com o servidor
-                    lblStatus.setText("Autenticando usuário...");
-                    if(conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // verifica se os dados do usuário são válidos
-                        if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
-                            Principal.frmPrincipal = new FramePrincipal(conexao);
-                            Principal.frmPrincipal.setVisible(true);
-                            dispose();
-                        }else
-                            JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
-                    }else
-                        JOptionPane.showMessageDialog(this, "A autenticação falhou, verifique seus dados e tente novamente",
-                                                            "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex){
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
-                }
-            }
+            autenticarUsuario(false);
         });
         
         btnCadastrar.addActionListener((ActionEvent e) -> {
-            if(verificarCampos()){ // se os campos estiverem preenchidos, continua
-                lblStatus.setText("Criando conexão...");
-                conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText()), Integer.parseInt(txtUsuario.getText())); // cria a conexão
-                try {
-                    lblStatus.setText("Conectando ao servidor...");
-                    conexao.conectar(); // conecta com o servidor
-                    lblStatus.setText("Cadastrando usuário...");
-                    if(conexao.cadastrarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), Arrays.toString(txtSenha.getPassword())))){ // cadastra o usuário no servidor
+            autenticarUsuario(true);
+        });
+    }
+    
+    private void autenticarUsuario(boolean cadastro){
+        if(verificarCampos()){ // se os campos estiverem preenchidos, continua
+            lblStatus.setText("Criando conexão...");
+            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
+            try {
+                lblStatus.setText("Conectando ao servidor...");
+                conexao.conectar(); // conecta com o servidor
+                lblStatus.setText(cadastro? "Cadastrando usuário..." : "Autenticando usuário...");
+                int status = conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword())), cadastro); // verifica se os dados do usuário são válidos
+                switch(status){
+                    case -1: // erro não definido
+                        JOptionPane.showMessageDialog(null, "Um erro ocorreu, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;                        
+                    case 0: // dados incorretos (login)
+                        JOptionPane.showMessageDialog(null, "Seus dados estão incorretos, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 1: // usuário não encontrado (login)
+                        JOptionPane.showMessageDialog(null, "Usuário não encontrado na base de dados, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 2: // usuário já existe (cadastro)
+                        JOptionPane.showMessageDialog(null, "Já existe uma pessoa cadastrada com esse nome de usuário, escolha outro nome", 
+                                "Falha no cadastro", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 4: // usuário já está logado
+                        JOptionPane.showMessageDialog(null, "Este usuário já está conectado ao chat, verifique e tente novamente", 
+                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 3: // autenticação funcionou
                         if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
                             Principal.frmPrincipal = new FramePrincipal(conexao);
                             Principal.frmPrincipal.setVisible(true);
                             dispose();
                         }else
-                            JOptionPane.showMessageDialog(this, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
-                    }else
-                        JOptionPane.showMessageDialog(this, "O cadastramento falhou, verifique seus dados e tente novamente",
-                                                            "Falha no cadastramento", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex){
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
+                            JOptionPane.showMessageDialog(null, "Houve um erro na conexão, tente novamente", "Falha na conexão", JOptionPane.ERROR_MESSAGE);
+                        break;
                 }
+                if(status != 3)
+                    lblStatus.setText("Esperando conexão");
+            } catch (IOException ex){
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
             }
-        });
+        }
     }
     
     private boolean verificarCampos(){ // verifica se todos os campos foram preenchidos
         if(txtEndereco.getText().isEmpty() || txtPorta.getText().isEmpty() ||
-           txtUsuario.getText().isEmpty() || Arrays.toString(txtSenha.getPassword()).isEmpty()){
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos e tente novamente", "Campos em branco", JOptionPane.ERROR_MESSAGE);
+           txtUsuario.getText().isEmpty() || new String(txtSenha.getPassword()).isEmpty()){
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos e tente novamente", "Campos em branco", JOptionPane.ERROR_MESSAGE);
             return false;
         }else{
             return true;
@@ -103,15 +108,14 @@ public class FrameLogin extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Login");
-        setMaximumSize(null);
-        setMinimumSize(new java.awt.Dimension(400, 400));
+        setTitle("Login - Mensageiro");
+        setMinimumSize(new java.awt.Dimension(450, 450));
         setName("frmLogin"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(400, 400));
+        setPreferredSize(new java.awt.Dimension(450, 450));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         lblLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblLogin.setText("Login");
+        lblLogin.setText("Login - Mensageiro");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -119,7 +123,8 @@ public class FrameLogin extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 5);
         getContentPane().add(lblLogin, gridBagConstraints);
 
-        lblInfo.setText("Digite seu usuário e senha para acessar o chat");
+        lblInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblInfo.setText("<html>\n<center>\nDigite o endereço e porta do servidor,<br>\nalém de seu usuário e senha para acessar o mensageiro\n</center>\n</html>");
         lblInfo.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
