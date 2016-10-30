@@ -143,8 +143,10 @@ public class FrameConversa extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Usuário");
+        setMaximumSize(null);
         setMinimumSize(new java.awt.Dimension(600, 500));
         setName("frmConversa"); // NOI18N
+        setPreferredSize(new java.awt.Dimension(600, 500));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.rowWeights = new double[] {2.0, 50.0, 1.0};
         getContentPane().setLayout(layout);
