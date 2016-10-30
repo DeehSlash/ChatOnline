@@ -52,13 +52,28 @@ public class FramePrincipal extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
+                    boolean aberta = false;
                     Usuario destino = null;
-                    if(!listUsuarios.getSelectedValue().equals("----------Offline----------") &&
+                    if(!listUsuarios.getSelectedValue().equals("----------Offline----------") && // ignora se foi clicado na mensagem de online/offline
                             !listUsuarios.getSelectedValue().equals("----------Online----------"))
-                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1);
-                    if(destino != null)
-                        // verificar se a conversa já está aberta
-                        conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino));
+                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1); // encontra o destino a partir do nome
+                    if(destino != null){
+                        int i = 0;
+                        for (FrameConversa conversa : conversas) { // verifica se a conversa já foi aberta alguma vez e pega a id da lista
+                            if(conversa.getIdDestino() == destino.getId()){
+                                aberta = true;
+                                break;
+                            }
+                            i++;
+                        }
+                        if(aberta){ // se já foi aberta
+                            if(!conversas.get(i).isVisible()) // e não estiver visivel
+                                 conversas.get(i).setVisible(true); // torna visivel
+                        }else{ // se nunca foi aberta
+                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino)); // adiciona na lista
+                            conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
+                        }
+                    }
                 }
             }
         });

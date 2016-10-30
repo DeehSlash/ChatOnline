@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.DateFormat;
+import javax.swing.JFrame;
 
 public class FrameConversa extends javax.swing.JFrame {
 
@@ -28,12 +29,12 @@ public class FrameConversa extends javax.swing.JFrame {
     public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
         addListeners();
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.origem = origem;
         this.destino = destino;
         mensagens = new ArrayList<>();
         mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
         carregarInfoUsuario();
-        setVisible(true);
     }
     
     public int getIdDestino(){ return destino.getId(); }
@@ -45,6 +46,7 @@ public class FrameConversa extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e){
                 setVisible(false);
+                Principal.frmPrincipal.requestFocus();
             }
         });
         
