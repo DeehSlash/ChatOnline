@@ -1,28 +1,28 @@
 package cliente.aplicacao;
 
+import cliente.frames.FrameConversa;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.text.BadLocationException;
 
 public class Transmissao {
     
-    public static void transmitir(ArrayList<Usuario> usuarios, Mensagem mensagem) throws IOException{
+    public static void transmitir(ArrayList<Usuario> usuarios, Mensagem mensagem) throws IOException, BadLocationException{
         ArrayList<Mensagem> mensagens = new ArrayList<>();
         for (Usuario usuario : usuarios) {
-            System.out.println("Usuario " + usuario.getId() + ": " + usuario.getUsuario());
             if(usuario.getId() != mensagem.getIdOrigem()){
-                System.out.println("Mudou id da mensagem para " + usuario.getId());
                 mensagem.setIdDestino(usuario.getId());
-                System.out.println("Chamou recuperarUltimaId");
-                //mensagem.setIdMensagem(Principal.frmPrincipal.conexao.recuperarUltimaId());
-                System.out.println("Recebeu ID " + mensagem.getIdMensagem());
-  
+                for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
+                    if(conversa.getIdDestino() == usuario.getId()){
+                        mensagem.setIdMensagem(conversa.mensagens.size() + 1);
+                        conversa.mensagens.add(mensagem);
+                        conversa.escreverMensagem(mensagem);
+                    }
+                }
+                Principal.frmPrincipal.conexao.enviarMensagem(mensagem); 
             }
-        }
-        System.out.println("Enviando para conexão");
-        for (Mensagem msg : mensagens) {
-            Principal.frmPrincipal.conexao.enviarMensagem(msg); 
         }
     }
     

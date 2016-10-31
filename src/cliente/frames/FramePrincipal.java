@@ -16,6 +16,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -113,7 +115,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             try {
                 Transmissao.transmitir(Principal.usuarios, mensagem);
                 JOptionPane.showMessageDialog(this, "A transmissão foi enviada!", "Transmissão", JOptionPane.INFORMATION_MESSAGE);
-            } catch (IOException ex) {
+            } catch (BadLocationException | IOException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Houve um erro com a transmissão, tente novamente", "Transmissão", JOptionPane.ERROR_MESSAGE);
             }

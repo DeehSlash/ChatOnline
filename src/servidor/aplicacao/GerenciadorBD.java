@@ -125,7 +125,7 @@ public class GerenciadorBD {
         ArrayList<Usuario> usuarios = new ArrayList<>();
         while(rs.next()){
             int id = rs.getInt("id");
-                if(id != 0){ // se for 0, é o usuário que não é usado, apenas para fins de não dar problema na FOREIGN KEY
+            if(id != 0){ // se for 0, é o usuário que não é usado, apenas para fins de não dar problema na FOREIGN KEY
                 String usuario = rs.getString("usuario");
                 Blob blob = rs.getBlob("foto");
                 InputStream is = blob.getBinaryStream();

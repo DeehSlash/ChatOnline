@@ -102,7 +102,7 @@ public class FrameConversa extends javax.swing.JFrame {
         }
     }
     
-    private void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
+    public void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
         doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
