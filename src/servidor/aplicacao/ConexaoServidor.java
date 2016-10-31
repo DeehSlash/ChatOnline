@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class ConexaoServidor extends Thread {
@@ -133,7 +134,7 @@ public class ConexaoServidor extends Thread {
         getSaidaObjeto().writeObject(mensagem); // envia a mensagem
     }
     
-    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{;
+    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{
         Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
         Principal.gerenciador.enviarMensagem(mensagem);
         for (ConexaoServidor conexao : Principal.conexoes) {
@@ -143,12 +144,10 @@ public class ConexaoServidor extends Thread {
         }
     }
     
-    private void recuperarUltimaId() throws IOException, SQLException{
-        int idOrigem = getEntradaDado().readInt();
-        int idDestino = getEntradaDado().readInt();
-        char destinoTipo = getEntradaDado().readChar();
-        int id = Principal.gerenciador.recuperarUltimaId(idOrigem, idDestino, destinoTipo);
-        getSaidaDado().writeInt(id);
+    private void enviarListaMensagens() throws SQLException, IOException{
+        ArrayList<Mensagem> mensagens;
+        mensagens = Principal.gerenciador.getListaMensagens(idCliente);
+        getSaidaObjeto().writeObject(mensagens);
     }
     
     @Override
@@ -158,6 +157,7 @@ public class ConexaoServidor extends Thread {
             if(autenticarUsuario() == 3){
                 setOnline(true);
                 enviarListaUsuarios(false);
+                enviarListaMensagens();
                 atualizarListaUsuarios();
                 while(!conexao.isClosed()){
                     comando = getEntradaDado().readInt();
@@ -170,9 +170,6 @@ public class ConexaoServidor extends Thread {
                             break;
                         case 2: // caso encerrar conexão;
                             fecharConexao();
-                            break;
-                        case 3:
-                            recuperarUltimaId();
                             break;
                         default:
                             fecharConexao();

@@ -2,6 +2,8 @@ package cliente.frames;
 
 import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
+import cliente.aplicacao.Transmissao;
+import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
@@ -14,22 +16,28 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
     public final ConexaoCliente conexao;
     public ArrayList<FrameConversa> conversas;
+    public ArrayList<Mensagem> mensagens;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
         conversas = new ArrayList<>();
+        mensagens = new ArrayList<>();
         carregarLista();
+        receberListaMensagens();
         carregarInfoUsuario();
         Thread t = conexao;
         t.start();
@@ -102,6 +110,19 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         
+        itemTransmissao.addActionListener((ActionEvent e) -> {
+            String msg = JOptionPane.showInputDialog(this, "Digite a mensagem que será transmitida:", "Enviar transmissão", JOptionPane.INFORMATION_MESSAGE);
+            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getIdCliente(), 0);
+            Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'U', 'T', msg);
+            try {
+                Transmissao.transmitir(Principal.usuarios, mensagem);
+                JOptionPane.showMessageDialog(this, "A transmissão foi enviada!", "Transmissão", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Houve um erro com a transmissão, tente novamente", "Transmissão", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
@@ -111,6 +132,14 @@ public class FramePrincipal extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
         });
+    }
+    
+    private void receberListaMensagens(){
+        try {
+            mensagens = conexao.receberListaMensagens();
+        } catch (IOException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
     }
     
     private void fecharConversas(){

@@ -5,11 +5,11 @@ import java.util.Date;
 
 public class MensagemImagem extends Mensagem<Image> implements java.io.Serializable {
     
+    private Image imagem;
+    
     public MensagemImagem(){
         super.tipoMensagem = 'I';
     }
-    
-    private Image imagem;
     
     @Override
     public int getIdOrigem(){ return idOrigem; }

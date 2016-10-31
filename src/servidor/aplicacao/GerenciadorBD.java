@@ -125,16 +125,54 @@ public class GerenciadorBD {
         ArrayList<Usuario> usuarios = new ArrayList<>();
         while(rs.next()){
             int id = rs.getInt("id");
-            String usuario = rs.getString("usuario");
-            Blob blob = rs.getBlob("foto");
-            InputStream is = blob.getBinaryStream();
-            Image imagem = ImageIO.read(is);
-            ImageIcon foto = new ImageIcon(imagem);
-            usuarios.add(new Usuario(id, usuario, foto));
+                if(id != 0){ // se for 0, é o usuário que não é usado, apenas para fins de não dar problema na FOREIGN KEY
+                String usuario = rs.getString("usuario");
+                Blob blob = rs.getBlob("foto");
+                InputStream is = blob.getBinaryStream();
+                Image imagem = ImageIO.read(is);
+                ImageIcon foto = new ImageIcon(imagem);
+                usuarios.add(new Usuario(id, usuario, foto));
+            }
         }
         return usuarios;
     }
-        
+    
+    public ArrayList<Mensagem> getListaMensagens(int id) throws SQLException, IOException{
+        ArrayList<Mensagem> mensagens = new ArrayList<>();
+        MensagemBuilder mensagemBuilder = new MensagemBuilder(id, 0);
+        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE idUsuarioOrigem = ? OR idUsuarioDestino = ? ORDER BY idMensagem");
+        ps.setInt(1, id);
+        ps.setInt(2, id);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("destinoTipo").charAt(0), rs.getString("tipoMens").charAt(0), null);
+            mensagem.setDataMensagem(new Date(rs.getTimestamp("timeMensagem").getTime()));
+            switch(mensagem.getDestinoTipo()){
+                case 'U':
+                    mensagem.setIdDestino(rs.getInt("idUsuarioDestino"));
+                    break;
+                case 'G':
+                    mensagem.setIdDestino(rs.getInt("idGrupoDestino"));
+            }
+            switch(mensagem.getTipoMensagem()){
+                case 'T':
+                    mensagem.setMensagem(rs.getString("txtMensagem"));
+                    break;
+                case 'I':
+                    Blob blob = rs.getBlob("arquivo");
+                    InputStream is = blob.getBinaryStream();
+                    Image imagem = ImageIO.read(is);
+                    mensagem.setMensagem(imagem);
+                    break;
+                case 'A':
+                    // falta implementar para arquivo
+                    break;
+            }
+            mensagens.add(mensagem);
+        }
+        return mensagens;
+    }
+    
     public boolean enviarMensagem(Mensagem mensagem) throws SQLException, IOException {
         PreparedStatement ps = conexao().prepareStatement("INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, timeMensagem, tipoMens, idMensagem, idGrupoDestino, arquivo) VALUES ("
                 + "?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -150,7 +188,6 @@ public class GerenciadorBD {
             ps.setNull(4, java.sql.Types.VARCHAR);
         ps.setTimestamp(5, new Timestamp(mensagem.getDataMensagem().getTime()));
         ps.setString(6, Character.toString(mensagem.getTipoMensagem()));
-        System.out.println(Character.toString(mensagem.getTipoMensagem()));
         ps.setInt(7, mensagem.getIdMensagem());
         if(mensagem.getDestinoTipo() == 'G')
             ps.setInt(8, mensagem.getIdDestino());
@@ -169,17 +206,5 @@ public class GerenciadorBD {
         }
         int result = ps.executeUpdate();
         return result == 1;
-    }
-    
-    public int recuperarUltimaId(int idOrigem, int idDestino, char destinoTipo) throws SQLException{
-        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE idUsuarioOrigem = ?, idUsuarioDestino = ?, destinoTipo = ? ORDER by idMensagem");
-        ps.setInt(1, idOrigem);
-        ps.setInt(2, idDestino);
-        ps.setString(3, Character.toString(destinoTipo));
-        ResultSet rs = ps.executeQuery();
-        rs.last();
-        int id = rs.getInt("idMensagem");
-        id++;
-        return id;
     }
 }

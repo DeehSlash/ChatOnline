@@ -26,7 +26,6 @@ public class FrameConversa extends javax.swing.JFrame {
     private Usuario destino;
     private StyledDocument doc;
     private final MensagemBuilder mensagemBuilder;
-    private ArrayList<Mensagem> mensagens;
     
     public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
@@ -34,7 +33,6 @@ public class FrameConversa extends javax.swing.JFrame {
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.origem = origem;
         this.destino = destino;
-        mensagens = new ArrayList<>();
         mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
         carregarInfoUsuario();
     }
@@ -67,7 +65,7 @@ public class FrameConversa extends javax.swing.JFrame {
         if(!txtMensagem.getText().isEmpty()){ // se o texto não estiver vazio
             try {
                 Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'T', txtMensagem.getText()); // cria a mensagem
-                mensagens.add(mensagem);
+                Principal.frmPrincipal.mensagens.add(mensagem);
                 escreverMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
                 txtMensagem.setText(""); // limpa o campo de mensagem
                 Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
@@ -90,6 +88,12 @@ public class FrameConversa extends javax.swing.JFrame {
         });
     }
     
+    private void carregarMensagens(){
+        for (Mensagem mensagem : Principal.frmPrincipal.mensagens) {
+            
+        }
+    }
+    
     private void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
         doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
@@ -103,7 +107,7 @@ public class FrameConversa extends javax.swing.JFrame {
     }
     
     public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
-        mensagens.add(mensagem);
+        Principal.frmPrincipal.mensagens.add(mensagem);
         doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));

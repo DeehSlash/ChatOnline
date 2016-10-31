@@ -8,6 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConexaoCliente extends Thread {
     
@@ -57,6 +59,11 @@ public class ConexaoCliente extends Thread {
         Principal.usuarios = (ArrayList<Usuario>)getEntradaObjeto().readObject();
     }
     
+    public ArrayList receberListaMensagens() throws IOException, ClassNotFoundException{
+        ArrayList<Mensagem> mensagens = (ArrayList<Mensagem>)getEntradaObjeto().readObject();
+        return mensagens;
+    }
+    
     public int autenticarUsuario(UsuarioAutenticacao usuario, boolean cadastro) throws IOException{ // serve tanto para cadastro quanto para autenticação
         getSaidaDado().writeBoolean(cadastro); // envia para o servidor se é cadastro ou login
         getSaidaObjeto().writeObject(usuario); // envia o usuário de autenticação para o servidor
@@ -80,15 +87,7 @@ public class ConexaoCliente extends Thread {
         getSaidaDado().writeInt(0); // envia para o servidor comando 0 (enviar mensagem)
         getSaidaObjeto().writeObject(mensagem); // envia para o servidor a mensagem
     }
-    
-    public int recuperarUltimaId(int idOrigem, int idDestino, char destinoTipo) throws IOException{
-        getSaidaDado().writeInt(3);
-        getSaidaDado().writeInt(idOrigem);
-        getSaidaDado().writeInt(idDestino);
-        getSaidaDado().writeChar(destinoTipo);
-        int id = getEntradaDado().readInt();
-        return id;
-    }
+
     
     @Override
     public void run(){
