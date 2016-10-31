@@ -187,7 +187,7 @@ public class FrameConversa extends javax.swing.JFrame {
                 doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), "\n", formatacao("normal"));
-        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("destinoNome"));
+        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
         switch(mensagem.getTipoMensagem()){
             case 'T':

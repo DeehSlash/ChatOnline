@@ -26,12 +26,12 @@ public class FramePrincipal extends javax.swing.JFrame {
                 lblStatus.setText("Iniciando...");
                 lblStatus.setForeground(Color.yellow);
                 new Thread(() -> {
-                    try {
+                    try{
                         Principal.iniciarServidor(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
                         Principal.pararServidor();
                         lblStatus.setText("Parado");
                         lblStatus.setForeground(Color.red);
-                    } catch (IOException | SQLException ex) {
+                    }catch (IOException | SQLException ex){
                         ex.printStackTrace();
                         enviarLog("Exceção: " + ex.getMessage());
                     }
