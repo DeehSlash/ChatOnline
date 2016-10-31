@@ -2,6 +2,8 @@ package cliente.frames;
 
 import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
+import cliente.aplicacao.Transmissao;
+import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
@@ -14,9 +16,12 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
@@ -31,6 +36,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         conversas = new ArrayList<>();
         carregarLista();
         carregarInfoUsuario();
+        inicializarConversas();
         Thread t = conexao;
         t.start();
     }
@@ -48,10 +54,10 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         
-        listUsuarios.addMouseListener(new MouseAdapter() {
+        listUsuarios.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getClickCount() == 2) {
+            public void mouseClicked(MouseEvent evt){
+                if (evt.getClickCount() == 2){
                     boolean aberta = false;
                     Usuario destino = null;
                     if(!listUsuarios.getSelectedValue().equals("----------Offline----------") && // ignora se foi clicado na mensagem de online/offline
@@ -102,6 +108,19 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         
+        itemTransmissao.addActionListener((ActionEvent e) -> {
+            String msg = JOptionPane.showInputDialog(this, "Digite a mensagem que será transmitida:", "Enviar transmissão", JOptionPane.INFORMATION_MESSAGE);
+            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getIdCliente(), 0);
+            Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'U', 'T', msg);
+            try {
+                Transmissao.transmitir(Principal.usuarios, mensagem);
+                JOptionPane.showMessageDialog(this, "A transmissão foi enviada!", "Transmissão", JOptionPane.INFORMATION_MESSAGE);
+            } catch (BadLocationException | IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Houve um erro com a transmissão, tente novamente", "Transmissão", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
@@ -111,6 +130,21 @@ public class FramePrincipal extends javax.swing.JFrame {
                 ex.printStackTrace();
             }
         });
+    }
+    
+    private void inicializarConversas(){
+        for (Usuario usuario : Principal.usuarios) {
+            if(usuario.getId() != conexao.getIdCliente()){
+                try {
+                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario);
+                    conversa.mensagens = conexao.receberListaMensagens(conexao.getIdCliente(), usuario.getId());
+                    conversa.carregarMensagens();
+                    conversas.add(conversa);
+                } catch (IOException | ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
     
     private void fecharConversas(){
@@ -141,12 +175,12 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(conversaAberta){
                 if(!conversas.get(i).isVisible())
                     conversas.get(i).setVisible(true);
-                conversas.get(i).receberMensagem(mensagem);
+                conversas.get(i).receberMensagem(mensagem, false);
             }else{
                 conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
                         Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
                 conversas.get(conversas.size() - 1).setVisible(true);
-                conversas.get(conversas.size() - 1).receberMensagem(mensagem);
+                conversas.get(conversas.size() - 1).receberMensagem(mensagem, false);
             }
         } catch (BadLocationException ex) {
             ex.printStackTrace();

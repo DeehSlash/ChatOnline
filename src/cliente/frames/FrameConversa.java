@@ -5,7 +5,6 @@ import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -14,7 +13,6 @@ import cliente.aplicacao.Principal;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.text.DateFormat;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
@@ -26,7 +24,7 @@ public class FrameConversa extends javax.swing.JFrame {
     private Usuario destino;
     private StyledDocument doc;
     private final MensagemBuilder mensagemBuilder;
-    private ArrayList<Mensagem> mensagens;
+    public ArrayList<Mensagem> mensagens;
     
     public FrameConversa(Usuario origem, Usuario destino) {
         initComponents();
@@ -66,7 +64,8 @@ public class FrameConversa extends javax.swing.JFrame {
     private void enviarMensagem(){
         if(!txtMensagem.getText().isEmpty()){ // se o texto não estiver vazio
             try {
-                Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size(), 'U', 'T', txtMensagem.getText()); // cria a mensagem
+                Mensagem mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'T', txtMensagem.getText()); // cria a mensagem
+                mensagens.add(mensagem);
                 escreverMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
                 txtMensagem.setText(""); // limpa o campo de mensagem
                 Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
@@ -89,7 +88,21 @@ public class FrameConversa extends javax.swing.JFrame {
         });
     }
     
-    private void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
+    public void carregarMensagens(){
+        for (Mensagem mensagem : mensagens) {
+            try {
+                if(mensagem.getIdOrigem() == origem.getId())
+                    escreverMensagem(mensagem);
+                else{
+                    receberMensagem(mensagem, true);
+                }
+            } catch (BadLocationException ex) {
+                ex.printStackTrace();
+            }    
+        }
+    }
+    
+    public void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
         doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
@@ -101,7 +114,9 @@ public class FrameConversa extends javax.swing.JFrame {
             descerScroll();
     }
     
-    public void receberMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
+    public void receberMensagem(Mensagem mensagem, boolean carregamento) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
+        if(!carregamento)
+            mensagens.add(mensagem);
         doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
         doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));

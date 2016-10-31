@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class ConexaoServidor extends Thread {
@@ -133,13 +134,22 @@ public class ConexaoServidor extends Thread {
         getSaidaObjeto().writeObject(mensagem); // envia a mensagem
     }
     
-    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{;
+    private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{
         Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
-        //Principal.gerenciador.enviarMensagem(mensagem);
+        Principal.gerenciador.enviarMensagem(mensagem);
         for (ConexaoServidor conexao : Principal.conexoes) {
             if(conexao.getIdCliente() == mensagem.getIdDestino()){
                 conexao.receberMensagem(mensagem);
             }     
+        }
+    }
+    
+    private void enviarListaMensagens() throws SQLException, IOException{
+        for(int i = 0; i < Principal.usuarios.size() - 1; i++){
+            int idOrigem = getEntradaDado().readInt();
+            int idDestino = getEntradaDado().readInt();
+            ArrayList<Mensagem> mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino);
+            getSaidaObjeto().writeObject(mensagens);
         }
     }
     
@@ -150,6 +160,7 @@ public class ConexaoServidor extends Thread {
             if(autenticarUsuario() == 3){
                 setOnline(true);
                 enviarListaUsuarios(false);
+                enviarListaMensagens();
                 atualizarListaUsuarios();
                 while(!conexao.isClosed()){
                     comando = getEntradaDado().readInt();
