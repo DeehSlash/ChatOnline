@@ -109,7 +109,7 @@ public class GerenciadorBD {
     
     public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException, URISyntaxException{
         ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png"));
-        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50);
+        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50, false);
         PreparedStatement ps = conexao().prepareStatement("INSERT INTO usuario (usuario, senha, foto) VALUES (?, ?, ?)");
         ps.setString(1, usuario.getUsuario());
         ps.setString(2, usuario.getSenha());
@@ -186,10 +186,6 @@ public class GerenciadorBD {
         else
             ps.setInt(2, 0);
         ps.setString(3, Character.toString(mensagem.getDestinoTipo()));
-        if(mensagem.getTipoMensagem() == 'T')
-            ps.setString(4, (String)mensagem.getMensagem());
-        else
-            ps.setNull(4, java.sql.Types.VARCHAR);
         ps.setTimestamp(5, new Timestamp(mensagem.getDataMensagem().getTime()));
         ps.setString(6, Character.toString(mensagem.getTipoMensagem()));
         ps.setInt(7, mensagem.getIdMensagem());
@@ -199,12 +195,15 @@ public class GerenciadorBD {
             ps.setInt(8, 0);
         switch(mensagem.getTipoMensagem()){
             case 'I':
-                ps.setBlob(9, compartilhado.aplicacao.Foto.imageToBlob((Image)mensagem.getMensagem()));
+                ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
+                ps.setBlob(9, compartilhado.aplicacao.Foto.imageToBlob(imagem.getImage()));
+                ps.setString(4, "");
                 break;
             case 'A':
                 // implementar conversão de arquivo para blob
                 break;
             case 'T':
+                ps.setString(4, (String)mensagem.getMensagem());
                 ps.setNull(9, java.sql.Types.BLOB);
                 break;
         }
