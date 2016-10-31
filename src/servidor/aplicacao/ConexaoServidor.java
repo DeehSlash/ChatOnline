@@ -135,7 +135,7 @@ public class ConexaoServidor extends Thread {
     
     private void enviarMensagem() throws IOException, ClassNotFoundException, SQLException{;
         Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
-        //Principal.gerenciador.enviarMensagem(mensagem);
+        Principal.gerenciador.enviarMensagem(mensagem);
         for (ConexaoServidor conexao : Principal.conexoes) {
             if(conexao.getIdCliente() == mensagem.getIdDestino()){
                 conexao.receberMensagem(mensagem);

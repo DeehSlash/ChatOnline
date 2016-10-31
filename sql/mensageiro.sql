@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.6.4
+-- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 24-Out-2016 às 21:05
--- Versão do servidor: 10.1.16-MariaDB
--- PHP Version: 7.0.9
+-- Generation Time: 31-Out-2016 às 00:24
+-- Versão do servidor: 5.7.14
+-- PHP Version: 5.6.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -39,8 +39,15 @@ CREATE TABLE `grupo` (
   `idMembro8` int(3) UNSIGNED DEFAULT NULL,
   `idMembro9` int(3) UNSIGNED DEFAULT NULL,
   `idMembro10` int(3) UNSIGNED DEFAULT NULL,
-  `foto` blob NOT NULL
+  `foto` blob
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Extraindo dados da tabela `grupo`
+--
+
+INSERT INTO `grupo` (`id`, `nomeGrupo`, `idMembro1`, `idMembro2`, `idMembro3`, `idMembro4`, `idMembro5`, `idMembro6`, `idMembro7`, `idMembro8`, `idMembro9`, `idMembro10`, `foto`) VALUES
+(0, 'naoUsado', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -55,7 +62,7 @@ CREATE TABLE `mensagem` (
   `txtMensagem` text NOT NULL,
   `timeMensagem` datetime NOT NULL,
   `arquivo` blob,
-  `tipoMens` enum('M','I','V','A') NOT NULL,
+  `tipoMens` enum('T','I','A') NOT NULL,
   `idMensagem` int(5) NOT NULL,
   `idGrupoDestino` int(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -72,6 +79,13 @@ CREATE TABLE `usuario` (
   `senha` varchar(20) NOT NULL,
   `foto` blob
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Extraindo dados da tabela `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `usuario`, `senha`, `foto`) VALUES
+(0, 'naoUsado', 'naoUsado', NULL);
 
 --
 -- Indexes for dumped tables
@@ -110,7 +124,7 @@ ALTER TABLE `grupo`
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `id` int(3) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --

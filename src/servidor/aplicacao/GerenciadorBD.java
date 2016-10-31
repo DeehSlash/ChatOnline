@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.sql.Blob;
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -133,17 +135,39 @@ public class GerenciadorBD {
         return usuarios;
     }
         
-    public boolean enviarMensagem(Mensagem mensagem) throws SQLException {
-        String SQL;
-        Statement st = conexao().createStatement();
-        if(mensagem.getTipoMensagem() == 'T'){
-            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, timeMensagem, tipoMens, idMensagem, idGrupoDestino) "
-        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', " + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdDestino()+ " ')";
-        } else {
-            SQL = "INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, arquivo, timeMensagem, tipoMens, idMensagem, idGrupoDestino) "
-        + "VALUES ('" + mensagem.getIdOrigem() + "', '" + mensagem.getIdDestino() + "', '" + mensagem.getDestinoTipo() + "', ' ', '" + mensagem.getMensagem() + "', '" + convData(mensagem.getDataMensagem()) + "', '" + mensagem.getTipoMensagem() + "', '" + mensagem.getIdMensagem() + "', " + mensagem.getIdDestino()+ " ')";
+    public boolean enviarMensagem(Mensagem mensagem) throws SQLException, IOException {
+        PreparedStatement ps = conexao().prepareStatement("INSERT INTO mensagem (idUsuarioOrigem, idUsuarioDestino, destinoTipo, txtMensagem, timeMensagem, tipoMens, idMensagem, idGrupoDestino, arquivo) VALUES ("
+                + "?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        ps.setInt(1, mensagem.getIdOrigem());
+        if(mensagem.getDestinoTipo() == 'U')
+            ps.setInt(2, mensagem.getIdDestino());
+        else
+            ps.setInt(2, 0);
+        ps.setString(3, Character.toString(mensagem.getDestinoTipo()));
+        if(mensagem.getTipoMensagem() == 'T')
+            ps.setString(4, (String)mensagem.getMensagem());
+        else
+            ps.setNull(4, java.sql.Types.VARCHAR);
+        ps.setTimestamp(5, new Timestamp(mensagem.getDataMensagem().getTime()));
+        ps.setString(6, Character.toString(mensagem.getTipoMensagem()));
+        System.out.println(Character.toString(mensagem.getTipoMensagem()));
+        ps.setInt(7, mensagem.getIdMensagem());
+        if(mensagem.getDestinoTipo() == 'G')
+            ps.setInt(8, mensagem.getIdDestino());
+        else
+            ps.setInt(8, 0);
+        switch(mensagem.getTipoMensagem()){
+            case 'I':
+                ps.setBlob(9, compartilhado.aplicacao.Foto.imageToBlob((Image)mensagem.getMensagem()));
+                break;
+            case 'A':
+                // implementar conversão de arquivo para blob
+                break;
+            case 'T':
+                ps.setNull(9, java.sql.Types.BLOB);
+                break;
         }
-        int result = st.executeUpdate(SQL);
+        int result = ps.executeUpdate();
         return result == 1;
     }
     
