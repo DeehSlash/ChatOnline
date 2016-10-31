@@ -160,20 +160,23 @@ public class FrameConversa extends javax.swing.JFrame {
     public void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
         doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
+        doc.insertString(doc.getLength(), "\n", formatacao("normal"));
         doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
         switch(mensagem.getTipoMensagem()){
             case 'T':
-                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("normal"));
+                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n", formatacao("normal"));
+                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+                txtConversa.setStyledDocument(doc);
                 break;
             case 'I':
+                doc.insertString(doc.getLength(), "\n", formatacao("normal"));
+                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+                txtConversa.setStyledDocument(doc);
                 ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
-                txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 100, true)));
-                doc.insertString(doc.getLength(), "", null);
+                txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
                 break;
         }
-        doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
-        txtConversa.setStyledDocument(doc);
         if(deveDarScroll)
             descerScroll();
     }
@@ -181,22 +184,25 @@ public class FrameConversa extends javax.swing.JFrame {
     public void receberMensagem(Mensagem mensagem, boolean carregamento) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
         if(!carregamento)
             mensagens.add(mensagem);
-        doc = txtConversa.getStyledDocument();
+                doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
-        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));
-        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("nome"));
+        doc.insertString(doc.getLength(), "\n", formatacao("normal"));
+        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("destinoNome"));
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
         switch(mensagem.getTipoMensagem()){
             case 'T':
-                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n\n", formatacao("normal"));
+                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n", formatacao("normal"));
+                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+                txtConversa.setStyledDocument(doc);
                 break;
             case 'I':
+                doc.insertString(doc.getLength(), "\n", formatacao("normal"));
+                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+                txtConversa.setStyledDocument(doc);
                 ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
-                txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 100, true)));
-                doc.insertString(doc.getLength(), "", null);
+                txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
                 break;
         }
-        doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
-        txtConversa.setStyledDocument(doc);
         if(deveDarScroll)
             descerScroll();
     }

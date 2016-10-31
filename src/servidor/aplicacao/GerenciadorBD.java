@@ -165,7 +165,7 @@ public class GerenciadorBD {
                     Blob blob = rs.getBlob("arquivo");
                     InputStream is = blob.getBinaryStream();
                     Image imagem = ImageIO.read(is);
-                    mensagem.setMensagem(imagem);
+                    mensagem.setMensagem(new ImageIcon(imagem));
                     break;
                 case 'A':
                     // falta implementar para arquivo
