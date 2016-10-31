@@ -145,9 +145,12 @@ public class ConexaoServidor extends Thread {
     }
     
     private void enviarListaMensagens() throws SQLException, IOException{
-        ArrayList<Mensagem> mensagens;
-        mensagens = Principal.gerenciador.getListaMensagens(idCliente);
-        getSaidaObjeto().writeObject(mensagens);
+        for(int i = 0; i < Principal.usuarios.size() - 1; i++){
+            int idOrigem = getEntradaDado().readInt();
+            int idDestino = getEntradaDado().readInt();
+            ArrayList<Mensagem> mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino);
+            getSaidaObjeto().writeObject(mensagens);
+        }
     }
     
     @Override

@@ -137,22 +137,25 @@ public class GerenciadorBD {
         return usuarios;
     }
     
-    public ArrayList<Mensagem> getListaMensagens(int id) throws SQLException, IOException{
+    public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino) throws SQLException, IOException{
         ArrayList<Mensagem> mensagens = new ArrayList<>();
-        MensagemBuilder mensagemBuilder = new MensagemBuilder(id, 0);
-        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE idUsuarioOrigem = ? OR idUsuarioDestino = ? ORDER BY idMensagem");
-        ps.setInt(1, id);
-        ps.setInt(2, id);
+        MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0);
+        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE (idUsuarioOrigem = ? AND idUsuarioDestino = ?) OR (idUsuarioOrigem = ? AND idUsuarioDestino = ?) AND destinoTipo = 'U' ORDER BY idMensagem");
+        ps.setInt(1, idOrigem);
+        ps.setInt(2, idDestino);
+        ps.setInt(3, idDestino);
+        ps.setInt(4, idOrigem);
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
             Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("destinoTipo").charAt(0), rs.getString("tipoMens").charAt(0), null);
-            mensagem.setDataMensagem(new Date(rs.getTimestamp("timeMensagem").getTime()));
+            mensagem.setIdOrigem(rs.getInt("idUsuarioOrigem"));
             switch(mensagem.getDestinoTipo()){
                 case 'U':
                     mensagem.setIdDestino(rs.getInt("idUsuarioDestino"));
                     break;
                 case 'G':
                     mensagem.setIdDestino(rs.getInt("idGrupoDestino"));
+                    break;
             }
             switch(mensagem.getTipoMensagem()){
                 case 'T':
@@ -168,6 +171,7 @@ public class GerenciadorBD {
                     // falta implementar para arquivo
                     break;
             }
+            mensagem.setDataMensagem(new Date(rs.getTimestamp("timeMensagem").getTime()));
             mensagens.add(mensagem);
         }
         return mensagens;

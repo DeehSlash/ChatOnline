@@ -16,8 +16,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -28,17 +26,15 @@ public class FramePrincipal extends javax.swing.JFrame {
 
     public final ConexaoCliente conexao;
     public ArrayList<FrameConversa> conversas;
-    public ArrayList<Mensagem> mensagens;
     
     public FramePrincipal(ConexaoCliente conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
         conversas = new ArrayList<>();
-        mensagens = new ArrayList<>();
         carregarLista();
-        receberListaMensagens();
         carregarInfoUsuario();
+        inicializarConversas();
         Thread t = conexao;
         t.start();
     }
@@ -56,10 +52,10 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         
-        listUsuarios.addMouseListener(new MouseAdapter() {
+        listUsuarios.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getClickCount() == 2) {
+            public void mouseClicked(MouseEvent evt){
+                if (evt.getClickCount() == 2){
                     boolean aberta = false;
                     Usuario destino = null;
                     if(!listUsuarios.getSelectedValue().equals("----------Offline----------") && // ignora se foi clicado na mensagem de online/offline
@@ -134,11 +130,18 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
     }
     
-    private void receberListaMensagens(){
-        try {
-            mensagens = conexao.receberListaMensagens();
-        } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+    private void inicializarConversas(){
+        for (Usuario usuario : Principal.usuarios) {
+            if(usuario.getId() != conexao.getIdCliente()){
+                try {
+                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario);
+                    conversa.mensagens = conexao.receberListaMensagens(conexao.getIdCliente(), usuario.getId());
+                    conversa.carregarMensagens();
+                    conversas.add(conversa);
+                } catch (IOException | ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
     }
     
@@ -170,12 +173,12 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(conversaAberta){
                 if(!conversas.get(i).isVisible())
                     conversas.get(i).setVisible(true);
-                conversas.get(i).receberMensagem(mensagem);
+                conversas.get(i).receberMensagem(mensagem, false);
             }else{
                 conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
                         Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
                 conversas.get(conversas.size() - 1).setVisible(true);
-                conversas.get(conversas.size() - 1).receberMensagem(mensagem);
+                conversas.get(conversas.size() - 1).receberMensagem(mensagem, false);
             }
         } catch (BadLocationException ex) {
             ex.printStackTrace();

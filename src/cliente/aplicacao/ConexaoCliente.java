@@ -59,7 +59,9 @@ public class ConexaoCliente extends Thread {
         Principal.usuarios = (ArrayList<Usuario>)getEntradaObjeto().readObject();
     }
     
-    public ArrayList receberListaMensagens() throws IOException, ClassNotFoundException{
+    public ArrayList receberListaMensagens(int idOrigem, int idDestino) throws IOException, ClassNotFoundException{
+        getSaidaDado().writeInt(idOrigem);
+        getSaidaDado().writeInt(idDestino);
         ArrayList<Mensagem> mensagens = (ArrayList<Mensagem>)getEntradaObjeto().readObject();
         return mensagens;
     }
