@@ -105,7 +105,7 @@ public class ConexaoServidor extends Thread {
                     Principal.frmPrincipal.enviarLog("Usuário " + usuario.getUsuario() + " cadastrado"); // envia o log
                     ClassLoader classLoader = getClass().getClassLoader();
                     ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png"));
-                    Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50);
+                    Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50, false);
                     Principal.usuarios.add(new Usuario(Principal.usuarios.size() + 1, usuario.getUsuario(), new ImageIcon(foto))); // adiciona na lista de usuários
                     status = Principal.gerenciador.autenticarUsuario(usuario); // tenta autenticar
                     setIdCliente(Principal.usuarios.size()); // define a id desse usuário

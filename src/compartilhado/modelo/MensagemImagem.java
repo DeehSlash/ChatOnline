@@ -1,11 +1,11 @@
 package compartilhado.modelo;
 
-import java.awt.Image;
 import java.util.Date;
+import javax.swing.ImageIcon;
 
-public class MensagemImagem extends Mensagem<Image> implements java.io.Serializable {
+public class MensagemImagem extends Mensagem<ImageIcon> implements java.io.Serializable {
     
-    private Image imagem;
+    private ImageIcon imagem;
     
     public MensagemImagem(){
         super.tipoMensagem = 'I';
@@ -52,10 +52,10 @@ public class MensagemImagem extends Mensagem<Image> implements java.io.Serializa
     }
     
     @Override
-    public Image getMensagem(){ return imagem; }
+    public ImageIcon getMensagem(){ return imagem; }
     
     @Override
-    public void setMensagem(Image mensagem) {
+    public void setMensagem(ImageIcon mensagem) {
         this.imagem = mensagem;
     }
     

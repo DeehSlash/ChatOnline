@@ -16,8 +16,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -92,7 +90,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(val == JFileChooser.APPROVE_OPTION){
                 File caminhoFoto = fs.getSelectedFile();
                 foto = new ImageIcon(caminhoFoto.getPath());
-                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50);
+                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
                 foto = new ImageIcon(imagemRedimensionada);
             }
             for (Usuario usuario : Principal.usuarios) {
@@ -264,7 +262,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<>();
+        listUsuarios = new javax.swing.JList<String>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();

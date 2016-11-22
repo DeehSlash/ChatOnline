@@ -10,13 +10,16 @@ import javax.imageio.ImageIO;
 
 public class Foto {
     
-    public static Image redimensionarFoto(Image imagem, int tam){
+    public static Image redimensionarFoto(Image imagem, int tam, boolean manterProporcao){
         Image imagemRedimensionada;
         BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D bGr = bi.createGraphics();
         bGr.drawImage(imagem, 0, 0, null);
         bGr.dispose();
-        imagemRedimensionada = bi.getScaledInstance(tam, tam, Image.SCALE_SMOOTH);
+        if(manterProporcao)
+            imagemRedimensionada = bi.getScaledInstance(tam, imagem.getHeight(null) / (imagem.getWidth(null) / tam), Image.SCALE_SMOOTH);
+        else
+            imagemRedimensionada = bi.getScaledInstance(tam, tam, Image.SCALE_SMOOTH);
         return imagemRedimensionada;
     }
     
