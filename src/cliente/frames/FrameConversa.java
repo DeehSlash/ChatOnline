@@ -24,6 +24,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
+import javax.swing.text.Style;
 
 public class FrameConversa extends javax.swing.JFrame {
 
@@ -116,8 +117,7 @@ public class FrameConversa extends javax.swing.JFrame {
                         mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'I', imagem); // cria a mensagem
                         break;
                 }
-                mensagens.add(mensagem);
-                escreverMensagem(mensagem); // método para escrever mensagem na própria tela de quem mandou
+                escreverMensagem(mensagem, false); // método para escrever mensagem na própria tela de quem mandou
                 txtMensagem.setText(""); // limpa o campo de mensagem
                 txtMensagem.setEnabled(true);
                 tipoMensagem = 'T';
@@ -146,63 +146,44 @@ public class FrameConversa extends javax.swing.JFrame {
     public void carregarMensagens(){
         for (Mensagem mensagem : mensagens) {
             try {
-                if(mensagem.getIdOrigem() == origem.getId())
-                    escreverMensagem(mensagem);
-                else{
-                    receberMensagem(mensagem, true);
-                }
+                escreverMensagem(mensagem, true);
             } catch (BadLocationException ex) {
                 ex.printStackTrace();
             }    
         }
     }
     
-    public void escreverMensagem(Mensagem mensagem) throws BadLocationException{ // escreve a própria mensagem na tela com formatação
-        doc = txtConversa.getStyledDocument();
-        boolean deveDarScroll = testeScroll();
-        doc.insertString(doc.getLength(), "\n", formatacao("normal"));
-        doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome"));
-        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
-        switch(mensagem.getTipoMensagem()){
-            case 'T':
-                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n", formatacao("normal"));
-                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
-                txtConversa.setStyledDocument(doc);
-                break;
-            case 'I':
-                doc.insertString(doc.getLength(), "\n", formatacao("normal"));
-                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
-                txtConversa.setStyledDocument(doc);
-                ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
-                txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
-                break;
-        }
-        if(deveDarScroll)
-            descerScroll();
-    }
-    
-    public void receberMensagem(Mensagem mensagem, boolean carregamento) throws BadLocationException{ // escreve a mensagem que recebeu na tela com formatação
+    public void escreverMensagem(Mensagem mensagem, boolean carregamento) throws BadLocationException{
         if(!carregamento)
             mensagens.add(mensagem);
-                doc = txtConversa.getStyledDocument();
+        doc = txtConversa.getStyledDocument();
         boolean deveDarScroll = testeScroll();
-        doc.insertString(doc.getLength(), "\n", formatacao("normal"));
-        doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome"));
-        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal"));
+        doc.insertString(doc.getLength(), "\n", formatacao("normal")); // pula uma linha
+        if(mensagem.getIdDestino() == origem.getId())
+            doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome")); // escreve o nome do usuário
+        else
+            doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("origemNome")); // escreve o nome do usuário
+        doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal")); // escreve a data da mensagem
         switch(mensagem.getTipoMensagem()){
             case 'T':
                 doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n", formatacao("normal"));
                 doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
-                txtConversa.setStyledDocument(doc);
                 break;
             case 'I':
-                doc.insertString(doc.getLength(), "\n", formatacao("normal"));
+                /*doc.insertString(doc.getLength(), "\n", formatacao("normal"));
                 doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
                 txtConversa.setStyledDocument(doc);
                 ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
                 txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
+                */
+                Style estilo = doc.addStyle("imagem", null);
+                ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
+                StyleConstants.setIcon(estilo, new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
+                doc.insertString(doc.getLength(), "", estilo);
                 break;
         }
+        //doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragro"), true);
+        txtConversa.setStyledDocument(doc);
         if(deveDarScroll)
             descerScroll();
     }
