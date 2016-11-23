@@ -173,12 +173,12 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(conversaAberta){
                 if(!conversas.get(i).isVisible())
                     conversas.get(i).setVisible(true);
-                conversas.get(i).receberMensagem(mensagem, false);
+                conversas.get(i).escreverMensagem(mensagem, false);
             }else{
                 conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
                         Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
                 conversas.get(conversas.size() - 1).setVisible(true);
-                conversas.get(conversas.size() - 1).receberMensagem(mensagem, false);
+                conversas.get(conversas.size() - 1).escreverMensagem(mensagem, false);
             }
         } catch (BadLocationException ex) {
             ex.printStackTrace();

@@ -154,38 +154,32 @@ public class FrameConversa extends javax.swing.JFrame {
     }
     
     public void escreverMensagem(Mensagem mensagem, boolean carregamento) throws BadLocationException{
-        if(!carregamento)
+        if(!carregamento) // se não for um carregamento das mensagens antigas, então adiciona na lista de mensagens
             mensagens.add(mensagem);
-        doc = txtConversa.getStyledDocument();
-        boolean deveDarScroll = testeScroll();
+        doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
+        boolean deveDarScroll = testeScroll(); // faz o teste de scroll
         doc.insertString(doc.getLength(), "\n", formatacao("normal")); // pula uma linha
-        if(mensagem.getIdDestino() == origem.getId())
-            doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome")); // escreve o nome do usuário
+        if(mensagem.getIdDestino() == origem.getId()) // verifica quem que enviou a mensagem
+            doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome")); // escreve o nome com a formatação adequada
         else
-            doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("origemNome")); // escreve o nome do usuário
+            doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome")); // escreve o nome com a formatação adequada
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal")); // escreve a data da mensagem
         switch(mensagem.getTipoMensagem()){
-            case 'T':
-                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n", formatacao("normal"));
-                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
+            case 'T': // caso for mensagem de texto
+                doc.insertString(doc.getLength(), "» " + mensagem.getMensagem().toString() + "\n", formatacao("normal")); // insere o texto da mensagem
                 break;
-            case 'I':
-                /*doc.insertString(doc.getLength(), "\n", formatacao("normal"));
-                doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragrafo"), true);
-                txtConversa.setStyledDocument(doc);
-                ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
-                txtConversa.insertIcon(new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
-                */
-                Style estilo = doc.addStyle("imagem", null);
-                ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
-                StyleConstants.setIcon(estilo, new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true)));
-                doc.insertString(doc.getLength(), "", estilo);
+            case 'I': // caso for mensagem de imagem
+                Style estilo = doc.addStyle("imagem", null); // cria um novo estilo
+                ImageIcon imagem = (ImageIcon)mensagem.getMensagem(); // obtem a imagem da mensagem
+                StyleConstants.setIcon(estilo, new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true))); // define o icone com redimensionamento
+                doc.insertString(doc.getLength(), "imagem", estilo); // insere a imagem no documento
+                doc.insertString(doc.getLength(), "\n", formatacao("normal")); // pula uma linha
                 break;
         }
-        //doc.setParagraphAttributes(0, doc.getLength(), formatacao("paragro"), true);
-        txtConversa.setStyledDocument(doc);
-        if(deveDarScroll)
-            descerScroll();
+        doc.setParagraphAttributes(0, doc.getLength(), formatacao("normal"), true); // formata a fonte e paragrafo
+        txtConversa.setStyledDocument(doc); // joga o documento de volta para o JTextPane
+        if(deveDarScroll) // se deve dar scroll
+            descerScroll(); // desce o scroll
     }
     
     private SimpleAttributeSet formatacao(String tipo){
