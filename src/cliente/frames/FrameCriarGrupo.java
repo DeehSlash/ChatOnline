@@ -7,12 +7,15 @@ import compartilhado.modelo.Usuario;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
 public class FrameCriarGrupo extends javax.swing.JFrame {
 
+    private ArrayList<JCheckBox> lista;
+    
     public FrameCriarGrupo() {
         initComponents();
         //lblFoto.setIcon(Foto.redimensionarFoto(imagem, 50, false));
@@ -39,10 +42,11 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     }
     
     private void carregarUsuarios(){
+        lista = new ArrayList<>();
         GridBagConstraints layout = new GridBagConstraints();
         layout.gridx = 0;
         layout.gridy = 1;
-        //layout.insets = new Insets(5, 5, 5, 5);
+        layout.insets = new Insets(0, 5, 5, 0);
         layout.anchor = GridBagConstraints.NORTHWEST;
         for (Usuario usuario : Principal.usuarios) {
             if(usuario.getId() != Principal.frmPrincipal.conexao.getIdCliente()){
@@ -50,6 +54,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 checkBox.setSelected(false);
                 checkBox.setText(usuario.getUsuario());
                 pnlUsuarios.add(checkBox, layout);
+                lista.add(checkBox);
                 layout.gridy++;
             }
         }
