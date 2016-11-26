@@ -15,19 +15,114 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        pnlHeader = new javax.swing.JPanel();
+        txtNome = new javax.swing.JTextField();
+        lblFoto = new javax.swing.JLabel();
+        btnAlterarFoto = new javax.swing.JButton();
+        lblNome = new javax.swing.JLabel();
+        pnlUsuarios = new javax.swing.JPanel();
+        pnlBottom = new javax.swing.JPanel();
+        btnOk = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        setTitle("Criar grupo");
+        setMaximumSize(null);
+        setMinimumSize(new java.awt.Dimension(350, 0));
+        setPreferredSize(new java.awt.Dimension(350, 500));
+        java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
+        layout.rowWeights = new double[] {2.0, 8.0, 1.0};
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+
+        pnlHeader.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlHeader.setLayout(new java.awt.GridBagLayout());
+
+        txtNome.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 200;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 15, 15);
+        pnlHeader.add(txtNome, gridBagConstraints);
+
+        lblFoto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lblFoto.setMaximumSize(new java.awt.Dimension(50, 50));
+        lblFoto.setMinimumSize(new java.awt.Dimension(50, 50));
+        lblFoto.setPreferredSize(new java.awt.Dimension(50, 50));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.insets = new java.awt.Insets(15, 15, 5, 5);
+        pnlHeader.add(lblFoto, gridBagConstraints);
+
+        btnAlterarFoto.setText("Alterar foto...");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 15, 15, 5);
+        pnlHeader.add(btnAlterarFoto, gridBagConstraints);
+
+        lblNome.setText("Nome do grupo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.insets = new java.awt.Insets(15, 5, 5, 15);
+        pnlHeader.add(lblNome, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(pnlHeader, gridBagConstraints);
+
+        pnlUsuarios.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout pnlUsuariosLayout = new javax.swing.GroupLayout(pnlUsuarios);
+        pnlUsuarios.setLayout(pnlUsuariosLayout);
+        pnlUsuariosLayout.setHorizontalGroup(
+            pnlUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 348, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        pnlUsuariosLayout.setVerticalGroup(
+            pnlUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 347, Short.MAX_VALUE)
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(pnlUsuarios, gridBagConstraints);
+
+        pnlBottom.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlBottom.setLayout(new java.awt.GridBagLayout());
+
+        btnOk.setText("OK");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlBottom.add(btnOk, gridBagConstraints);
+
+        btnCancelar.setText("Cancelar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        pnlBottom.add(btnCancelar, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(pnlBottom, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -68,6 +163,15 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlterarFoto;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnOk;
+    private javax.swing.JLabel lblFoto;
+    private javax.swing.JLabel lblNome;
+    private javax.swing.JPanel pnlBottom;
+    private javax.swing.JPanel pnlHeader;
+    private javax.swing.JPanel pnlUsuarios;
+    private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 
 }

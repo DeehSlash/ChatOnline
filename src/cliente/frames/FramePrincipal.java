@@ -274,7 +274,8 @@ public class FramePrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         itemSair = new javax.swing.JMenuItem();
         mnuConversa = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        itemCriarGrupo = new javax.swing.JMenuItem();
+        itemDeletarGrupo = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         itemTransmissao = new javax.swing.JMenuItem();
         mnuSobre = new javax.swing.JMenu();
@@ -396,11 +397,14 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         mnuConversa.setText("Conversa");
 
-        jMenuItem1.setText("jMenuItem1");
-        mnuConversa.add(jMenuItem1);
+        itemCriarGrupo.setText("Criar grupo...");
+        mnuConversa.add(itemCriarGrupo);
+
+        itemDeletarGrupo.setText("Deletar grupo...");
+        mnuConversa.add(itemDeletarGrupo);
         mnuConversa.add(jSeparator2);
 
-        itemTransmissao.setText("Enviar transmissão");
+        itemTransmissao.setText("Enviar transmissão...");
         mnuConversa.add(itemTransmissao);
 
         menuBar.add(mnuConversa);
@@ -415,11 +419,12 @@ public class FramePrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem itemAlterarFoto;
+    private javax.swing.JMenuItem itemCriarGrupo;
+    private javax.swing.JMenuItem itemDeletarGrupo;
     private javax.swing.JMenuItem itemSair;
     private javax.swing.JMenuItem itemTransmissao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;

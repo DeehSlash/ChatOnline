@@ -28,16 +28,21 @@
             <Property name="text" type="java.lang.String" value="Conversa"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+            <MenuItem class="javax.swing.JMenuItem" name="itemCriarGrupo">
               <Properties>
-                <Property name="text" type="java.lang.String" value="jMenuItem1"/>
+                <Property name="text" type="java.lang.String" value="Criar grupo..."/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="itemDeletarGrupo">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Deletar grupo..."/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="itemTransmissao">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Enviar transmiss&#xe3;o"/>
+                <Property name="text" type="java.lang.String" value="Enviar transmiss&#xe3;o..."/>
               </Properties>
             </MenuItem>
           </SubComponents>
