@@ -56,13 +56,13 @@ public class ConexaoCliente extends Thread {
     }
     
     public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
-        Principal.usuarios = (ArrayList<Usuario>)getEntradaObjeto().readObject();
+        Principal.usuarios = (ArrayList<Usuario>) getEntradaObjeto().readObject();
     }
     
     public ArrayList receberListaMensagens(int idOrigem, int idDestino) throws IOException, ClassNotFoundException{
         getSaidaDado().writeInt(idOrigem);
         getSaidaDado().writeInt(idDestino);
-        ArrayList<Mensagem> mensagens = (ArrayList<Mensagem>)getEntradaObjeto().readObject();
+        ArrayList<Mensagem> mensagens = (ArrayList<Mensagem>) getEntradaObjeto().readObject();
         return mensagens;
     }
     
@@ -81,7 +81,7 @@ public class ConexaoCliente extends Thread {
     }
     
     private void receberMensagem() throws IOException, ClassNotFoundException{
-        Mensagem mensagem = (Mensagem)getEntradaObjeto().readObject();
+        Mensagem mensagem = (Mensagem) getEntradaObjeto().readObject();
         Principal.frmPrincipal.receberMensagem(mensagem);
     }
     
@@ -90,6 +90,10 @@ public class ConexaoCliente extends Thread {
         getSaidaObjeto().writeObject(mensagem); // envia para o servidor a mensagem
     }
 
+    public void criarGrupo(Grupo grupo) throws IOException{
+        getSaidaDado().writeInt(3); // envia para o servidor comando 3 (criar grupo)
+        getSaidaObjeto().writeObject(grupo); // envia para o servidor o grpo
+    }
     
     @Override
     public void run(){
