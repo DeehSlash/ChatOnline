@@ -137,6 +137,11 @@ public class GerenciadorBD {
         return usuarios;
     }
     
+    public ArrayList<Grupo> getListaGrupos(){
+        ArrayList<Grupo> grupos = new ArrayList<>();
+        return grupos;
+    }
+    
     public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino) throws SQLException, IOException{
         ArrayList<Mensagem> mensagens = new ArrayList<>();
         MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0);

@@ -12,11 +12,15 @@ import java.sql.SQLException;
 public class Principal {
 
     private static boolean executando;
+    
     public static FrameInicio frmInicio;
     public static FramePrincipal frmPrincipal;
+    
     private static ServerSocket servidor;
     public static GerenciadorBD gerenciador;
+    
     public static ArrayList<Usuario> usuarios;
+    public static ArrayList<Grupo> grupos;
     public static ArrayList<ConexaoServidor> conexoes;
     
     public static void main(String[] args) {
@@ -38,6 +42,8 @@ public class Principal {
         frmPrincipal.enviarLog("Iniciando gerenciador de banco de dados...");
         usuarios = gerenciador.getListaUsuarios();
         frmPrincipal.enviarLog("Lista de usuários recuperada");
+        grupos = gerenciador.getListaGrupos();
+        frmPrincipal.enviarLog("Lista de grupos recuperada");
         executando = true;
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
