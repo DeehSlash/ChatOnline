@@ -2,10 +2,14 @@ package cliente.frames;
 
 import cliente.aplicacao.Principal;
 import compartilhado.aplicacao.Foto;
+import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Usuario;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 
 public class FrameCriarGrupo extends javax.swing.JFrame {
 
@@ -13,6 +17,25 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         initComponents();
         //lblFoto.setIcon(Foto.redimensionarFoto(imagem, 50, false));
         carregarUsuarios();
+    }
+    
+    private void addListeners(){
+        btnOk.addActionListener((ActionEvent e) -> {
+            if(txtNome.getText().isEmpty())
+                JOptionPane.showMessageDialog(null, "Campo nome do grupo não pode ser vazio!", "Campo vazio", JOptionPane.ERROR_MESSAGE);
+            ImageIcon foto = null;
+            Grupo grupo = new Grupo(0, txtNome.getText(), identificarMembros(), foto);
+        });
+        
+        btnCancelar.addActionListener((ActionEvent e) -> {
+            dispose();
+        });
+    }
+    
+    
+    private int[] identificarMembros(){
+        int[] membros = new int[10];
+        return membros;
     }
     
     private void carregarUsuarios(){
@@ -104,7 +127,6 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         getContentPane().add(pnlHeader, gridBagConstraints);
 
         pnlUsuarios.setBorder(javax.swing.BorderFactory.createTitledBorder("Membros"));
-        pnlUsuarios.setMaximumSize(null);
         pnlUsuarios.setLayout(new java.awt.GridBagLayout());
 
         lblPessoasGrupo.setText("Pessoas no grupo:");

@@ -1,15 +1,15 @@
 package compartilhado.modelo;
 
-import java.awt.Image;
+import javax.swing.ImageIcon;
 
 public class Grupo {
     
     private int id;
     private String nome;
     private int[] membros;
-    private Image foto;
+    private ImageIcon foto;
     
-    public Grupo(int id, String nome, int[] membros, Image foto){
+    public Grupo(int id, String nome, int[] membros, ImageIcon foto){
         this.id = id;
         this.nome = nome;
         membros = new int[10];
@@ -20,5 +20,5 @@ public class Grupo {
     public int getId(){ return id; }
     public String getNome(){ return nome; }
     public int[] getMembros(){ return membros; }
-    public Image getFoto(){ return foto; }
+    public ImageIcon getFoto(){ return foto; }
 }
