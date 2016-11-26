@@ -38,6 +38,11 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     
     private int[] identificarMembros(){
         int[] membros = new int[10];
+        int i = 0;
+        for (JCheckBox checkBox : lista) {
+            membros[i] = Principal.frmPrincipal.idPorNome(checkBox.getText());
+            i++;
+        }
         return membros;
     }
     
