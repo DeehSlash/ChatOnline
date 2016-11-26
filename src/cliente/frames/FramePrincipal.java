@@ -119,6 +119,11 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         
+        itemCriarGrupo.addActionListener((ActionEvent e) -> {
+            FrameCriarGrupo frmCriarGrupo = new FrameCriarGrupo();
+            frmCriarGrupo.setVisible(true);
+        });
+        
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
