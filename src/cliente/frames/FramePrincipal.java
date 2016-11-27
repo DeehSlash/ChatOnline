@@ -74,7 +74,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                             if(!conversas.get(i).isVisible()) // e não estiver visivel
                                  conversas.get(i).setVisible(true); // torna visivel
                         }else{ // se nunca foi aberta
-                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino)); // adiciona na lista
+                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino.getId(), 'U')); // adiciona na lista
                             conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
                         }
                     }
@@ -139,7 +139,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         for (Usuario usuario : Principal.usuarios) {
             if(usuario.getId() != conexao.getIdCliente()){
                 try {
-                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario);
+                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario.getId(), 'U');
                     conversa.mensagens = conexao.receberListaMensagens(conexao.getIdCliente(), usuario.getId());
                     conversa.carregarMensagens();
                     conversas.add(conversa);
@@ -181,7 +181,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 conversas.get(i).escreverMensagem(mensagem, false);
             }else{
                 conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
-                        Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
+                        mensagem.getIdOrigem(), 'U'));
                 conversas.get(conversas.size() - 1).setVisible(true);
                 conversas.get(conversas.size() - 1).escreverMensagem(mensagem, false);
             }
