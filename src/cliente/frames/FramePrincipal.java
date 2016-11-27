@@ -4,6 +4,7 @@ import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
 import cliente.aplicacao.Transmissao;
 import compartilhado.aplicacao.MensagemBuilder;
+import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
@@ -247,6 +248,10 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
+        }
+        listModel.addElement("----------Grupos-----------");
+        for(Grupo grupo : Principal.grupos){
+            listModel.addElement(grupo.getNome());
         }
         listUsuarios.setModel(listModel);
     }
