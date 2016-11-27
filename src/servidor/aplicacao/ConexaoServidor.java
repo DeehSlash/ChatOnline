@@ -129,6 +129,12 @@ public class ConexaoServidor extends Thread {
         atualizarListaUsuarios();
     }
     
+    private void criarGrupo() throws IOException, ClassNotFoundException, SQLException{
+        Grupo grupo = (Grupo) getEntradaObjeto().readObject();
+        Principal.gerenciador.criarGrupo(grupo);
+        Principal.grupos.add(grupo);
+    }
+    
     private void receberMensagem(Mensagem mensagem) throws IOException{
         getSaidaDado().writeInt(0); // envia comando 0 (receber mensagem)
         getSaidaObjeto().writeObject(mensagem); // envia a mensagem
@@ -173,6 +179,9 @@ public class ConexaoServidor extends Thread {
                             break;
                         case 2: // caso encerrar conexão;
                             fecharConexao();
+                            break;
+                        case 3:
+                            criarGrupo();
                             break;
                         default:
                             fecharConexao();
