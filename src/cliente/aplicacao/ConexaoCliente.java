@@ -95,6 +95,12 @@ public class ConexaoCliente extends Thread {
         getSaidaObjeto().writeObject(grupo); // envia para o servidor o grpo
     }
     
+    public int receberIdGrupoDisponivel() throws IOException{
+        getSaidaDado().writeInt(4); // envia para o servidor comando 4 (recuperar id de grupo disponível)
+        int id = getEntradaDado().readInt(); // recebe do servidor a id
+        return id;
+    }
+    
     @Override
     public void run(){
         try{

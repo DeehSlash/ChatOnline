@@ -7,7 +7,10 @@ import compartilhado.modelo.Usuario;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -26,8 +29,16 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         btnOk.addActionListener((ActionEvent e) -> {
             if(txtNome.getText().isEmpty())
                 JOptionPane.showMessageDialog(null, "Campo nome do grupo não pode ser vazio!", "Campo vazio", JOptionPane.ERROR_MESSAGE);
+            int id;
+            try {
+                id = Principal.frmPrincipal.conexao.receberIdGrupoDisponivel();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             ImageIcon foto = null;
-            Grupo grupo = new Grupo(0, txtNome.getText(), identificarMembros(), foto);
+            Grupo grupo = new Grupo(id, txtNome.getText(), identificarMembros(), foto);
         });
         
         btnCancelar.addActionListener((ActionEvent e) -> {

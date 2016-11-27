@@ -64,6 +64,15 @@ public class GerenciadorBD {
         return result == 1;
     }
     
+    public int receberIdGrupoDisponivel() throws SQLException{
+        Statement st = conexao().createStatement();
+        String SQL = "SELECT * FROM grupo ORDER BY id";
+        ResultSet rs = st.executeQuery(SQL);
+        rs.last();
+        int id = rs.getInt("id");
+        return ++id;
+    }
+    
     public boolean criarGrupo(Grupo grupo) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
