@@ -133,6 +133,7 @@ public class ConexaoServidor extends Thread {
         Grupo grupo = (Grupo) getEntradaObjeto().readObject();
         Principal.gerenciador.criarGrupo(grupo);
         Principal.grupos.add(grupo);
+        Principal.frmPrincipal.enviarLog("Grupo" + grupo.getNome() + " foi criado");
     }
     
     private void receberIdGrupoDisponivel() throws IOException, SQLException{

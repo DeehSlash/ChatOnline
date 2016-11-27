@@ -1,8 +1,9 @@
 package compartilhado.modelo;
 
+import java.io.Serializable;
 import javax.swing.ImageIcon;
 
-public class Grupo {
+public class Grupo implements Serializable{
     
     private int id;
     private String nome;
