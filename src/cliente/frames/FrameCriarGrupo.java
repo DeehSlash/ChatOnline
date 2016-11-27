@@ -39,6 +39,15 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
             }
             ImageIcon foto = null;
             Grupo grupo = new Grupo(id, txtNome.getText(), identificarMembros(), foto);
+            try {
+                Principal.frmPrincipal.conexao.criarGrupo(grupo);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Principal.grupos.add(grupo);
+            Principal.frmPrincipal.carregarLista();
         });
         
         btnCancelar.addActionListener((ActionEvent e) -> {

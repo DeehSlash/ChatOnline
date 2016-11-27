@@ -9,8 +9,9 @@ public class Principal {
     
     public static FrameLogin frmLogin;
     public static FramePrincipal frmPrincipal;
+    
     public static ArrayList<Usuario> usuarios;
-    public static ArrayList<Mensagem> mensagens;
+    public static ArrayList<Grupo> grupos;
     
     public static void main(String[] args) {
         try {
@@ -18,7 +19,10 @@ public class Principal {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        
         usuarios = new ArrayList<>();
+        grupos = new ArrayList<>();
+        
         frmLogin = new FrameLogin();
         frmLogin.setVisible(true);
         
