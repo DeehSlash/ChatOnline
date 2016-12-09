@@ -4,6 +4,7 @@ import cliente.aplicacao.ConexaoCliente;
 import cliente.aplicacao.Principal;
 import cliente.aplicacao.Transmissao;
 import compartilhado.aplicacao.MensagemBuilder;
+import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.awt.Color;
@@ -74,7 +75,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                             if(!conversas.get(i).isVisible()) // e não estiver visivel
                                  conversas.get(i).setVisible(true); // torna visivel
                         }else{ // se nunca foi aberta
-                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino)); // adiciona na lista
+                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino.getId(), 'U')); // adiciona na lista
                             conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
                         }
                     }
@@ -119,6 +120,11 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
         
+        itemCriarGrupo.addActionListener((ActionEvent e) -> {
+            FrameCriarGrupo frmCriarGrupo = new FrameCriarGrupo();
+            frmCriarGrupo.setVisible(true);
+        });
+        
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
@@ -134,7 +140,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         for (Usuario usuario : Principal.usuarios) {
             if(usuario.getId() != conexao.getIdCliente()){
                 try {
-                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario);
+                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario.getId(), 'U');
                     conversa.mensagens = conexao.receberListaMensagens(conexao.getIdCliente(), usuario.getId());
                     conversa.carregarMensagens();
                     conversas.add(conversa);
@@ -176,7 +182,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 conversas.get(i).escreverMensagem(mensagem, false);
             }else{
                 conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
-                        Principal.usuarios.get(mensagem.getIdOrigem()- 1)));
+                        mensagem.getIdOrigem(), 'U'));
                 conversas.get(conversas.size() - 1).setVisible(true);
                 conversas.get(conversas.size() - 1).escreverMensagem(mensagem, false);
             }
@@ -243,6 +249,10 @@ public class FramePrincipal extends javax.swing.JFrame {
                 listModel.addElement(usuario.getUsuario());
             }
         }
+        listModel.addElement("----------Grupos-----------");
+        for(Grupo grupo : Principal.grupos){
+            listModel.addElement(grupo.getNome());
+        }
         listUsuarios.setModel(listModel);
     }
     
@@ -262,7 +272,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         lblStatus = new javax.swing.JLabel();
         pnlListaUsuarios = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listUsuarios = new javax.swing.JList<String>();
+        listUsuarios = new javax.swing.JList<>();
         pnlInfo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblStatusConexao = new javax.swing.JLabel();
@@ -274,14 +284,15 @@ public class FramePrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         itemSair = new javax.swing.JMenuItem();
         mnuConversa = new javax.swing.JMenu();
+        itemCriarGrupo = new javax.swing.JMenuItem();
+        itemDeletarGrupo = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         itemTransmissao = new javax.swing.JMenuItem();
         mnuSobre = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mensageiro");
-        setMaximumSize(null);
         setMinimumSize(new java.awt.Dimension(500, 600));
-        setPreferredSize(new java.awt.Dimension(500, 600));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.rowWeights = new double[] {2.0, 50.0, 1.0};
         getContentPane().setLayout(layout);
@@ -396,7 +407,14 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         mnuConversa.setText("Conversa");
 
-        itemTransmissao.setText("Enviar transmissão");
+        itemCriarGrupo.setText("Criar grupo...");
+        mnuConversa.add(itemCriarGrupo);
+
+        itemDeletarGrupo.setText("Deletar grupo...");
+        mnuConversa.add(itemDeletarGrupo);
+        mnuConversa.add(jSeparator2);
+
+        itemTransmissao.setText("Enviar transmissão...");
         mnuConversa.add(itemTransmissao);
 
         menuBar.add(mnuConversa);
@@ -411,12 +429,15 @@ public class FramePrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem itemAlterarFoto;
+    private javax.swing.JMenuItem itemCriarGrupo;
+    private javax.swing.JMenuItem itemDeletarGrupo;
     private javax.swing.JMenuItem itemSair;
     private javax.swing.JMenuItem itemTransmissao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblStatus;

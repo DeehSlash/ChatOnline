@@ -64,20 +64,29 @@ public class GerenciadorBD {
         return result == 1;
     }
     
+    public int receberIdGrupoDisponivel() throws SQLException{
+        Statement st = conexao().createStatement();
+        String SQL = "SELECT * FROM grupo ORDER BY id";
+        ResultSet rs = st.executeQuery(SQL);
+        rs.last();
+        int id = rs.getInt("id");
+        return ++id;
+    }
+    
     public boolean criarGrupo(Grupo grupo) throws SQLException, IOException{
         Statement st = conexao().createStatement();
         int [] m = grupo.getMembros();
         String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
-                + grupo.getId() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto()) + "')";
+                + grupo.getId() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()) + "')";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
     
     public boolean alterarGrupo(Grupo grupo) throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        int [] m = grupo.getMembros();
+        int[] m = grupo.getMembros();
         String SQL = "UPDATE grupo SET nomeGrupo = '" + grupo.getNome() + "', idMembro1 = '" + m[0] + "', idMembro2 = '" + m[1] + "', idMembro3 = '" + m[2] + "', idMembro4 = '" + m[3] + "', idMembro5 = '" + m[4] + "', idMembro6 = '" + m[5]
-                     + "', idMembro7 = '" + m[6] + "', idMembro8 = '" + m[7] + "', idMembro9 = '" + m[8] + "', idMembro10 = '" + m[9] + "', foto = '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto()) + "' WHERE id = '" + grupo.getId() + "'";
+                     + "', idMembro7 = '" + m[6] + "', idMembro8 = '" + m[7] + "', idMembro9 = '" + m[8] + "', idMembro10 = '" + m[9] + "', foto = '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()) + "' WHERE id = '" + grupo.getId() + "'";
         int result = st.executeUpdate(SQL);
         return result == 1;
     }
@@ -135,6 +144,11 @@ public class GerenciadorBD {
             }
         }
         return usuarios;
+    }
+    
+    public ArrayList<Grupo> getListaGrupos(){
+        ArrayList<Grupo> grupos = new ArrayList<>();
+        return grupos;
     }
     
     public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino) throws SQLException, IOException{

@@ -30,17 +30,21 @@ public class FrameConversa extends javax.swing.JFrame {
 
     private Usuario origem;
     private Usuario destino;
+    private char tipoDestino;
+    
     private StyledDocument doc;
+    
     private final MensagemBuilder mensagemBuilder;
     public ArrayList<Mensagem> mensagens;
     private char tipoMensagem;
     
-    public FrameConversa(Usuario origem, Usuario destino) {
+    public FrameConversa(Usuario origem, int idDestino, char tipoDestino) {
         initComponents();
         addListeners();
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.origem = origem;
-        this.destino = destino;
+        if(tipoDestino == 'U')
+            destino = Principal.usuarios.get(idDestino - 1);
         mensagens = new ArrayList<>();
         mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
         tipoMensagem = 'T';
