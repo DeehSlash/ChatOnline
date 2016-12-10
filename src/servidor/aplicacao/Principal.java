@@ -58,5 +58,8 @@ public class Principal {
     public static void pararServidor() throws IOException{
         executando = false;
         servidor.close();
+        for (ConexaoServidor conexao : conexoes) {
+            conexao.fecharConexao();
+        }
     }
 }
