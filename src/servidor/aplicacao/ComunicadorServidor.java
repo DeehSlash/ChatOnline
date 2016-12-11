@@ -113,7 +113,13 @@ public class ComunicadorServidor implements IComunicadorServidor {
 
     @Override
     public ArrayList recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<Mensagem> mensagens = null;
+        try {
+            mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino);
+        } catch (SQLException | IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao recuperar lista de mensagens com origem " + idOrigem + " e destino " + idDestino + ": " + ex.getMessage());
+        }
+        return mensagens;
     }
 
 }
