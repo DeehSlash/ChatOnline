@@ -77,6 +77,9 @@ public class ComunicadorServidor implements IComunicadorServidor {
         }else{
             status = 1; // se não, status é 1 (cadastrou)
         }
+        ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png")); // cria uma ImageIcon com a foto padrão de usuário
+        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50, false); // redimensiona a imagem
+        Principal.usuarios.add(new Usuario(Principal.usuarios.size() + 1, autenticacao.getUsuario(), new ImageIcon(foto))); // adiciona na lista de usuários
         Principal.frmPrincipal.enviarLog("Usuário " + autenticacao.getUsuario() + " se cadastrou"); // envia log de cadastro
         return status; // retorna o status
     }
