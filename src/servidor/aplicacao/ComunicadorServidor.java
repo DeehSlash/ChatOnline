@@ -9,14 +9,15 @@ import java.awt.Image;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
-public class ComunicadorServidor implements IComunicadorServidor {
+public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
 
+    public ComunicadorServidor() throws RemoteException{}
+    
     @Override
     public int autenticarUsuario(UsuarioAutenticacao autenticacao) throws RemoteException {
         /*  CÓDIGO DE RETORNO (STATUS)

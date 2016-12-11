@@ -1,5 +1,6 @@
 package cliente.aplicacao;
 
+import compartilhado.aplicacao.IComunicadorServidor;
 import compartilhado.modelo.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +19,7 @@ public class ConexaoCliente extends Thread {
     private String endereco;
     private int porta;
     private Socket conexao;
+    public IComunicadorServidor comunicadorServidor; 
     private int idCliente;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
@@ -47,8 +51,9 @@ public class ConexaoCliente extends Thread {
         return saidaDado = new DataOutputStream(conexao.getOutputStream());
     }
     
-    public void conectar() throws IOException{
+    public void conectar() throws IOException, NotBoundException{
         conexao = new Socket(endereco, porta);
+        comunicadorServidor = (IComunicadorServidor) Naming.lookup("ComunicadorServidor"); 
     }
     
     public void desconectar() throws IOException{

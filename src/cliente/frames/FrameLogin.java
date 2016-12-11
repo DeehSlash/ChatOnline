@@ -4,6 +4,9 @@ import cliente.aplicacao.*;
 import compartilhado.modelo.UsuarioAutenticacao;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
@@ -33,27 +36,36 @@ public class FrameLogin extends javax.swing.JFrame {
                 lblStatus.setText("Conectando ao servidor...");
                 conexao.conectar(); // conecta com o servidor
                 lblStatus.setText(cadastro? "Cadastrando usuário..." : "Autenticando usuário...");
-                int status = conexao.autenticarUsuario(new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword())), cadastro); // verifica se os dados do usuário são válidos
+                int status;
+                UsuarioAutenticacao autenticacao = new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword()));
+                if(cadastro)
+                    status = conexao.comunicadorServidor.cadastrarUsuario(autenticacao); // caso cadastro, cadastra no servidor através do comunicador
+                else
+                    status = conexao.comunicadorServidor.autenticarUsuario(autenticacao); // caso autenticação, autentica no servidor através do comunicador
                 switch(status){
-                    case -1: // erro não definido
+                    case -1: // erro genérico
                         JOptionPane.showMessageDialog(null, "Um erro ocorreu, verifique e tente novamente", 
-                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                                "Falha n" + (cadastro? "o cadastro" : "a autenticação"), JOptionPane.ERROR_MESSAGE);
                         break;                        
-                    case 0: // dados incorretos (login)
-                        JOptionPane.showMessageDialog(null, "Seus dados estão incorretos, verifique e tente novamente", 
+                    case 0: // cadastro: usuário já existe / autenticação: usuario não existe
+                        if(cadastro)
+                            JOptionPane.showMessageDialog(null, "Já existe uma pessoa cadastrada com esse nome de usuário, escolha outro nome", 
+                                "Falha no cadastro", JOptionPane.ERROR_MESSAGE);
+                        else
+                            JOptionPane.showMessageDialog(null, "Usuário não encontrado na base de dados, verifique e tente novamente", 
                                 "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
                         break;
-                    case 1: // usuário não encontrado (login)
-                        JOptionPane.showMessageDialog(null, "Usuário não encontrado na base de dados, verifique e tente novamente", 
-                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                    case 1: // usuário já está online (autenticação)
+                        if(!cadastro)
+                            JOptionPane.showMessageDialog(null, "A senha está incorreta, verifique e tente novamente", 
+                                    "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
+                        else
+                            JOptionPane.showMessageDialog(null, "O cadastro foi efetuado, agora você pode entrar", 
+                                    "Cadastro efetuado", JOptionPane.INFORMATION_MESSAGE);
                         break;
-                    case 2: // usuário já existe (cadastro)
+                    case 2: // senha incorreta
                         JOptionPane.showMessageDialog(null, "Já existe uma pessoa cadastrada com esse nome de usuário, escolha outro nome", 
                                 "Falha no cadastro", JOptionPane.ERROR_MESSAGE);
-                        break;
-                    case 4: // usuário já está logado
-                        JOptionPane.showMessageDialog(null, "Este usuário já está conectado ao chat, verifique e tente novamente", 
-                                "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
                         break;
                     case 3: // autenticação funcionou
                         if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
@@ -66,7 +78,7 @@ public class FrameLogin extends javax.swing.JFrame {
                 }
                 if(status != 3)
                     lblStatus.setText("Esperando conexão");
-            } catch (IOException ex){
+            } catch (IOException | NotBoundException ex){
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Exceção: " + ex.getMessage(), "Erro na conexão", JOptionPane.ERROR_MESSAGE);;
             }

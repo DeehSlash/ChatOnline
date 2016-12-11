@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URISyntaxException;
+import java.rmi.Naming;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -17,6 +18,7 @@ import javax.swing.ImageIcon;
 public class ConexaoServidor extends Thread {
     
     private final Socket conexao;
+    private final ComunicadorServidor comunicador;
     private int idCliente;
     private BufferedReader entradaString;
     private ObjectInputStream entradaObjeto;
@@ -26,6 +28,8 @@ public class ConexaoServidor extends Thread {
     
     public ConexaoServidor(int porta, Socket cliente) throws IOException{
         this.conexao = cliente;
+        comunicador = new ComunicadorServidor();
+        Naming.rebind("ComunicadorServidor", comunicador);
     }
     
     public int getIdCliente(){ return this.idCliente; }
