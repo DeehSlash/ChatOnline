@@ -141,10 +141,10 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(usuario.getId() != conexao.getIdCliente()){
                 try {
                     FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario.getId(), 'U');
-                    conversa.mensagens = conexao.receberListaMensagens(conexao.getIdCliente(), usuario.getId());
+                    conversa.mensagens = conexao.comunicadorServidor.recuperarListaMensagens(conexao.getIdCliente(), usuario.getId());
                     conversa.carregarMensagens();
                     conversas.add(conversa);
-                } catch (IOException | ClassNotFoundException ex) {
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
@@ -232,8 +232,8 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     public void carregarLista(){ // carrega a lista de usuários
         try {
-            conexao.atualizarListaUsuarios();
-        } catch (IOException | ClassNotFoundException ex) {
+            Principal.usuarios = conexao.comunicadorServidor.recuperarListaUsuarios();
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
         DefaultListModel listModel = new DefaultListModel();

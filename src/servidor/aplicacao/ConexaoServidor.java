@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -29,7 +30,8 @@ public class ConexaoServidor extends Thread {
     public ConexaoServidor(int porta, Socket cliente) throws IOException{
         this.conexao = cliente;
         comunicador = new ComunicadorServidor();
-        Naming.rebind("ComunicadorServidor", comunicador);
+        LocateRegistry.createRegistry(8081);
+        Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicador);
     }
     
     public int getIdCliente(){ return this.idCliente; }
@@ -171,40 +173,5 @@ public class ConexaoServidor extends Thread {
     
     @Override
     public void run(){
-        int comando;
-        try {
-            if(autenticarUsuario() == 3){
-                setOnline(true);
-                enviarListaUsuarios(false);
-                enviarListaMensagens();
-                atualizarListaUsuarios();
-                while(!conexao.isClosed()){
-                    comando = getEntradaDado().readInt();
-                    switch(comando){
-                        case 0: // caso mensagem enviada
-                            enviarMensagem();
-                            break;
-                        case 1: // caso usuário alterado
-                            alterarUsuario();
-                            break;
-                        case 2: // caso encerrar conexão;
-                            fecharConexao();
-                            break;
-                        case 3: // caso criar grupo
-                            criarGrupo();
-                            break;
-                        case 4: // caso cliente requerendo uma id disponível para criar grupo
-                            receberIdGrupoDisponivel();
-                            break;
-                        default:
-                            fecharConexao();
-                            break;
-                    }
-                }
-            }
-        } catch (URISyntaxException | IOException | ClassNotFoundException | SQLException ex) {
-            ex.printStackTrace();
-            Principal.frmPrincipal.enviarLog("Exceção: " + ex.getMessage());
-        }
     }
 }

@@ -32,6 +32,7 @@ public class ConexaoCliente extends Thread {
     }
     
     public int getIdCliente(){ return idCliente; }
+    public void setIdCliente(int idCliente){ this.idCliente = idCliente; }
     public String getEndereco(){ return endereco; }
     public int getPorta(){ return porta; }
     public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
@@ -53,7 +54,7 @@ public class ConexaoCliente extends Thread {
     
     public void conectar() throws IOException, NotBoundException{
         conexao = new Socket(endereco, porta);
-        comunicadorServidor = (IComunicadorServidor) Naming.lookup("ComunicadorServidor"); 
+        comunicadorServidor = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor"); 
     }
     
     public void desconectar() throws IOException{
@@ -108,28 +109,5 @@ public class ConexaoCliente extends Thread {
     
     @Override
     public void run(){
-        try{
-            int comando;
-            while(!conexao.isClosed()){
-                comando = getEntradaDado().readInt();
-                switch(comando){
-                    case 0: // caso mensagem recebida
-                        receberMensagem();
-                        break;
-                    case 1: // caso atualização da lista de usuários
-                        Principal.frmPrincipal.carregarLista();
-                        Principal.frmPrincipal.atualizarConversas();
-                        break;
-                    case 2: // encerrar conexão
-                        conexao.close();
-                        break;
-                    default:
-                        desconectar();
-                        break;
-                }
-            }
-        } catch (ClassNotFoundException | IOException ex){
-            ex.printStackTrace();
-        }
     }
 }

@@ -101,12 +101,12 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
 
     @Override
-    public ArrayList recuperarListaUsuarios() throws RemoteException {
+    public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException {
         return Principal.usuarios; // retorna a lista de usuários
     }
 
     @Override
-    public ArrayList recuperarListaGrupos() throws RemoteException {
+    public ArrayList<Grupo> recuperarListaGrupos() throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -123,7 +123,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
 
     @Override
-    public ArrayList recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException {
+    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException {
         ArrayList<Mensagem> mensagens = null;
         try {
             mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino);
