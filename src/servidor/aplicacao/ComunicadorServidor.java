@@ -98,7 +98,7 @@ public class ComunicadorServidor implements IComunicadorServidor {
 
     @Override
     public ArrayList recuperarListaUsuarios() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Principal.usuarios; // retorna a lista de usuários
     }
 
     @Override
