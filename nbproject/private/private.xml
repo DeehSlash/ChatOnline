@@ -11,10 +11,12 @@
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/aplicacao/Principal.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/frames/FrameInicio.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/aplicacao/Foto.java</file>
+            <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/UsuarioAutenticacao.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/frames/FrameLogin.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/aplicacao/ConexaoCliente.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/cliente/frames/FrameCriarGrupo.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/modelo/Grupo.java</file>
+            <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/compartilhado/aplicacao/ComunicadorServidor.java</file>
             <file>file:/D:/Users/andre/Documents/GitHub/Mensageiro/src/servidor/aplicacao/GerenciadorBD.java</file>
         </group>
     </open-files>
