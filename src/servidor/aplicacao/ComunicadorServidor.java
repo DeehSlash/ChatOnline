@@ -107,8 +107,15 @@ public class ComunicadorServidor implements IComunicadorServidor {
     }
 
     @Override
-    public int enviarMensagem(Mensagem mensagem) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean enviarMensagem(Mensagem mensagem) throws RemoteException {
+        try {
+            Principal.gerenciador.enviarMensagem(mensagem);
+        } catch (SQLException | IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
+            return false;
+        }
+        // implementar recebimento de mensagem pelo destino
+        return true;
     }
 
     @Override
