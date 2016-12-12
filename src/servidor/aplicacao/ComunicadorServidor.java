@@ -16,7 +16,11 @@ import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
 
-    public ComunicadorServidor() throws RemoteException{}
+    int idConexao;
+        
+    public ComunicadorServidor(int id) throws RemoteException{
+        idConexao = id;
+    }
     
     @Override
     public int autenticarUsuario(UsuarioAutenticacao autenticacao) throws RemoteException {

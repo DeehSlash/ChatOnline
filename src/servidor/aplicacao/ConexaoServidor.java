@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 
 public class ConexaoServidor extends Thread {
     
+    private int id;
     private final Socket conexao;
     public IComunicadorCliente comunicador;
     private ComunicadorServidor comunicadorServidor;
@@ -30,9 +31,9 @@ public class ConexaoServidor extends Thread {
     private DataInputStream entradaDado;
     private DataOutputStream saidaDado;
     
-    public ConexaoServidor(int porta, Socket cliente) throws IOException, NotBoundException{
+    public ConexaoServidor(int id, int porta, Socket cliente) throws IOException, NotBoundException{
         this.conexao = cliente;
-        comunicadorServidor = new ComunicadorServidor();
+        comunicadorServidor = new ComunicadorServidor(id);
         LocateRegistry.createRegistry(8081);
         Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicadorServidor);
         comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); 

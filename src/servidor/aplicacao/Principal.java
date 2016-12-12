@@ -36,6 +36,7 @@ public class Principal {
     }
     
     public static void iniciarServidor(int porta) throws IOException, SQLException, NotBoundException{
+        int id = 0;
         conexoes = new ArrayList<>();
         servidor = new ServerSocket(porta);
         Principal.frmPrincipal.enviarLog("O servidor está sendo iniciado...");
@@ -49,8 +50,9 @@ public class Principal {
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
             Socket conexao = servidor.accept();
-            ConexaoServidor cs = new ConexaoServidor(porta, conexao);
+            ConexaoServidor cs = new ConexaoServidor(id, porta, conexao);
             conexoes.add(cs);
+            id++;
             Thread t = cs;
             t.start();
         }
