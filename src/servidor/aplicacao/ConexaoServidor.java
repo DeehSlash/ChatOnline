@@ -39,8 +39,9 @@ public class ConexaoServidor extends Thread {
         comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); 
     }
     
+    public int getIdConexao(){ return id; }
     public int getIdCliente(){ return this.idCliente; }
-    private void setIdCliente(int id) throws IOException{ this.idCliente = id; } 
+    public void setIdCliente(int id){ this.idCliente = id; } 
     public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
     
     private ObjectInputStream getEntradaObjeto() throws IOException{

@@ -36,7 +36,11 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
             if(u.getUsuario().equals(autenticacao.getUsuario())){
                 existe = true;
-                //setIdCliente(u.getId());
+                for (ConexaoServidor conexao : Principal.conexoes) {
+                    if(conexao.getIdConexao() == idConexao){
+                        conexao.setIdCliente(u.getId());
+                    }
+                }
                 if(u.isOnline())
                     return 1; // se já está online, então retorna 1
             }
