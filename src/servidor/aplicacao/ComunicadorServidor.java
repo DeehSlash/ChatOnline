@@ -91,6 +91,15 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
 
     @Override
+    public Usuario getUsuarioPorNome(String nome) throws RemoteException {
+        for (Usuario usuario : Principal.usuarios) {
+            if(usuario.getUsuario().equals(nome))
+                return usuario;
+        }
+        return null;
+    }
+    
+    @Override
     public int criarGrupo(Grupo grupo) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -132,5 +141,4 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         }
         return mensagens;
     }
-
 }

@@ -1,6 +1,7 @@
 package cliente.frames;
 
 import cliente.aplicacao.*;
+import compartilhado.modelo.Usuario;
 import compartilhado.modelo.UsuarioAutenticacao;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class FrameLogin extends javax.swing.JFrame {
         if(verificarCampos()){ // se os campos estiverem preenchidos, continua
             lblStatus.setText("Criando conexão...");
             conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
+            conexao.setCliente(new Usuario(-1, txtUsuario.getText(), null)); // cliente temporário
             try {
                 lblStatus.setText("Conectando ao servidor...");
                 conexao.conectar(); // conecta com o servidor
@@ -69,6 +71,7 @@ public class FrameLogin extends javax.swing.JFrame {
                         break;
                     case 3: // autenticação funcionou
                         if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
+                            conexao.setCliente(conexao.comunicadorServidor.getUsuarioPorNome(conexao.getCliente().getUsuario()));
                             Principal.frmPrincipal = new FramePrincipal(conexao);
                             Principal.frmPrincipal.setVisible(true);
                             dispose();

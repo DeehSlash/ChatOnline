@@ -11,8 +11,6 @@ import java.net.Socket;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ConexaoCliente extends Thread {
     
@@ -20,7 +18,7 @@ public class ConexaoCliente extends Thread {
     private int porta;
     private Socket conexao;
     public IComunicadorServidor comunicadorServidor; 
-    private int idCliente;
+    private Usuario cliente;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
     private DataInputStream entradaDado;
@@ -31,8 +29,8 @@ public class ConexaoCliente extends Thread {
         this.porta = porta;
     }
     
-    public int getIdCliente(){ return idCliente; }
-    public void setIdCliente(int idCliente){ this.idCliente = idCliente; }
+    public Usuario getCliente(){ return cliente; }
+    public void setCliente(Usuario cliente){ this.cliente = cliente; }
     public String getEndereco(){ return endereco; }
     public int getPorta(){ return porta; }
     public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
@@ -76,8 +74,8 @@ public class ConexaoCliente extends Thread {
         getSaidaDado().writeBoolean(cadastro); // envia para o servidor se é cadastro ou login
         getSaidaObjeto().writeObject(usuario); // envia o usuário de autenticação para o servidor
         int status = getEntradaDado().readInt(); // recebe do servidor o status da autenticação
-        if(status == 3)
-            idCliente = getEntradaDado().readInt(); // recupera o id do usuário
+        //if(status == 3)
+            //idCliente = getEntradaDado().readInt(); // recupera o id do usuário
         return status;
     }
     

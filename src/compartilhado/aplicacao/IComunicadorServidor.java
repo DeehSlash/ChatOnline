@@ -12,6 +12,7 @@ public interface IComunicadorServidor extends Remote{
     public int autenticarUsuario(UsuarioAutenticacao autenticacao) throws RemoteException;
     public int cadastrarUsuario(UsuarioAutenticacao autenticacao) throws RemoteException;
     public int alterarUsuario(Usuario usuario) throws RemoteException;
+    public Usuario getUsuarioPorNome(String nome) throws RemoteException;
     
     public int criarGrupo(Grupo grupo) throws RemoteException;
     public int alterarGrupo(Grupo grupo) throws RemoteException;

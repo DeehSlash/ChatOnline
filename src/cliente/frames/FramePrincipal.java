@@ -75,7 +75,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                             if(!conversas.get(i).isVisible()) // e não estiver visivel
                                  conversas.get(i).setVisible(true); // torna visivel
                         }else{ // se nunca foi aberta
-                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino.getId(), 'U')); // adiciona na lista
+                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), destino.getId(), 'U')); // adiciona na lista
                             conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
                         }
                     }
@@ -95,7 +95,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 foto = new ImageIcon(imagemRedimensionada);
             }
             for (Usuario usuario : Principal.usuarios) {
-                if(usuario.getId() == conexao.getIdCliente()){
+                if(usuario.getId() == conexao.getCliente().getId()){
                     try {
                         lblFoto.setIcon(foto);
                         usuario.setFoto(foto);
@@ -109,7 +109,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         
         itemTransmissao.addActionListener((ActionEvent e) -> {
             String msg = JOptionPane.showInputDialog(this, "Digite a mensagem que será transmitida:", "Enviar transmissão", JOptionPane.INFORMATION_MESSAGE);
-            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getIdCliente(), 0);
+            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getCliente().getId(), 0);
             Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'U', 'T', msg);
             try {
                 Transmissao.transmitir(Principal.usuarios, mensagem);
@@ -138,10 +138,10 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     private void inicializarConversas(){
         for (Usuario usuario : Principal.usuarios) {
-            if(usuario.getId() != conexao.getIdCliente()){
+            if(usuario.getId() != conexao.getCliente().getId()){
                 try {
-                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario.getId(), 'U');
-                    conversa.mensagens = conexao.comunicadorServidor.recuperarListaMensagens(conexao.getIdCliente(), usuario.getId());
+                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), usuario.getId(), 'U');
+                    conversa.mensagens = conexao.comunicadorServidor.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId());
                     conversa.carregarMensagens();
                     conversas.add(conversa);
                 } catch (IOException ex) {
@@ -181,7 +181,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                     conversas.get(i).setVisible(true);
                 conversas.get(i).escreverMensagem(mensagem, false);
             }else{
-                conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
+                conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1),
                         mensagem.getIdOrigem(), 'U'));
                 conversas.get(conversas.size() - 1).setVisible(true);
                 conversas.get(conversas.size() - 1).escreverMensagem(mensagem, false);
@@ -201,7 +201,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente() - 1);
+        Usuario usuario = Principal.usuarios.get(conexao.getCliente().getId() - 1);
         lblFoto.setIcon(usuario.getFoto());
         lblUsuario.setText(usuario.getUsuario());
         atualizarStatusConexao();
@@ -239,13 +239,13 @@ public class FramePrincipal extends javax.swing.JFrame {
         DefaultListModel listModel = new DefaultListModel();
         listModel.addElement("----------Online----------");
         for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
-            if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
+            if(usuario.getId() != conexao.getCliente().getId() && usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
         }
         listModel.addElement("----------Offline----------");
         for (Usuario usuario : Principal.usuarios) { // só então adiciona os usuários offline
-            if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
+            if(usuario.getId() != conexao.getCliente().getId() && !usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
         }

@@ -75,7 +75,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         layout.insets = new Insets(0, 5, 5, 0);
         layout.anchor = GridBagConstraints.NORTHWEST;
         for (Usuario usuario : Principal.usuarios) {
-            if(usuario.getId() != Principal.frmPrincipal.conexao.getIdCliente()){
+            if(usuario.getId() != Principal.frmPrincipal.conexao.getCliente().getId()){
                 JCheckBox checkBox = new JCheckBox();
                 checkBox.setSelected(false);
                 checkBox.setText(usuario.getUsuario());
