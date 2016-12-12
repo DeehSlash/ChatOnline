@@ -33,10 +33,12 @@ public class Conexao extends Thread {
     
     public Conexao(int id, int porta, Socket cliente) throws IOException, NotBoundException{
         this.conexao = cliente;
-        comunicadorServidor = new ComunicadorServidor(id);
-        LocateRegistry.createRegistry(8081);
-        Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicadorServidor);
-        comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); 
+        // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
+        comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
+        LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
+        Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
+        comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
     }
     
     public int getIdConexao(){ return id; }

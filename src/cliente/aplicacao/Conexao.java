@@ -53,11 +53,13 @@ public class Conexao extends Thread {
     }
     
     public void conectar() throws IOException, NotBoundException{
-        conexao = new Socket(endereco, porta);
-        comunicadorCliente = new ComunicadorCliente();
-        LocateRegistry.createRegistry(8082);
-        Naming.rebind("//127.0.0.1:8082/ComunicadorCliente", comunicadorCliente);
-        comunicador = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor"); 
+        conexao = new Socket(endereco, porta); // cria o socket
+        // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
+        comunicadorCliente = new ComunicadorCliente(); // cria um novo comunicador
+        LocateRegistry.createRegistry(8082); // inicia o registro RMI na porta 8082
+        Naming.rebind("//127.0.0.1:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
+        // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
+        comunicador = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor");  // procura o comunicador no servidor
     }
     
     public void desconectar() throws IOException{
