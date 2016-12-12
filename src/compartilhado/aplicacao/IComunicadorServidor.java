@@ -19,8 +19,8 @@ public interface IComunicadorServidor extends Remote{
     
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException;
     public ArrayList<Grupo> recuperarListaGrupos() throws RemoteException;
+    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException;
     
     public boolean enviarMensagem(Mensagem mensagem) throws RemoteException;
-    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException;
     
 }

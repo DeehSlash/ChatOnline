@@ -18,10 +18,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.rmi.RemoteException;
 import java.text.DateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 import javax.swing.text.Style;
@@ -121,13 +125,18 @@ public class FrameConversa extends javax.swing.JFrame {
                         mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'I', imagem); // cria a mensagem
                         break;
                 }
-                escreverMensagem(mensagem, false); // método para escrever mensagem na própria tela de quem mandou
+                try {
+                    Principal.frmPrincipal.conexao.comunicador.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
+                    escreverMensagem(mensagem, false); // método para escrever mensagem na própria tela de quem mandou
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(null, "Houve uma falha ao enviar a mensagem para o servidor, tente novamente", 
+                            "Falha no envio", JOptionPane.ERROR_MESSAGE);
+                }
                 txtMensagem.setText(""); // limpa o campo de mensagem
                 txtMensagem.setEnabled(true);
                 tipoMensagem = 'T';
                 lblTexto.setForeground(new Color(31, 167, 9));
                 lblImagem.setForeground(Color.black);
-                Principal.frmPrincipal.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
             } catch (BadLocationException ex) {
                 ex.printStackTrace();
             }

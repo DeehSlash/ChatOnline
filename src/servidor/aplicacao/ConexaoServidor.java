@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.modelo.*;
 import java.awt.Image;
 import java.io.BufferedReader;
@@ -11,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,7 +21,8 @@ import javax.swing.ImageIcon;
 public class ConexaoServidor extends Thread {
     
     private final Socket conexao;
-    private final ComunicadorServidor comunicador;
+    private final IComunicadorCliente comunicador;
+    private final ComunicadorServidor comunicadorServidor;
     private int idCliente;
     private BufferedReader entradaString;
     private ObjectInputStream entradaObjeto;
@@ -27,11 +30,12 @@ public class ConexaoServidor extends Thread {
     private DataInputStream entradaDado;
     private DataOutputStream saidaDado;
     
-    public ConexaoServidor(int porta, Socket cliente) throws IOException{
+    public ConexaoServidor(int porta, Socket cliente) throws IOException, NotBoundException{
         this.conexao = cliente;
-        comunicador = new ComunicadorServidor();
+        comunicadorServidor = new ComunicadorServidor();
         LocateRegistry.createRegistry(8081);
-        Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicador);
+        Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicadorServidor);
+        comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); 
     }
     
     public int getIdCliente(){ return this.idCliente; }
@@ -72,7 +76,7 @@ public class ConexaoServidor extends Thread {
     private void atualizarListaUsuarios() throws IOException{
         for (ConexaoServidor conexao : Principal.conexoes) {
             if(conexao.getIdCliente() != getIdCliente())
-                conexao.comunicador.recuperarListaUsuarios(); // envia a lista atualizada para o usuário
+                conexao.comunicadorServidor.recuperarListaUsuarios(); // envia a lista atualizada para o usuário
         }
     }
     

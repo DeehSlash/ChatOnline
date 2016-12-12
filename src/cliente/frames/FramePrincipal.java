@@ -141,7 +141,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(usuario.getId() != conexao.getCliente().getId()){
                 try {
                     FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), usuario.getId(), 'U');
-                    conversa.mensagens = conexao.comunicadorServidor.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId());
+                    conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId());
                     conversa.carregarMensagens();
                     conversas.add(conversa);
                 } catch (IOException ex) {
@@ -154,14 +154,6 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void fecharConversas(){
         for (FrameConversa conversa : conversas) {
             conversa.dispose();
-        }
-    }
-    
-    protected void enviarMensagem(Mensagem mensagem){
-        try {
-            conexao.enviarMensagem(mensagem);
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
     
@@ -232,7 +224,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     public void carregarLista(){ // carrega a lista de usuários
         try {
-            Principal.usuarios = conexao.comunicadorServidor.recuperarListaUsuarios();
+            Principal.usuarios = conexao.comunicador.recuperarListaUsuarios();
         } catch (IOException ex) {
             ex.printStackTrace();
         }

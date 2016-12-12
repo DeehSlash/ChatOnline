@@ -41,9 +41,9 @@ public class FrameLogin extends javax.swing.JFrame {
                 int status;
                 UsuarioAutenticacao autenticacao = new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword()));
                 if(cadastro)
-                    status = conexao.comunicadorServidor.cadastrarUsuario(autenticacao); // caso cadastro, cadastra no servidor através do comunicador
+                    status = conexao.comunicador.cadastrarUsuario(autenticacao); // caso cadastro, cadastra no servidor através do comunicador
                 else
-                    status = conexao.comunicadorServidor.autenticarUsuario(autenticacao); // caso autenticação, autentica no servidor através do comunicador
+                    status = conexao.comunicador.autenticarUsuario(autenticacao); // caso autenticação, autentica no servidor através do comunicador
                 switch(status){
                     case -1: // erro genérico
                         JOptionPane.showMessageDialog(null, "Um erro ocorreu, verifique e tente novamente", 
@@ -71,7 +71,7 @@ public class FrameLogin extends javax.swing.JFrame {
                         break;
                     case 3: // autenticação funcionou
                         if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
-                            conexao.setCliente(conexao.comunicadorServidor.getUsuarioPorNome(conexao.getCliente().getUsuario()));
+                            conexao.setCliente(conexao.comunicador.getUsuarioPorNome(conexao.getCliente().getUsuario()));
                             Principal.frmPrincipal = new FramePrincipal(conexao);
                             Principal.frmPrincipal.setVisible(true);
                             dispose();

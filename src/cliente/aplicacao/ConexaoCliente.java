@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 
 public class ConexaoCliente extends Thread {
@@ -17,7 +18,8 @@ public class ConexaoCliente extends Thread {
     private String endereco;
     private int porta;
     private Socket conexao;
-    public IComunicadorServidor comunicadorServidor; 
+    public IComunicadorServidor comunicador; 
+    public ComunicadorCliente comunicadorCliente;
     private Usuario cliente;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
@@ -52,7 +54,10 @@ public class ConexaoCliente extends Thread {
     
     public void conectar() throws IOException, NotBoundException{
         conexao = new Socket(endereco, porta);
-        comunicadorServidor = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor"); 
+        comunicadorCliente = new ComunicadorCliente();
+        LocateRegistry.createRegistry(8082);
+        Naming.rebind("//127.0.0.1:8082/ComunicadorCliente", comunicadorCliente);
+        comunicador = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor"); 
     }
     
     public void desconectar() throws IOException{
