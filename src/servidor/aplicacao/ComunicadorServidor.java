@@ -127,7 +127,10 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
             return false;
         }
-        // implementar recebimento de mensagem pelo destino
+        for (ConexaoServidor conexao : Principal.conexoes) {
+            if(conexao.getIdCliente() == mensagem.getIdDestino())
+                conexao.comunicador.receberMensagem(mensagem);
+        }
         return true;
     }
 

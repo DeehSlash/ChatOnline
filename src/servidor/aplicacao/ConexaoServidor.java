@@ -21,8 +21,8 @@ import javax.swing.ImageIcon;
 public class ConexaoServidor extends Thread {
     
     private final Socket conexao;
-    private final IComunicadorCliente comunicador;
-    private final ComunicadorServidor comunicadorServidor;
+    public IComunicadorCliente comunicador;
+    private ComunicadorServidor comunicadorServidor;
     private int idCliente;
     private BufferedReader entradaString;
     private ObjectInputStream entradaObjeto;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.UIManager;
 import servidor.frames.*;
 import compartilhado.modelo.*;
+import java.rmi.NotBoundException;
 import java.sql.SQLException;
 
 public class Principal {
@@ -34,7 +35,7 @@ public class Principal {
         frmInicio.setVisible(true);
     }
     
-    public static void iniciarServidor(int porta) throws IOException, SQLException{
+    public static void iniciarServidor(int porta) throws IOException, SQLException, NotBoundException{
         conexoes = new ArrayList<>();
         servidor = new ServerSocket(porta);
         Principal.frmPrincipal.enviarLog("O servidor está sendo iniciado...");

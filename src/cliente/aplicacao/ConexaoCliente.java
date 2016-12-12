@@ -19,7 +19,7 @@ public class ConexaoCliente extends Thread {
     private int porta;
     private Socket conexao;
     public IComunicadorServidor comunicador; 
-    public ComunicadorCliente comunicadorCliente;
+    private ComunicadorCliente comunicadorCliente;
     private Usuario cliente;
     private ObjectInputStream entradaObjeto;
     private ObjectOutputStream saidaObjeto;
