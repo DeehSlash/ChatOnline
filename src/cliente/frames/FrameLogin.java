@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
     
-    private ConexaoCliente conexao;
+    private Conexao conexao;
     
     public FrameLogin() {
         initComponents();
@@ -32,7 +32,7 @@ public class FrameLogin extends javax.swing.JFrame {
     private void autenticarUsuario(boolean cadastro){
         if(verificarCampos()){ // se os campos estiverem preenchidos, continua
             lblStatus.setText("Criando conexão...");
-            conexao = new ConexaoCliente(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
+            conexao = new Conexao(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
             conexao.setCliente(new Usuario(-1, txtUsuario.getText(), null)); // cliente temporário
             try {
                 lblStatus.setText("Conectando ao servidor...");

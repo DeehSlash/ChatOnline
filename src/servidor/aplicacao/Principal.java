@@ -22,7 +22,7 @@ public class Principal {
     
     public static ArrayList<Usuario> usuarios;
     public static ArrayList<Grupo> grupos;
-    public static ArrayList<ConexaoServidor> conexoes;
+    public static ArrayList<Conexao> conexoes;
     
     public static void main(String[] args) {
         try {
@@ -50,7 +50,7 @@ public class Principal {
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
             Socket conexao = servidor.accept();
-            ConexaoServidor cs = new ConexaoServidor(id, porta, conexao);
+            Conexao cs = new Conexao(id, porta, conexao);
             conexoes.add(cs);
             id++;
             Thread t = cs;
@@ -61,7 +61,7 @@ public class Principal {
     public static void pararServidor() throws IOException{
         executando = false;
         servidor.close();
-        for (ConexaoServidor conexao : conexoes) {
+        for (Conexao conexao : conexoes) {
             conexao.fecharConexao();
         }
     }

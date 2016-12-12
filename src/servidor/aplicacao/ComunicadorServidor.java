@@ -36,7 +36,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
             if(u.getUsuario().equals(autenticacao.getUsuario())){
                 existe = true;
-                for (ConexaoServidor conexao : Principal.conexoes) {
+                for (Conexao conexao : Principal.conexoes) {
                     if(conexao.getIdConexao() == idConexao){
                         conexao.setIdCliente(u.getId());
                     }
@@ -135,7 +135,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
             return false;
         }
-        for (ConexaoServidor conexao : Principal.conexoes) {
+        for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdCliente() == mensagem.getIdDestino())
                 conexao.comunicador.receberMensagem(mensagem);
         }

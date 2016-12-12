@@ -1,6 +1,6 @@
 package cliente.frames;
 
-import cliente.aplicacao.ConexaoCliente;
+import cliente.aplicacao.Conexao;
 import cliente.aplicacao.Principal;
 import cliente.aplicacao.Transmissao;
 import compartilhado.aplicacao.MensagemBuilder;
@@ -25,10 +25,10 @@ import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    public final ConexaoCliente conexao;
+    public final Conexao conexao;
     public ArrayList<FrameConversa> conversas;
     
-    public FramePrincipal(ConexaoCliente conexao) {
+    public FramePrincipal(Conexao conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;

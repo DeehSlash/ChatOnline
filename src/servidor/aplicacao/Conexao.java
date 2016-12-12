@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
-public class ConexaoServidor extends Thread {
+public class Conexao extends Thread {
     
     private int id;
     private final Socket conexao;
@@ -31,7 +31,7 @@ public class ConexaoServidor extends Thread {
     private DataInputStream entradaDado;
     private DataOutputStream saidaDado;
     
-    public ConexaoServidor(int id, int porta, Socket cliente) throws IOException, NotBoundException{
+    public Conexao(int id, int porta, Socket cliente) throws IOException, NotBoundException{
         this.conexao = cliente;
         comunicadorServidor = new ComunicadorServidor(id);
         LocateRegistry.createRegistry(8081);
@@ -63,7 +63,7 @@ public class ConexaoServidor extends Thread {
         Principal.frmPrincipal.enviarLog("Usuário " + Principal.usuarios.get(idCliente - 1).getUsuario() + " (" + idCliente + ") se desconectou");
         Principal.frmPrincipal.alterarUsuarios(false);
         int i = 0;
-        for (ConexaoServidor conexao : Principal.conexoes) {
+        for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdCliente() == getIdCliente())
                 break;
             i++;
@@ -76,7 +76,7 @@ public class ConexaoServidor extends Thread {
     }
     
     private void atualizarListaUsuarios() throws IOException{
-        for (ConexaoServidor conexao : Principal.conexoes) {
+        for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdCliente() != getIdCliente())
                 conexao.comunicadorServidor.recuperarListaUsuarios(); // envia a lista atualizada para o usuário
         }

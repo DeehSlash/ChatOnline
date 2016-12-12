@@ -13,7 +13,7 @@ import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 
-public class ConexaoCliente extends Thread {
+public class Conexao extends Thread {
     
     private String endereco;
     private int porta;
@@ -26,7 +26,7 @@ public class ConexaoCliente extends Thread {
     private DataInputStream entradaDado;
     private DataOutputStream saidaDado;
 
-    public ConexaoCliente(String endereco, int porta){
+    public Conexao(String endereco, int porta){
         this.endereco = endereco;
         this.porta = porta;
     }
