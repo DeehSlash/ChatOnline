@@ -61,7 +61,7 @@ public class Conexao extends Thread {
         //LocateRegistry.createRegistry(8082); // inicia o registro RMI na porta 8082
         //Naming.rebind("//localhost:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        Registry r = LocateRegistry.getRegistry(endereco, 8081);
+        Registry r = LocateRegistry.getRegistry(endereco, porta + 1);
         comunicador = (IComunicadorServidor) r.lookup("ComunicadorServidor");  // procura o comunicador no servidor
     }
     

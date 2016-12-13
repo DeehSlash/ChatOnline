@@ -37,7 +37,7 @@ public class Principal {
         frmInicio.setVisible(true);
     }
     
-    public static void iniciarServidor(int porta) throws IOException, SQLException, NotBoundException{
+    public static void iniciarServidor(String endereco, int porta) throws IOException, SQLException, NotBoundException{
         int id = 0;
         conexoes = new ArrayList<>();
         servidor = new ServerSocket(porta);
@@ -48,13 +48,13 @@ public class Principal {
         frmPrincipal.enviarLog("Lista de usuários recuperada");
         grupos = gerenciador.getListaGrupos();
         frmPrincipal.enviarLog("Lista de grupos recuperada");
-        LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
+        LocateRegistry.createRegistry(porta + 1); // inicia o registro RMI na porta informada + 1
         frmPrincipal.enviarLog("Registro RMI iniciado na porta 8081");
         executando = true;
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
             Socket socket = servidor.accept();
-            Conexao conexao = new Conexao(id, porta, socket);
+            Conexao conexao = new Conexao(id, endereco, porta, socket);
             Principal.conexoes.add(conexao);
             conexao.conectar();
             id++;

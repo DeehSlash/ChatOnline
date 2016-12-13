@@ -20,15 +20,15 @@ public class FramePrincipal extends javax.swing.JFrame {
 
     private void addListeners(){
         btnIniciar.addActionListener((ActionEvent e) -> { // Evento de clique no botão iniciar
-            if(txtPorta.getText().isEmpty()) // mostra uma mensagem de erro caso o campo porta esteja vazio
-                JOptionPane.showMessageDialog(this, "O campo porta não pode estar vazio!", "Erro", JOptionPane.ERROR_MESSAGE);
+            if(txtEndereco.getText().isEmpty() || txtPorta.getText().isEmpty()) // mostra uma mensagem de erro caso algum campo esteja vazio
+                JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos!", "Erro", JOptionPane.ERROR_MESSAGE);
             else{
                 txtLog.setText(null);
                 lblStatus.setText("Iniciando...");
                 lblStatus.setForeground(Color.yellow);
                 new Thread(() -> {
                     try{
-                        Principal.iniciarServidor(Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
+                        Principal.iniciarServidor(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
                         Principal.pararServidor();
                         lblStatus.setText("Parado");
                         lblStatus.setForeground(Color.red);
@@ -82,11 +82,13 @@ public class FramePrincipal extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         pnlConexao = new javax.swing.JPanel();
-        lblEndereco = new javax.swing.JLabel();
+        lblPorta = new javax.swing.JLabel();
         txtPorta = new javax.swing.JTextField();
         btnIniciar = new javax.swing.JButton();
         btnParar = new javax.swing.JButton();
         lblStatus = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        txtEndereco = new javax.swing.JTextField();
         pnlInfo = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtLog = new javax.swing.JTextArea();
@@ -109,20 +111,18 @@ public class FramePrincipal extends javax.swing.JFrame {
         pnlConexaoLayout.columnWeights = new double[] {1.0};
         pnlConexao.setLayout(pnlConexaoLayout);
 
-        lblEndereco.setText("Porta");
+        lblPorta.setText(":");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 20, 5, 5);
-        pnlConexao.add(lblEndereco, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 5);
+        pnlConexao.add(lblPorta, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 50;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 20);
         pnlConexao.add(txtPorta, gridBagConstraints);
 
@@ -130,7 +130,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 20, 90);
         pnlConexao.add(btnIniciar, gridBagConstraints);
@@ -138,8 +138,9 @@ public class FramePrincipal extends javax.swing.JFrame {
         btnParar.setText("Parar");
         btnParar.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 20, 20);
         pnlConexao.add(btnParar, gridBagConstraints);
@@ -153,6 +154,23 @@ public class FramePrincipal extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 20, 20, 5);
         pnlConexao.add(lblStatus, gridBagConstraints);
+
+        jLabel1.setText("Endereço");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 5, 5);
+        pnlConexao.add(jLabel1, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 200;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 5);
+        pnlConexao.add(txtEndereco, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -218,13 +236,15 @@ public class FramePrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIniciar;
     private javax.swing.JButton btnParar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblEndereco;
+    private javax.swing.JLabel lblPorta;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblUsuarios;
     private javax.swing.JLabel lblUsuariosConectados;
     private javax.swing.JPanel pnlConexao;
     private javax.swing.JPanel pnlInfo;
+    private javax.swing.JTextField txtEndereco;
     private javax.swing.JTextArea txtLog;
     private javax.swing.JTextField txtPorta;
     // End of variables declaration//GEN-END:variables

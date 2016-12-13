@@ -25,6 +25,8 @@ import javax.swing.ImageIcon;
 public class Conexao extends Thread {
     
     private int id;
+    private String endereco;
+    private int porta;
     private final Socket conexao;
     public IComunicadorCliente comunicador;
     private ComunicadorServidor comunicadorServidor;
@@ -35,9 +37,11 @@ public class Conexao extends Thread {
     private DataInputStream entradaDado;
     private DataOutputStream saidaDado;
     
-    public Conexao(int id, int porta, Socket cliente) throws IOException, NotBoundException{
-        this.conexao = cliente;
+    public Conexao(int id, String endereco, int porta, Socket cliente) throws IOException, NotBoundException{
         this.id = id;
+        this.endereco = endereco;
+        this.porta = porta;
+        this.conexao = cliente;
     }
     
     public int getIdConexao(){ return id; }
@@ -62,9 +66,9 @@ public class Conexao extends Thread {
     
     public void conectar() throws RemoteException, MalformedURLException, NotBoundException{
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        System.setProperty("java.rmi.server.hostname", "localhost");
+        System.setProperty("java.rmi.server.hostname", endereco);
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
-        Naming.rebind("//localhost:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        Naming.rebind("//localhost:" + (porta + 1) + "/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
         //String endereco = conexao.getRemoteSocketAddress().toString().substring(1, conexao.getRemoteSocketAddress().toString().indexOf(":"));
         //System.out.println("endereco cliente: " + endereco + ":8082");
