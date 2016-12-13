@@ -80,11 +80,12 @@ public class Conexao extends Thread {
         Principal.frmPrincipal.alterarUsuarios(false);
         int i = 0;
         for (Conexao conexao : Principal.conexoes) {
-            if(conexao.getIdCliente() == getIdCliente())
+            if(conexao.getIdCliente() == getIdCliente()){
+                Principal.conexoes.remove(i);
                 break;
+            }
             i++;
         }
-        Principal.conexoes.remove(i);
         setOnline(false);
         atualizarListaUsuarios();
         conexao.close();

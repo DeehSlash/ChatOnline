@@ -41,6 +41,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 lblStatus.setForeground(new Color(31, 167, 9));
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);
+                txtEndereco.setEnabled(false);
                 txtPorta.setEnabled(false);
             }
         });
