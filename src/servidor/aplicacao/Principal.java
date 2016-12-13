@@ -49,11 +49,12 @@ public class Principal {
         executando = true;
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){
-            Socket conexao = servidor.accept();
-            Conexao cs = new Conexao(id, porta, conexao);
-            conexoes.add(cs);
+            Socket socket = servidor.accept();
+            Conexao conexao = new Conexao(id, porta, socket);
+            Principal.conexoes.add(conexao);
+            conexao.conectar();
             id++;
-            Thread t = cs;
+            Thread t = conexao;
             t.start();
         }
     }

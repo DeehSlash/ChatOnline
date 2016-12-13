@@ -9,10 +9,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,12 +35,7 @@ public class Conexao extends Thread {
     
     public Conexao(int id, int porta, Socket cliente) throws IOException, NotBoundException{
         this.conexao = cliente;
-        // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
-        LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
-        Naming.rebind("//:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
-        // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
-        comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
+        this.id = id;
     }
     
     public int getIdConexao(){ return id; }
@@ -59,6 +56,15 @@ public class Conexao extends Thread {
     
     private DataOutputStream getSaidaDado() throws IOException{
         return saidaDado = new DataOutputStream(conexao.getOutputStream());
+    }
+    
+    public void conectar() throws RemoteException, MalformedURLException, NotBoundException{
+        // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
+        comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
+        LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
+        Naming.rebind("//:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
+        comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
     }
     
     public void desconectar() throws IOException{

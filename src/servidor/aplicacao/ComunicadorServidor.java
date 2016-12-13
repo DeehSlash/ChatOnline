@@ -12,13 +12,11 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
 
-    int idConexao;
+    private int idConexao;
         
     public ComunicadorServidor(int id) throws RemoteException{
         idConexao = id;
@@ -34,15 +32,11 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             3 - Autenticou
         */
         boolean existe = false; // controle se usuário já existe
-        int status = -1; // controle de status da autenticação
+        int status = -1, id = 0; // controle de status da autenticação
         for (Usuario u : Principal.usuarios) { // verifica se o usuário já existe na lista de usuários
             if(u.getUsuario().equals(autenticacao.getUsuario())){
                 existe = true;
-                for (Conexao conexao : Principal.conexoes) {
-                    if(conexao.getIdConexao() == idConexao){
-                        conexao.setIdCliente(u.getId());
-                    }
-                }
+                id = u.getId();
                 if(u.isOnline())
                     return 1; // se já está online, então retorna 1
             }
@@ -58,7 +52,9 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         if(status == 2){
             return status; // se a senha está incorreta, retorna
         }
-        Principal.frmPrincipal.enviarLog("Usuário " + autenticacao.getUsuario() + " se conectou"); // envia log de autenticação
+        Principal.frmPrincipal.enviarLog("Usuário " + autenticacao.getUsuario() + " (" + id + ") se conectou"); // envia log de autenticação
+        Principal.conexoes.get(idConexao).setIdCliente(id);
+        Principal.usuarios.get(id - 1).setOnline(true);
         Principal.frmPrincipal.alterarUsuarios(true); // incrementa número de usuários online
         return status; // retorna status de autenticação
     }
