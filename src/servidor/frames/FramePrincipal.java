@@ -3,6 +3,7 @@ package servidor.frames;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import servidor.aplicacao.Principal;
@@ -31,7 +32,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                         Principal.pararServidor();
                         lblStatus.setText("Parado");
                         lblStatus.setForeground(Color.red);
-                    }catch (IOException | SQLException ex){
+                    }catch (IOException | SQLException | NotBoundException ex){
                         ex.printStackTrace();
                         enviarLog("Exceção: " + ex.getMessage());
                     }

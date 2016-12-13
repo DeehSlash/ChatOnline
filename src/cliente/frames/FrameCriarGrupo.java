@@ -45,7 +45,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 return;
             }
             Principal.grupos.add(grupo);
-            Principal.frmPrincipal.carregarLista();
+            Principal.frmPrincipal.carregarLista(true);
             dispose();
         });
         

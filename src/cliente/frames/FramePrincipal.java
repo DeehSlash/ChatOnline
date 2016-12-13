@@ -33,7 +33,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         addListeners();
         this.conexao = conexao;
         conversas = new ArrayList<>();
-        carregarLista();
+        carregarLista(false);
         carregarInfoUsuario();
         inicializarConversas();
         Thread t = conexao;
@@ -222,11 +222,13 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
-    public void carregarLista(){ // carrega a lista de usuários
-        try {
-            Principal.usuarios = conexao.comunicador.recuperarListaUsuarios();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    public void carregarLista(boolean atualizacao){ // carrega a lista de usuários
+        if(!atualizacao){
+            try {
+                Principal.usuarios = conexao.comunicador.recuperarListaUsuarios();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
         DefaultListModel listModel = new DefaultListModel();
         listModel.addElement("----------Online----------");
