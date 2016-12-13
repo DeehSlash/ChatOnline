@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import javax.swing.UIManager;
 import servidor.frames.*;
 import compartilhado.modelo.*;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
 import java.sql.SQLException;
 
 public class Principal {
@@ -46,6 +48,8 @@ public class Principal {
         frmPrincipal.enviarLog("Lista de usuários recuperada");
         grupos = gerenciador.getListaGrupos();
         frmPrincipal.enviarLog("Lista de grupos recuperada");
+        LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
+        frmPrincipal.enviarLog("Registro RMI iniciado na porta 8081");
         executando = true;
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         while(executando){

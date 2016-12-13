@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 
 public class Conexao extends Thread {
@@ -56,11 +57,12 @@ public class Conexao extends Thread {
     public void conectar() throws IOException, NotBoundException{
         conexao = new Socket(endereco, porta); // cria o socket
         // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
-        comunicadorCliente = new ComunicadorCliente(); // cria um novo comunicador
-        LocateRegistry.createRegistry(8082); // inicia o registro RMI na porta 8082
-        Naming.rebind("//localhost:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
+        //comunicadorCliente = new ComunicadorCliente(); // cria um novo comunicador
+        //LocateRegistry.createRegistry(8082); // inicia o registro RMI na porta 8082
+        //Naming.rebind("//localhost:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        comunicador = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor");  // procura o comunicador no servidor
+        Registry r = LocateRegistry.getRegistry(endereco, 8081);
+        comunicador = (IComunicadorServidor) r.lookup("ComunicadorServidor");  // procura o comunicador no servidor
     }
     
     public void alterarUsuario(Usuario usuario) throws IOException{

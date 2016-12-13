@@ -62,12 +62,13 @@ public class Conexao extends Thread {
     
     public void conectar() throws RemoteException, MalformedURLException, NotBoundException{
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        System.setProperty("java.rmi.server.hostname", "mensageiro.servebeer.com");
+        System.setProperty("java.rmi.server.hostname", "localhost");
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
-        LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
         Naming.rebind("//localhost:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
-        comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
+        //String endereco = conexao.getRemoteSocketAddress().toString().substring(1, conexao.getRemoteSocketAddress().toString().indexOf(":"));
+        //System.out.println("endereco cliente: " + endereco + ":8082");
+        //comunicador = (IComunicadorCliente) Naming.lookup("//" + endereco + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
     }
     
     public void desconectar() throws IOException{
