@@ -66,39 +66,9 @@ public class Conexao extends Thread {
         getSaidaDado().writeInt(2); // envia pedido para desconectar
     }
     
-    public void atualizarListaUsuarios() throws IOException, ClassNotFoundException{
-        Principal.usuarios = (ArrayList<Usuario>) getEntradaObjeto().readObject();
-    }
-    
-    public ArrayList receberListaMensagens(int idOrigem, int idDestino) throws IOException, ClassNotFoundException{
-        getSaidaDado().writeInt(idOrigem);
-        getSaidaDado().writeInt(idDestino);
-        ArrayList<Mensagem> mensagens = (ArrayList<Mensagem>) getEntradaObjeto().readObject();
-        return mensagens;
-    }
-    
-    public int autenticarUsuario(UsuarioAutenticacao usuario, boolean cadastro) throws IOException{ // serve tanto para cadastro quanto para autenticação
-        getSaidaDado().writeBoolean(cadastro); // envia para o servidor se é cadastro ou login
-        getSaidaObjeto().writeObject(usuario); // envia o usuário de autenticação para o servidor
-        int status = getEntradaDado().readInt(); // recebe do servidor o status da autenticação
-        //if(status == 3)
-            //idCliente = getEntradaDado().readInt(); // recupera o id do usuário
-        return status;
-    }
-    
     public void alterarUsuario(Usuario usuario) throws IOException{
         getSaidaDado().writeInt(1);
         getSaidaObjeto().writeObject(usuario);
-    }
-    
-    private void receberMensagem() throws IOException, ClassNotFoundException{
-        Mensagem mensagem = (Mensagem) getEntradaObjeto().readObject();
-        Principal.frmPrincipal.receberMensagem(mensagem);
-    }
-    
-    public void enviarMensagem(Mensagem mensagem) throws IOException{
-        getSaidaDado().writeInt(0); // envia para o servidor comando 0 (enviar mensagem)
-        getSaidaObjeto().writeObject(mensagem); // envia para o servidor a mensagem
     }
 
     public void criarGrupo(Grupo grupo) throws IOException{

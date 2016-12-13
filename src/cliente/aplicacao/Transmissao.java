@@ -20,7 +20,7 @@ public class Transmissao {
                         conversa.escreverMensagem(mensagem, false);
                     }
                 }
-                Principal.frmPrincipal.conexao.enviarMensagem(mensagem); 
+                Principal.frmPrincipal.conexao.comunicador.enviarMensagem(mensagem); 
             }
         }
     }
