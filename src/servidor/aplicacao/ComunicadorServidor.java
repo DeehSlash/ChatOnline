@@ -12,6 +12,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
@@ -151,5 +153,16 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             Principal.frmPrincipal.enviarLog("Exceção ao recuperar lista de mensagens com origem " + idOrigem + " e destino " + idDestino + ": " + ex.getMessage());
         }
         return mensagens;
+    }
+
+    @Override
+    public boolean desconectar() throws RemoteException {
+        try {
+            Principal.conexoes.get(idConexao).desconectar();
+        } catch (IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao desconectar cliente " + Principal.conexoes.get(idConexao).getIdCliente() + ": " + ex.getMessage());
+            return false;
+        }
+        return true;
     }
 }

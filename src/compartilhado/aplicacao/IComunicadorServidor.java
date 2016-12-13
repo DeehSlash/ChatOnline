@@ -23,4 +23,6 @@ public interface IComunicadorServidor extends Remote{
     
     public boolean enviarMensagem(Mensagem mensagem) throws RemoteException;
     
+    public boolean desconectar() throws RemoteException;
+    
 }

@@ -57,13 +57,9 @@ public class Conexao extends Thread {
         // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
         comunicadorCliente = new ComunicadorCliente(); // cria um novo comunicador
         LocateRegistry.createRegistry(8082); // inicia o registro RMI na porta 8082
-        Naming.rebind("//127.0.0.1:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
+        Naming.rebind("//:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
         comunicador = (IComunicadorServidor) Naming.lookup("//" + endereco + ":8081/ComunicadorServidor");  // procura o comunicador no servidor
-    }
-    
-    public void desconectar() throws IOException{
-        getSaidaDado().writeInt(2); // envia pedido para desconectar
     }
     
     public void alterarUsuario(Usuario usuario) throws IOException{

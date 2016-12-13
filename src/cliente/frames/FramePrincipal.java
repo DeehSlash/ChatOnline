@@ -46,7 +46,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e){ // caso a janela tenha sido fechada, encerra a conexão com o servidor
                 try {
-                    conexao.desconectar();
+                    conexao.comunicador.desconectar();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -128,7 +128,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
-                conexao.desconectar();
+                conexao.comunicador.desconectar();
                 dispose();
             } catch (IOException ex) {
                 ex.printStackTrace();

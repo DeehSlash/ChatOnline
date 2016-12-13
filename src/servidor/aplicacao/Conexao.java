@@ -36,7 +36,7 @@ public class Conexao extends Thread {
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
         LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
-        Naming.rebind("//127.0.0.1:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        Naming.rebind("//:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
         comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
     }
@@ -61,7 +61,7 @@ public class Conexao extends Thread {
         return saidaDado = new DataOutputStream(conexao.getOutputStream());
     }
     
-    public void fecharConexao() throws IOException{
+    public void desconectar() throws IOException{
         Principal.frmPrincipal.enviarLog("Usuário " + Principal.usuarios.get(idCliente - 1).getUsuario() + " (" + idCliente + ") se desconectou");
         Principal.frmPrincipal.alterarUsuarios(false);
         int i = 0;
@@ -73,14 +73,13 @@ public class Conexao extends Thread {
         Principal.conexoes.remove(i);
         setOnline(false);
         atualizarListaUsuarios();
-        getSaidaDado().writeInt(2);
         conexao.close();
     }
     
     private void atualizarListaUsuarios() throws IOException{
         for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdCliente() != getIdCliente())
-                conexao.comunicadorServidor.recuperarListaUsuarios(); // envia a lista atualizada para o usuário
+                conexao.comunicador.atualizarListaUsuarios(Principal.usuarios); // envia a lista atualizada para o usuário
         }
     }
     

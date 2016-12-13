@@ -62,7 +62,7 @@ public class Principal {
         executando = false;
         servidor.close();
         for (Conexao conexao : conexoes) {
-            conexao.fecharConexao();
+            conexao.desconectar();
         }
     }
 }
