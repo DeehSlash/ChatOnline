@@ -9,9 +9,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -60,9 +62,10 @@ public class Conexao extends Thread {
     
     public void conectar() throws RemoteException, MalformedURLException, NotBoundException{
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
+        System.setProperty("java.rmi.server.hostname", "mensageiro.servebeer.com");
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
         LocateRegistry.createRegistry(8081); // inicia o registro RMI na porta 8081
-        Naming.rebind("//:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        Naming.rebind("//localhost:8081/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
         // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
         comunicador = (IComunicadorCliente) Naming.lookup("//" + conexao.getInetAddress().getHostAddress() + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
     }
