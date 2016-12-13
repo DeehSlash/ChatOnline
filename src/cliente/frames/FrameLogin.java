@@ -59,14 +59,14 @@ public class FrameLogin extends javax.swing.JFrame {
                         break;
                     case 1: // usuário já está online (autenticação)
                         if(!cadastro)
-                            JOptionPane.showMessageDialog(null, "A senha está incorreta, verifique e tente novamente", 
+                            JOptionPane.showMessageDialog(null, "Este usuário já está conectado, verifique e tente novamente", 
                                     "Falha na autenticação", JOptionPane.ERROR_MESSAGE);
                         else
                             JOptionPane.showMessageDialog(null, "O cadastro foi efetuado, agora você pode entrar", 
                                     "Cadastro efetuado", JOptionPane.INFORMATION_MESSAGE);
                         break;
                     case 2: // senha incorreta
-                        JOptionPane.showMessageDialog(null, "Já existe uma pessoa cadastrada com esse nome de usuário, escolha outro nome", 
+                        JOptionPane.showMessageDialog(null, "A senha está incorreta, verifique e tente novamente", 
                                 "Falha no cadastro", JOptionPane.ERROR_MESSAGE);
                         break;
                     case 3: // autenticação funcionou
