@@ -2,6 +2,7 @@ package servidor.aplicacao;
 
 // IMPORTAÇÕES DO PROJETO
 import compartilhado.aplicacao.IComunicadorCliente;
+import java.io.DataOutputStream;
 // IMPORTAÇÕES JAVA
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,6 +27,7 @@ public class Conexao extends Thread {
     }
     
     public int getIdConexao(){ return id; }
+    public void setIdConexao(int id){ this.id = id; }
     public int getIdCliente(){ return this.idCliente; }
     public void setIdCliente(int id){ this.idCliente = id; } 
     public boolean getStatus(){ return !cliente.isClosed() && cliente.isConnected(); }
@@ -34,23 +36,34 @@ public class Conexao extends Thread {
     public void conectar() throws RemoteException, MalformedURLException, NotBoundException{
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
-        Naming.rebind("//localhost:" + (Principal.porta + 1) + "/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        Naming.rebind("rmi://localhost:" + (Principal.portaRMI) + "/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
+        try {
+            DataOutputStream saida = new DataOutputStream(cliente.getOutputStream());
+            saida.writeBoolean(true);
+        } catch (IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção no OutputStream para cliente " + idCliente + ": " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
     
     public void desconectar() throws IOException{
         Principal.frmPrincipal.enviarLog("Usuário " + Principal.usuarios.get(idCliente - 1).getUsuario() + " (" + idCliente + ") se desconectou");
         Principal.frmPrincipal.alterarUsuarios(false); // decrementa a qtd de usuários online
-        int i = 0;
-        for (Conexao conexao : Principal.conexoes) {
-            if(conexao.getIdCliente() == getIdCliente()){
-                Principal.conexoes.remove(i); // remove esta conexão
-                break;
-            }
-            i++;
-        }
+        removerConexao();
         setOnline(false); // define o usuário como offline
         atualizarListaUsuarios(); // atualiza a lista de usuários
         cliente.close(); // fecha a conexão
+    }
+    
+    public void removerConexao(){
+        int i = 0;
+        Principal.conexoes.remove(id);
+        for (Conexao conexao : Principal.conexoes) {
+            conexao.setIdConexao(i);
+            conexao.comunicadorServidor.idConexao = i;
+            i++;
+        }
+        Principal.id = i;
     }
     
     public void atualizarListaUsuarios() throws RemoteException{

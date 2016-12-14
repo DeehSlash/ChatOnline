@@ -4,6 +4,7 @@ package cliente.aplicacao;
 import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.aplicacao.IComunicadorServidor;
 import compartilhado.modelo.*;
+import java.io.DataInputStream;
 // IMPORTAÇÕES JAVA
 import java.io.IOException;
 import java.net.Socket;
@@ -17,6 +18,7 @@ public class Conexao extends Thread {
     
     private String endereco;
     private int porta;
+    private int portaRMI;
     
     private Socket conexao;
     public IComunicadorServidor comunicador; 
@@ -27,6 +29,7 @@ public class Conexao extends Thread {
     public Conexao(String endereco, int porta){
         this.endereco = endereco;
         this.porta = porta;
+        portaRMI = porta + 1;
     }
     
     public Usuario getCliente(){ return cliente; }
@@ -35,11 +38,13 @@ public class Conexao extends Thread {
     public int getPorta(){ return porta; }
     public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
     
-    public void conectar() throws IOException, NotBoundException{
+    public void conectar() throws IOException, RemoteException, NotBoundException{
         conexao = new Socket(endereco, porta); // cria o socket
         comunicadorCliente = new ComunicadorCliente();
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        Registry r = LocateRegistry.getRegistry(endereco, (porta + 1));
+        DataInputStream entrada = new DataInputStream(conexao.getInputStream());
+        entrada.readBoolean();
+        Registry r = LocateRegistry.getRegistry(endereco, (portaRMI));
         comunicador = (IComunicadorServidor) r.lookup("ComunicadorServidor");  // procura o comunicador no servidor
     }
     

@@ -15,12 +15,14 @@ import java.sql.SQLException;
 public class Principal {
 
     private static boolean executando;
+    public static int id;
     
     public static FrameInicio frmInicio;
     public static FramePrincipal frmPrincipal;
     
     public static String endereco;
     public static int porta;
+    public static int portaRMI;
     
     private static ServerSocket servidor;
     public static GerenciadorBD gerenciador;
@@ -43,8 +45,9 @@ public class Principal {
     public static void iniciarServidor(String e, int p) throws IOException, SQLException, NotBoundException{
         endereco = e;
         porta = p;
+        portaRMI = porta + 1;
         
-        int id = 0; // id vinculado a conexão
+        id = 0; // id vinculado a conexão
         
         conexoes = new ArrayList<>();
         servidor = new ServerSocket(porta);
@@ -61,8 +64,8 @@ public class Principal {
         frmPrincipal.enviarLog("Lista de grupos recuperada");
         
         System.setProperty("java.rmi.server.hostname", endereco);
-        LocateRegistry.createRegistry(porta + 1); // inicia o registro RMI na porta informada + 1
-        frmPrincipal.enviarLog("Registro RMI iniciado na porta 8081");
+        LocateRegistry.createRegistry(portaRMI); // inicia o registro RMI na porta informada + 1
+        frmPrincipal.enviarLog("Registro RMI iniciado na porta " + portaRMI);
         
         executando = true;
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
