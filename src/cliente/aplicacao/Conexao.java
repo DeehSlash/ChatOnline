@@ -39,7 +39,7 @@ public class Conexao extends Thread {
         conexao = new Socket(endereco, porta); // cria o socket
         comunicadorCliente = new ComunicadorCliente();
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        Registry r = LocateRegistry.getRegistry(endereco, porta + 1);
+        Registry r = LocateRegistry.getRegistry(endereco, (porta + 1));
         comunicador = (IComunicadorServidor) r.lookup("ComunicadorServidor");  // procura o comunicador no servidor
     }
     

@@ -60,6 +60,7 @@ public class Principal {
         grupos = gerenciador.getListaGrupos();
         frmPrincipal.enviarLog("Lista de grupos recuperada");
         
+        System.setProperty("java.rmi.server.hostname", endereco);
         LocateRegistry.createRegistry(porta + 1); // inicia o registro RMI na porta informada + 1
         frmPrincipal.enviarLog("Registro RMI iniciado na porta 8081");
         
@@ -69,8 +70,8 @@ public class Principal {
         while(executando){
             Socket socket = servidor.accept(); // aceita uma conexão do cliente
             Conexao conexao = new Conexao(id, socket); // cria a conexão passando id e socket
-            Principal.conexoes.add(conexao); // adiciona na lista
             conexao.conectar(); // faz a conexão principal e RMI
+            Principal.conexoes.add(conexao); // adiciona na lista
             id++; // incrementa a id
             Thread t = conexao; // cria uma nova thread
             t.start(); // executa a thread

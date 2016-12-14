@@ -20,7 +20,7 @@ public class Conexao extends Thread {
     
     private int idCliente;
     
-    public Conexao(int id, Socket cliente) throws IOException, NotBoundException{
+    public Conexao(int id, Socket cliente){
         this.id = id;
         this.cliente = cliente;
     }
@@ -33,7 +33,6 @@ public class Conexao extends Thread {
     
     public void conectar() throws RemoteException, MalformedURLException, NotBoundException{
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
-        System.setProperty("java.rmi.server.hostname", Principal.endereco);
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
         Naming.rebind("//localhost:" + (Principal.porta + 1) + "/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
     }
