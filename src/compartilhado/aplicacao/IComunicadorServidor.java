@@ -1,5 +1,6 @@
 package compartilhado.aplicacao;
 
+import cliente.aplicacao.ComunicadorCliente;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
@@ -8,6 +9,8 @@ import java.rmi.*;
 import java.util.ArrayList;
 
 public interface IComunicadorServidor extends Remote{
+    
+    public boolean registrarCliente(IComunicadorCliente comunicador) throws RemoteException;
     
     public int autenticarUsuario(UsuarioAutenticacao autenticacao) throws RemoteException;
     public int cadastrarUsuario(UsuarioAutenticacao autenticacao) throws RemoteException;

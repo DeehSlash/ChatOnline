@@ -1,5 +1,6 @@
 package cliente.aplicacao;
 
+import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.aplicacao.IComunicadorServidor;
 import compartilhado.modelo.*;
 import java.io.DataInputStream;
@@ -7,13 +8,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
+import java.rmi.server.UnicastRemoteObject;
 
 public class Conexao extends Thread {
     
@@ -56,13 +56,14 @@ public class Conexao extends Thread {
     
     public void conectar() throws IOException, NotBoundException{
         conexao = new Socket(endereco, porta); // cria o socket
-        // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
-        //comunicadorCliente = new ComunicadorCliente(); // cria um novo comunicador
-        //LocateRegistry.createRegistry(8082); // inicia o registro RMI na porta 8082
-        //Naming.rebind("//localhost:8082/ComunicadorCliente", comunicadorCliente); // vincula o objeto comunicador ao endereço RMI
+        comunicadorCliente = new ComunicadorCliente();
         // COMUNICADOR SERVIDOR (USADO PELO CLIENTE)
         Registry r = LocateRegistry.getRegistry(endereco, porta + 1);
         comunicador = (IComunicadorServidor) r.lookup("ComunicadorServidor");  // procura o comunicador no servidor
+    }
+    
+    public void registrarCliente() throws RemoteException{
+        comunicador.registrarCliente((IComunicadorCliente) UnicastRemoteObject.exportObject(comunicadorCliente, 0));
     }
     
     public void alterarUsuario(Usuario usuario) throws IOException{

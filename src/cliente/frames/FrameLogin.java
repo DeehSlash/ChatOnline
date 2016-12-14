@@ -72,6 +72,7 @@ public class FrameLogin extends javax.swing.JFrame {
                     case 3: // autenticação funcionou
                         if(conexao.getStatus()){ // se a conexão estiver funcionando, vai para o Frame Principal
                             conexao.setCliente(conexao.comunicador.getUsuarioPorNome(conexao.getCliente().getUsuario()));
+                            conexao.registrarCliente();
                             Principal.frmPrincipal = new FramePrincipal(conexao);
                             Principal.frmPrincipal.setVisible(true);
                             dispose();

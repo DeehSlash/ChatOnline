@@ -2,25 +2,18 @@ package servidor.aplicacao;
 
 import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.modelo.*;
-import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.swing.ImageIcon;
 
 public class Conexao extends Thread {
     
@@ -48,6 +41,7 @@ public class Conexao extends Thread {
     public int getIdCliente(){ return this.idCliente; }
     public void setIdCliente(int id){ this.idCliente = id; } 
     public boolean getStatus(){ return !conexao.isClosed() && conexao.isConnected(); }
+    public void setComunicador(IComunicadorCliente comunicador){ this.comunicador = comunicador; };
     
     private ObjectInputStream getEntradaObjeto() throws IOException{
         return entradaObjeto = new ObjectInputStream(conexao.getInputStream());
@@ -69,10 +63,6 @@ public class Conexao extends Thread {
         System.setProperty("java.rmi.server.hostname", endereco);
         comunicadorServidor = new ComunicadorServidor(id); // cria um novo comunicador
         Naming.rebind("//localhost:" + (porta + 1) + "/ComunicadorServidor", comunicadorServidor); // vincula o objeto comunicador ao endereço RMI
-        // COMUNICADOR CLIENTE (USADO PELO SERVIDOR)
-        //String endereco = conexao.getRemoteSocketAddress().toString().substring(1, conexao.getRemoteSocketAddress().toString().indexOf(":"));
-        //System.out.println("endereco cliente: " + endereco + ":8082");
-        //comunicador = (IComunicadorCliente) Naming.lookup("//" + endereco + ":8082/ComunicadorCliente"); // procura o comunicador no cliente
     }
     
     public void desconectar() throws IOException{
@@ -91,7 +81,7 @@ public class Conexao extends Thread {
         conexao.close();
     }
     
-    private void atualizarListaUsuarios() throws IOException{
+    public void atualizarListaUsuarios() throws RemoteException{
         for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdCliente() != getIdCliente())
                 conexao.comunicador.atualizarListaUsuarios(Principal.usuarios); // envia a lista atualizada para o usuário

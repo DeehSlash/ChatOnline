@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.aplicacao.IComunicadorServidor;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
@@ -12,6 +13,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
@@ -20,6 +23,12 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         
     public ComunicadorServidor(int id) throws RemoteException{
         idConexao = id;
+    }
+    
+    @Override
+    public boolean registrarCliente(IComunicadorCliente comunicador) throws RemoteException {
+        Principal.conexoes.get(idConexao).setComunicador(comunicador);
+        return true;
     }
     
     @Override
@@ -56,6 +65,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         Principal.conexoes.get(idConexao).setIdCliente(id);
         Principal.usuarios.get(id - 1).setOnline(true);
         Principal.frmPrincipal.alterarUsuarios(true); // incrementa número de usuários online
+        Principal.conexoes.get(idConexao).atualizarListaUsuarios();
         return status; // retorna status de autenticação
     }
 

@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-public class ComunicadorCliente extends UnicastRemoteObject implements IComunicadorCliente {
+public class ComunicadorCliente implements IComunicadorCliente {
 
     public ComunicadorCliente() throws RemoteException {}
     
