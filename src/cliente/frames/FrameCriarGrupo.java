@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -29,8 +30,8 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Campo nome do grupo não pode ser vazio!", "Campo vazio", JOptionPane.ERROR_MESSAGE);
             int id;
             try {
-                id = Principal.frmPrincipal.conexao.receberIdGrupoDisponivel();
-            } catch (IOException ex) {
+                id = Principal.frmPrincipal.conexao.comunicador.recuperarIdDisponivelGrupo();
+            } catch (RemoteException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -38,8 +39,8 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
             ImageIcon foto = null;
             Grupo grupo = new Grupo(id, txtNome.getText(), identificarMembros(), foto);
             try {
-                Principal.frmPrincipal.conexao.criarGrupo(grupo);
-            } catch (IOException ex) {
+                Principal.frmPrincipal.conexao.comunicador.criarGrupo(grupo);
+            } catch (RemoteException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;

@@ -1,5 +1,6 @@
 package cliente.frames;
 
+//IMPORTAÇÕES DO PROJETO
 import cliente.aplicacao.Conexao;
 import cliente.aplicacao.Principal;
 import cliente.aplicacao.Transmissao;
@@ -7,6 +8,7 @@ import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
+// IMPORTAÇÕES JAVA
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -16,6 +18,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -99,8 +102,8 @@ public class FramePrincipal extends javax.swing.JFrame {
                     try {
                         lblFoto.setIcon(foto);
                         usuario.setFoto(foto);
-                        conexao.alterarUsuario(usuario);
-                    } catch (IOException ex) {
+                        conexao.comunicador.alterarUsuario(usuario);
+                    } catch (RemoteException ex) {
                         ex.printStackTrace();
                     }
                 }

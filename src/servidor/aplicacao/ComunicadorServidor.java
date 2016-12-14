@@ -102,8 +102,17 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
 
     @Override
-    public int alterarUsuario(Usuario usuario) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean alterarUsuario(Usuario usuario) throws RemoteException {
+        try {
+            Principal.gerenciador.alterarUsuario(usuario);
+            Principal.usuarios.set(usuario.getId() - 1, usuario);
+            Principal.conexoes.get(idConexao).atualizarListaUsuarios();
+        } catch (SQLException | IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao alterar usuário " + usuario.getUsuario() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -117,14 +126,32 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     
     @Override
     public int criarGrupo(Grupo grupo) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Principal.gerenciador.criarGrupo(grupo);
+        } catch (SQLException | IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao criar grupo " + grupo.getNome() + ": " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        Principal.grupos.add(grupo);
+        Principal.frmPrincipal.enviarLog("Grupo" + grupo.getNome() + " foi criado");
+        return 1;
     }
 
     @Override
-    public int alterarGrupo(Grupo grupo) throws RemoteException {
+    public boolean alterarGrupo(Grupo grupo) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public int recuperarIdDisponivelGrupo() throws RemoteException {
+        try {
+            return Principal.gerenciador.receberIdGrupoDisponivel();
+        } catch (SQLException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção SQL ao recuperar id disponível para grupo: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+    
     @Override
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException {
         return Principal.usuarios; // retorna a lista de usuários
