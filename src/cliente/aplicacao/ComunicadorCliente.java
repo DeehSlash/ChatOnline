@@ -21,6 +21,7 @@ public class ComunicadorCliente implements IComunicadorCliente {
     public boolean atualizarListaUsuarios(ArrayList<Usuario> usuarios) throws RemoteException {
         Principal.usuarios = usuarios;
         Principal.frmPrincipal.carregarLista(true);
+        Principal.frmPrincipal.atualizarConversas();
         return true;
     }
 
