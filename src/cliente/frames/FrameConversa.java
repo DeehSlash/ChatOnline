@@ -126,6 +126,7 @@ public class FrameConversa extends javax.swing.JFrame {
                         break;
                 }
                 try {
+                    txtMensagem.setText("Enviando...");
                     Principal.frmPrincipal.conexao.comunicador.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
                     escreverMensagem(mensagem, false); // método para escrever mensagem na própria tela de quem mandou
                 } catch (RemoteException ex) {
