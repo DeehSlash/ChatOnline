@@ -25,7 +25,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     
     @Override
     public boolean registrarCliente(IComunicadorCliente comunicador) throws RemoteException {
-        Principal.conexoes.get(idConexao).setComunicador(comunicador);
+        Principal.getConexao(idConexao).setComunicador(comunicador);
         return true;
     }
     
@@ -60,10 +60,10 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             return status; // se a senha está incorreta, retorna
         }
         Principal.frmPrincipal.enviarLog("Usuário " + autenticacao.getUsuario() + " (" + id + ") se conectou"); // envia log de autenticação
-        Principal.conexoes.get(idConexao).setIdCliente(id);
+        Principal.getConexao(idConexao).setIdCliente(id);
         Principal.usuarios.get(id - 1).setOnline(true);
         Principal.frmPrincipal.alterarUsuarios(true); // incrementa número de usuários online
-        Principal.conexoes.get(idConexao).atualizarListaUsuarios();
+        Principal.getConexao(idConexao).atualizarListaUsuarios();
         return status; // retorna status de autenticação
     }
 
@@ -104,7 +104,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         try {
             Principal.gerenciador.alterarUsuario(usuario);
             Principal.usuarios.set(usuario.getId() - 1, usuario);
-            Principal.conexoes.get(idConexao).atualizarListaUsuarios();
+            Principal.getConexao(idConexao).atualizarListaUsuarios();
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao alterar usuário " + usuario.getUsuario() + ": " + ex.getMessage());
             ex.printStackTrace();
@@ -189,9 +189,9 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     @Override
     public boolean desconectar() throws RemoteException {
         try {
-            Principal.conexoes.get(idConexao).desconectar();
+            Principal.getConexao(idConexao).desconectar();
         } catch (IOException ex) {
-            Principal.frmPrincipal.enviarLog("Exceção ao desconectar cliente " + Principal.conexoes.get(idConexao).getIdCliente() + ": " + ex.getMessage());
+            Principal.frmPrincipal.enviarLog("Exceção ao desconectar cliente " + Principal.getConexao(idConexao).getIdCliente() + ": " + ex.getMessage());
             return false;
         }
         return true;

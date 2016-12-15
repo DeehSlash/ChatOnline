@@ -126,9 +126,9 @@ public class FrameLogin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login - Mensageiro");
-        setMinimumSize(new java.awt.Dimension(450, 450));
+        setMinimumSize(new java.awt.Dimension(500, 460));
         setName("frmLogin"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(450, 450));
+        setPreferredSize(new java.awt.Dimension(500, 460));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         lblLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -140,7 +140,7 @@ public class FrameLogin extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 5);
         getContentPane().add(lblLogin, gridBagConstraints);
 
-        lblInfo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblInfo.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lblInfo.setText("<html>\n<center>\nDigite o endereço e porta do servidor,<br>\nalém de seu usuário e senha para acessar o mensageiro\n</center>\n</html>");
         lblInfo.setToolTipText("");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -207,6 +207,8 @@ public class FrameLogin extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 20, 5, 5);
         getContentPane().add(lblEndereco, gridBagConstraints);
+
+        txtEndereco.setText("mensageiro.servebeer.com");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -222,6 +224,8 @@ public class FrameLogin extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(lblPorta, gridBagConstraints);
+
+        txtPorta.setText("8080");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;

@@ -57,13 +57,11 @@ public class Conexao extends Thread {
     
     public void removerConexao(){
         int i = 0;
-        Principal.conexoes.remove(id);
         for (Conexao conexao : Principal.conexoes) {
-            conexao.setIdConexao(i);
-            conexao.comunicadorServidor.idConexao = i;
+            if(conexao.getIdConexao() == getIdConexao())
+                Principal.conexoes.remove(i);
             i++;
         }
-        Principal.id = i;
     }
     
     public void atualizarListaUsuarios() throws RemoteException{

@@ -88,4 +88,12 @@ public class Principal {
             conexao.desconectar();
         }
     }
+    
+    public static Conexao getConexao(int id){
+        for (Conexao conexao : conexoes) {
+            if(conexao.getIdConexao() == id)
+                return conexao;
+        }
+        return null;
+    }
 }
