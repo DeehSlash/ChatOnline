@@ -59,9 +59,10 @@ public class Conexao extends Thread {
         int i = 0;
         for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdConexao() == getIdConexao())
-                Principal.conexoes.remove(i);
+                break;
             i++;
         }
+        Principal.conexoes.remove(i);
     }
     
     public void atualizarListaUsuarios() throws RemoteException{
