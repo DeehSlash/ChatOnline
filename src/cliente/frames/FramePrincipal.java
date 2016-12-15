@@ -96,15 +96,15 @@ public class FramePrincipal extends javax.swing.JFrame {
                 foto = new ImageIcon(caminhoFoto.getPath());
                 Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
                 foto = new ImageIcon(imagemRedimensionada);
-            }
-            for (Usuario usuario : Principal.usuarios) {
-                if(usuario.getId() == conexao.getCliente().getId()){
-                    try {
-                        lblFoto.setIcon(foto);
-                        usuario.setFoto(foto);
-                        conexao.comunicador.alterarUsuario(usuario);
-                    } catch (RemoteException ex) {
-                        ex.printStackTrace();
+                for (Usuario usuario : Principal.usuarios) {
+                    if(usuario.getId() == conexao.getCliente().getId()){
+                        try {
+                            lblFoto.setIcon(foto);
+                            usuario.setFoto(foto);
+                            conexao.comunicador.alterarUsuario(usuario);
+                        } catch (RemoteException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
