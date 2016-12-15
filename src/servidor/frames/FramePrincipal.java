@@ -24,43 +24,55 @@ public class FramePrincipal extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos!", "Erro", JOptionPane.ERROR_MESSAGE);
             else{
                 txtLog.setText(null);
-                lblStatus.setText("Iniciando...");
-                lblStatus.setForeground(Color.yellow);
+                alterarStatus(1);
                 new Thread(() -> {
                     try{
                         Principal.iniciarServidor(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // chama o método que faz o loop dos threads
                         Principal.pararServidor();
-                        lblStatus.setText("Parado");
-                        lblStatus.setForeground(Color.red);
+                        alterarStatus(0);
                     }catch (IOException | SQLException | NotBoundException ex){
                         ex.printStackTrace();
                         enviarLog("Exceção: " + ex.getMessage());
                     }
                 }).start();
-                lblStatus.setText("Rodando");
-                lblStatus.setForeground(new Color(31, 167, 9));
-                btnIniciar.setEnabled(false);
-                btnParar.setEnabled(true);
-                txtEndereco.setEnabled(false);
-                txtPorta.setEnabled(false);
             }
         });
         
         btnParar.addActionListener((ActionEvent e) -> {
             try {
                 Principal.pararServidor(); // chama a função que para o servidor e desvincula da porta usada
+                alterarStatus(0);
                 enviarLog("Servidor parado com sucesso");
-                lblStatus.setText("Parado");
-                lblUsuariosConectados.setText("0");
-                lblStatus.setForeground(Color.red);
-                btnIniciar.setEnabled(true);
-                btnParar.setEnabled(false);
-                txtPorta.setEnabled(true);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 enviarLog("Exceção: " + ex.getMessage());
             }
         });
+    }
+    
+    public void alterarStatus(int id){
+        switch(id){
+            case 0: // parado
+                lblStatus.setText("Parado");
+                lblStatus.setForeground(Color.red);
+                lblUsuariosConectados.setText("0");
+                btnIniciar.setEnabled(true);
+                btnParar.setEnabled(false);
+                txtPorta.setEnabled(true);
+                break;
+            case 1: // iniciando
+                lblStatus.setText("Iniciando...");
+                lblStatus.setForeground(new Color(230, 194, 0));
+                btnIniciar.setEnabled(false);
+                btnParar.setEnabled(true);
+                txtEndereco.setEnabled(false);
+                txtPorta.setEnabled(false);
+                break;
+            case 2: // executando
+                lblStatus.setText("Rodando");
+                lblStatus.setForeground(new Color(31, 167, 9));
+                break;
+        }
     }
     
     public void alterarUsuarios(boolean incremento){

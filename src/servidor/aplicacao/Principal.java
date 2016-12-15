@@ -68,6 +68,7 @@ public class Principal {
         frmPrincipal.enviarLog("Registro RMI iniciado na porta " + portaRMI);
         
         executando = true;
+        frmPrincipal.alterarStatus(2);
         frmPrincipal.enviarLog("Servidor iniciado com sucesso na porta " + porta);   
         
         while(executando){
