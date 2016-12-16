@@ -136,7 +136,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 50;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 20);
+        gridBagConstraints.insets = new java.awt.Insets(20, 5, 5, 21);
         pnlConexao.add(txtPorta, gridBagConstraints);
 
         btnIniciar.setText("Iniciar");
@@ -145,7 +145,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 20, 90);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 20, 100);
         pnlConexao.add(btnIniciar, gridBagConstraints);
 
         btnParar.setText("Parar");
