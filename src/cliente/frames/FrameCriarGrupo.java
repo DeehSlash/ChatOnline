@@ -7,7 +7,7 @@ import compartilhado.modelo.Usuario;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
+import java.awt.event.ItemEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -17,11 +17,13 @@ import javax.swing.JOptionPane;
 public class FrameCriarGrupo extends javax.swing.JFrame {
 
     private ArrayList<JCheckBox> lista;
+    int n;
     
     public FrameCriarGrupo() {
         initComponents();
         //lblFoto.setIcon(Foto.redimensionarFoto(imagem, 50, false));
         carregarUsuarios();
+        n = 0;
     }
     
     private void addListeners(){
@@ -80,10 +82,28 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 JCheckBox checkBox = new JCheckBox();
                 checkBox.setSelected(false);
                 checkBox.setText(usuario.getUsuario());
-                pnlUsuarios.add(checkBox, layout);
+                pnlMembros.add(checkBox, layout);
                 lista.add(checkBox);
                 layout.gridy++;
             }
+        }
+        adicionarListenersCheckBox();
+    }
+    
+    private void adicionarListenersCheckBox(){
+        for (JCheckBox checkBox : lista) {
+            checkBox.addItemListener((ItemEvent e) -> {
+                if(checkBox.isSelected()){
+                    if(n < 9){
+                        checkBox.setSelected(true);
+                        n++;
+                    }else
+                        checkBox.setSelected(false);
+                }else{
+                    checkBox.setSelected(false);
+                    n--;
+                }
+            });
         }
     }
 
@@ -99,6 +119,8 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         lblNome = new javax.swing.JLabel();
         pnlUsuarios = new javax.swing.JPanel();
         lblPessoasGrupo = new javax.swing.JLabel();
+        scroll = new javax.swing.JScrollPane();
+        pnlMembros = new javax.swing.JPanel();
         pnlBottom = new javax.swing.JPanel();
         btnOk = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -161,10 +183,26 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         pnlUsuarios.setBorder(javax.swing.BorderFactory.createTitledBorder("Membros"));
         pnlUsuarios.setLayout(new java.awt.GridBagLayout());
 
-        lblPessoasGrupo.setText("Pessoas no grupo:");
+        lblPessoasGrupo.setText("Selecione até 9 membros:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlUsuarios.add(lblPessoasGrupo, gridBagConstraints);
+
+        scroll.setBorder(null);
+        scroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scroll.setHorizontalScrollBar(null);
+
+        pnlMembros.setLayout(new java.awt.GridBagLayout());
+        scroll.setViewportView(pnlMembros);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        pnlUsuarios.add(scroll, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -210,7 +248,9 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     private javax.swing.JLabel lblPessoasGrupo;
     private javax.swing.JPanel pnlBottom;
     private javax.swing.JPanel pnlHeader;
+    private javax.swing.JPanel pnlMembros;
     private javax.swing.JPanel pnlUsuarios;
+    private javax.swing.JScrollPane scroll;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 
