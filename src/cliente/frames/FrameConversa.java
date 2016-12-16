@@ -125,14 +125,18 @@ public class FrameConversa extends javax.swing.JFrame {
                         mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'I', imagem); // cria a mensagem
                         break;
                 }
+                btnEnviar.setText("Enviando...");
+                btnEnviar.setEnabled(false);
                 try {
-                    txtMensagem.setText("Enviando...");
                     Principal.frmPrincipal.conexao.comunicador.enviarMensagem(mensagem); // envia a mensagem para o FramePrincipal
                     escreverMensagem(mensagem, false); // método para escrever mensagem na própria tela de quem mandou
                 } catch (RemoteException ex) {
                     JOptionPane.showMessageDialog(null, "Houve uma falha ao enviar a mensagem para o servidor, tente novamente", 
                             "Falha no envio", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
                 }
+                btnEnviar.setText("Enviar");
+                btnEnviar.setEnabled(true);
                 txtMensagem.setText(""); // limpa o campo de mensagem
                 txtMensagem.setEnabled(true);
                 tipoMensagem = 'T';
