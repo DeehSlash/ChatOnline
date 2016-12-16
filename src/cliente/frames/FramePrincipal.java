@@ -1,12 +1,14 @@
 package cliente.frames;
 
-import cliente.aplicacao.ConexaoCliente;
+//IMPORTAÇÕES DO PROJETO
+import cliente.aplicacao.Conexao;
 import cliente.aplicacao.Principal;
 import cliente.aplicacao.Transmissao;
 import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
+// IMPORTAÇÕES JAVA
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -16,7 +18,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -25,15 +30,15 @@ import javax.swing.text.BadLocationException;
 
 public class FramePrincipal extends javax.swing.JFrame {
 
-    public final ConexaoCliente conexao;
+    public final Conexao conexao;
     public ArrayList<FrameConversa> conversas;
     
-    public FramePrincipal(ConexaoCliente conexao) {
+    public FramePrincipal(Conexao conexao) {
         initComponents();
         addListeners();
         this.conexao = conexao;
         conversas = new ArrayList<>();
-        carregarLista();
+        carregarLista(false);
         carregarInfoUsuario();
         inicializarConversas();
         Thread t = conexao;
@@ -46,7 +51,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             @Override
             public void windowClosing(WindowEvent e){ // caso a janela tenha sido fechada, encerra a conexão com o servidor
                 try {
-                    conexao.desconectar();
+                    conexao.comunicador.desconectar();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -75,7 +80,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                             if(!conversas.get(i).isVisible()) // e não estiver visivel
                                  conversas.get(i).setVisible(true); // torna visivel
                         }else{ // se nunca foi aberta
-                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), destino.getId(), 'U')); // adiciona na lista
+                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), destino.getId(), 'U')); // adiciona na lista
                             conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
                         }
                     }
@@ -93,15 +98,15 @@ public class FramePrincipal extends javax.swing.JFrame {
                 foto = new ImageIcon(caminhoFoto.getPath());
                 Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
                 foto = new ImageIcon(imagemRedimensionada);
-            }
-            for (Usuario usuario : Principal.usuarios) {
-                if(usuario.getId() == conexao.getIdCliente()){
-                    try {
-                        lblFoto.setIcon(foto);
-                        usuario.setFoto(foto);
-                        conexao.alterarUsuario(usuario);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                for (Usuario usuario : Principal.usuarios) {
+                    if(usuario.getId() == conexao.getCliente().getId()){
+                        try {
+                            lblFoto.setIcon(foto);
+                            usuario.setFoto(foto);
+                            conexao.comunicador.alterarUsuario(usuario);
+                        } catch (RemoteException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
@@ -109,7 +114,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         
         itemTransmissao.addActionListener((ActionEvent e) -> {
             String msg = JOptionPane.showInputDialog(this, "Digite a mensagem que será transmitida:", "Enviar transmissão", JOptionPane.INFORMATION_MESSAGE);
-            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getIdCliente(), 0);
+            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getCliente().getId(), 0);
             Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'U', 'T', msg);
             try {
                 Transmissao.transmitir(Principal.usuarios, mensagem);
@@ -128,7 +133,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
-                conexao.desconectar();
+                conexao.comunicador.desconectar();
                 dispose();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -138,13 +143,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     private void inicializarConversas(){
         for (Usuario usuario : Principal.usuarios) {
-            if(usuario.getId() != conexao.getIdCliente()){
+            if(usuario.getId() != conexao.getCliente().getId()){
                 try {
-                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1), usuario.getId(), 'U');
-                    conversa.mensagens = conexao.receberListaMensagens(conexao.getIdCliente(), usuario.getId());
+                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), usuario.getId(), 'U');
+                    conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId());
                     conversa.carregarMensagens();
                     conversas.add(conversa);
-                } catch (IOException | ClassNotFoundException ex) {
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
@@ -157,37 +162,20 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
-    protected void enviarMensagem(Mensagem mensagem){
-        try {
-            conexao.enviarMensagem(mensagem);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-    
     public void receberMensagem(Mensagem mensagem){
         boolean conversaAberta = false;
         int i = 0;
         for (FrameConversa conversa : conversas) {
             if(conversa.getIdDestino() == mensagem.getIdOrigem()){
-                conversaAberta = true;
+                conversa.setVisible(true);
+                try {
+                    conversa.escreverMensagem(mensagem, false);
+                } catch (BadLocationException ex) {
+                    ex.printStackTrace();
+                }
                 break;
             }
             i++;
-        }
-        try {
-            if(conversaAberta){
-                if(!conversas.get(i).isVisible())
-                    conversas.get(i).setVisible(true);
-                conversas.get(i).escreverMensagem(mensagem, false);
-            }else{
-                conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getIdCliente() - 1),
-                        mensagem.getIdOrigem(), 'U'));
-                conversas.get(conversas.size() - 1).setVisible(true);
-                conversas.get(conversas.size() - 1).escreverMensagem(mensagem, false);
-            }
-        } catch (BadLocationException ex) {
-            ex.printStackTrace();
         }
     }
     
@@ -201,7 +189,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        Usuario usuario = Principal.usuarios.get(conexao.getIdCliente() - 1);
+        Usuario usuario = Principal.usuarios.get(conexao.getCliente().getId() - 1);
         lblFoto.setIcon(usuario.getFoto());
         lblUsuario.setText(usuario.getUsuario());
         atualizarStatusConexao();
@@ -230,22 +218,24 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
     }
     
-    public void carregarLista(){ // carrega a lista de usuários
-        try {
-            conexao.atualizarListaUsuarios();
-        } catch (IOException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+    public void carregarLista(boolean atualizacao){ // carrega a lista de usuários
+        if(!atualizacao){
+            try {
+                Principal.usuarios = conexao.comunicador.recuperarListaUsuarios();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
         DefaultListModel listModel = new DefaultListModel();
         listModel.addElement("----------Online----------");
         for (Usuario usuario : Principal.usuarios) { // primeiro adiciona à lista os usuários online
-            if(usuario.getId() != conexao.getIdCliente() && usuario.isOnline()){
+            if(usuario.getId() != conexao.getCliente().getId() && usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
         }
         listModel.addElement("----------Offline----------");
         for (Usuario usuario : Principal.usuarios) { // só então adiciona os usuários offline
-            if(usuario.getId() != conexao.getIdCliente() && !usuario.isOnline()){
+            if(usuario.getId() != conexao.getCliente().getId() && !usuario.isOnline()){
                 listModel.addElement(usuario.getUsuario());
             }
         }

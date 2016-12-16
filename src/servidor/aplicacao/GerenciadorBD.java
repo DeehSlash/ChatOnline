@@ -48,11 +48,11 @@ public class GerenciadorBD {
         String SQL = "SELECT * FROM usuario WHERE usuario = '" + userAuth.getUsuario() + "'";
         ResultSet rs = st.executeQuery(SQL);
         if(!rs.next())
-            return 1; // retorna 1 caso não achou registro desse usuário
+            return 0; // retorna 0 caso não achou registro desse usuário
         if(rs.getString("senha").equals(userAuth.getSenha()))
             return 3; // retorna 3 caso as senhas batem
         else
-            return 0; // ou então retorna 0 caso os dados estejam incorretos
+            return 2; // ou então retorna 0 caso a senha esteja incorreta
     }
      
     public boolean alterarUsuario(Usuario usuario) throws SQLException, IOException{

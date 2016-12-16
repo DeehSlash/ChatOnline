@@ -8,9 +8,8 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -31,8 +30,8 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Campo nome do grupo não pode ser vazio!", "Campo vazio", JOptionPane.ERROR_MESSAGE);
             int id;
             try {
-                id = Principal.frmPrincipal.conexao.receberIdGrupoDisponivel();
-            } catch (IOException ex) {
+                id = Principal.frmPrincipal.conexao.comunicador.recuperarIdDisponivelGrupo();
+            } catch (RemoteException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -40,14 +39,14 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
             ImageIcon foto = null;
             Grupo grupo = new Grupo(id, txtNome.getText(), identificarMembros(), foto);
             try {
-                Principal.frmPrincipal.conexao.criarGrupo(grupo);
-            } catch (IOException ex) {
+                Principal.frmPrincipal.conexao.comunicador.criarGrupo(grupo);
+            } catch (RemoteException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             Principal.grupos.add(grupo);
-            Principal.frmPrincipal.carregarLista();
+            Principal.frmPrincipal.carregarLista(true);
             dispose();
         });
         
@@ -77,7 +76,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         layout.insets = new Insets(0, 5, 5, 0);
         layout.anchor = GridBagConstraints.NORTHWEST;
         for (Usuario usuario : Principal.usuarios) {
-            if(usuario.getId() != Principal.frmPrincipal.conexao.getIdCliente()){
+            if(usuario.getId() != Principal.frmPrincipal.conexao.getCliente().getId()){
                 JCheckBox checkBox = new JCheckBox();
                 checkBox.setSelected(false);
                 checkBox.setText(usuario.getUsuario());
