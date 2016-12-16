@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -165,24 +167,15 @@ public class FramePrincipal extends javax.swing.JFrame {
         int i = 0;
         for (FrameConversa conversa : conversas) {
             if(conversa.getIdDestino() == mensagem.getIdOrigem()){
-                conversaAberta = true;
+                conversa.setVisible(true);
+                try {
+                    conversa.escreverMensagem(mensagem, false);
+                } catch (BadLocationException ex) {
+                    ex.printStackTrace();
+                }
                 break;
             }
             i++;
-        }
-        try {
-            if(conversaAberta){
-                if(!conversas.get(i).isVisible())
-                    conversas.get(i).setVisible(true);
-                conversas.get(i).escreverMensagem(mensagem, false);
-            }else{
-                conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1),
-                        mensagem.getIdOrigem(), 'U'));
-                conversas.get(conversas.size() - 1).setVisible(true);
-                conversas.get(conversas.size() - 1).escreverMensagem(mensagem, false);
-            }
-        } catch (BadLocationException ex) {
-            ex.printStackTrace();
         }
     }
     
