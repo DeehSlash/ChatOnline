@@ -186,10 +186,10 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
 
     @Override
-    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException {
+    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino, char tipoDestino) throws RemoteException {
         ArrayList<Mensagem> mensagens = null;
         try {
-            mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino);
+            mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino, tipoDestino);
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao recuperar lista de mensagens com origem " + idOrigem + " e destino " + idDestino + ": " + ex.getMessage());
         }

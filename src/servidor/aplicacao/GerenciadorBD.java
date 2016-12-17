@@ -159,14 +159,20 @@ public class GerenciadorBD {
         return grupos;
     }
     
-    public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino) throws SQLException, IOException{
+    public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino, char tipoDestino) throws SQLException, IOException{
         ArrayList<Mensagem> mensagens = new ArrayList<>();
         MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0, 'U');
-        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE (idUsuarioOrigem = ? AND idUsuarioDestino = ?) OR (idUsuarioOrigem = ? AND idUsuarioDestino = ?) AND destinoTipo = 'U' ORDER BY idMensagem");
-        ps.setInt(1, idOrigem);
-        ps.setInt(2, idDestino);
-        ps.setInt(3, idDestino);
-        ps.setInt(4, idOrigem);
+        PreparedStatement ps;
+        if(tipoDestino == 'U'){
+            ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE (idUsuarioOrigem = ? AND idUsuarioDestino = ?) OR (idUsuarioOrigem = ? AND idUsuarioDestino = ?) AND destinoTipo = 'U' ORDER BY idMensagem");
+            ps.setInt(1, idOrigem);
+            ps.setInt(2, idDestino);
+            ps.setInt(3, idDestino);
+            ps.setInt(4, idOrigem);    
+        }else{
+            ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE idGrupoDestino = ? AND destinoTipo = 'G' ORDER BY idMensagem");
+            ps.setInt(1, idDestino);
+        }
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
             Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("tipoMens").charAt(0), null);
