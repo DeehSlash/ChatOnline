@@ -161,16 +161,18 @@ public class GerenciadorBD {
         ArrayList<Grupo> grupos = new ArrayList<>();
         while(rs.next()){
             int id = rs.getInt("id");
-            String nome = rs.getString("nomeGrupo");
-            int[] membros = new int[10];
-            for (int i = 0; i < 10; i++) {
-                membros[i] = rs.getInt("idMembro" + (i + 1));
+            if(id != 0){
+                String nome = rs.getString("nomeGrupo");
+                int[] membros = new int[10];
+                for (int i = 0; i < 10; i++) {
+                    membros[i] = rs.getInt("idMembro" + (i + 1));
+                }
+                Blob blob = rs.getBlob("foto");
+                InputStream is = blob.getBinaryStream();
+                Image imagem = ImageIO.read(is);
+                ImageIcon foto = new ImageIcon(imagem);
+                grupos.add(new Grupo(id, nome, membros, foto));
             }
-            Blob blob = rs.getBlob("foto");
-            InputStream is = blob.getBinaryStream();
-            Image imagem = ImageIO.read(is);
-            ImageIcon foto = new ImageIcon(imagem);
-            grupos.add(new Grupo(id, nome, membros, foto));
         }
         return grupos;
     }
