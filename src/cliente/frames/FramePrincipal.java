@@ -36,11 +36,13 @@ public class FramePrincipal extends javax.swing.JFrame {
         addListeners();
         this.conexao = conexao;
         conversas = new ArrayList<>();
-        carregarLista(false);
-        carregarInfoUsuario();
-        inicializarConversas();
-        //Thread t = conexao;
-        //t.start();
+        new Thread(() -> {
+            carregarLista(false);
+            carregarInfoUsuario();
+            inicializarConversas();
+        }).start();
+        Thread t = conexao;
+        t.start();
     }
 
     private void addListeners(){
@@ -69,7 +71,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                     char tipoDestino = identificarSelecao();
                     switch(tipoDestino){
                         case 'U':
-                            destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue())).getId(); // encontra o destino a partir do nome
+                            destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1).getId(); // encontra o destino a partir do nome
                             break;
                         case 'G':
                             destino = getGrupoPorNome(listUsuarios.getSelectedValue()).getId();
