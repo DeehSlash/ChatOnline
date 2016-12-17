@@ -135,6 +135,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 fecharConversas();
                 conexao.comunicador.desconectar();
                 dispose();
+                System.exit(0);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
