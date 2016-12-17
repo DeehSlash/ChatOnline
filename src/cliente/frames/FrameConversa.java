@@ -12,6 +12,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -222,7 +223,8 @@ public class FrameConversa extends javax.swing.JFrame {
             lblStatus.setForeground((Principal.usuarios.get(destino - 1).isOnline()? new Color(31, 167, 9) : Color.red));
         }else{
             Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
-            lblFoto.setIcon(grupo.getFoto());
+            Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(grupo.getFoto().getImage(), 50, false);
+            lblFoto.setIcon(new ImageIcon(foto));
             lblDestino.setText(grupo.getNome());
             setTitle(grupo.getNome() + " - Mensageiro");
             String membros = "";
