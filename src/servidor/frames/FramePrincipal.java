@@ -61,7 +61,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 txtPorta.setEnabled(true);
                 break;
             case 1: // iniciando
-                lblStatus.setText("Iniciando...");
+                lblStatus.setText("Iniciando");
                 lblStatus.setForeground(new Color(230, 194, 0));
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);

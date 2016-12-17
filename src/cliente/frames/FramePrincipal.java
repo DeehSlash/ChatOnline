@@ -223,6 +223,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         if(!atualizacao){
             try {
                 Principal.usuarios = conexao.comunicador.recuperarListaUsuarios();
+                Principal.grupos = conexao.comunicador.recuperarListaGrupos();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
