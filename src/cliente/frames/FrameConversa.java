@@ -31,10 +31,9 @@ import javax.swing.text.Style;
 
 public class FrameConversa extends javax.swing.JFrame {
 
-    private Usuario origem;
-    private Usuario destino;
-    private Grupo destinoGrupo;
-    private char tipoDestino;
+    private final int origem;
+    private final int destino;
+    private final char tipoDestino;
     
     private StyledDocument doc;
     
@@ -42,25 +41,19 @@ public class FrameConversa extends javax.swing.JFrame {
     public ArrayList<Mensagem> mensagens;
     private char tipoMensagem;
     
-    public FrameConversa(Usuario origem, int idDestino, char tipoDestino) {
+    public FrameConversa(int origem, int destino, char tipoDestino) {
         initComponents();
         addListeners();
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.origem = origem;
-        if(tipoDestino == 'U'){
-            destino = Principal.usuarios.get(idDestino - 1);
-            mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId(), 'U');
-        }else{
-            destinoGrupo = Principal.frmPrincipal.getGrupo(idDestino);
-            mensagemBuilder = new MensagemBuilder(origem.getId(), destinoGrupo.getId(), 'G');
-        }
+        this.destino = destino;
+        this.tipoDestino = tipoDestino;
+        mensagemBuilder = new MensagemBuilder(origem, destino, tipoDestino);
         mensagens = new ArrayList<>();
         tipoMensagem = 'T';
-        carregarInfoUsuario();
+        carregarInfo();
     }
     
-    public int getIdDestino(){ return destino.getId(); }
-    public void setDestino(Usuario usuario) { destino = usuario; }
+    public int getDestino(){ return destino; }
     
     private void addListeners(){
         
@@ -181,10 +174,10 @@ public class FrameConversa extends javax.swing.JFrame {
         doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
         boolean deveDarScroll = testeScroll(); // faz o teste de scroll
         doc.insertString(doc.getLength(), "\n", formatacao("normal")); // pula uma linha
-        if(mensagem.getIdDestino() == origem.getId()) // verifica quem que enviou a mensagem
-            doc.insertString(doc.getLength(), destino.getUsuario(), formatacao("destinoNome")); // escreve o nome com a formatação adequada
+        if(mensagem.getIdOrigem() == origem) // verifica quem que enviou a mensagem
+            doc.insertString(doc.getLength(), Principal.usuarios.get(origem - 1).getUsuario(), formatacao("origemNome")); // escreve o nome com a formatação adequada
         else
-            doc.insertString(doc.getLength(), origem.getUsuario(), formatacao("origemNome")); // escreve o nome com a formatação adequada
+            doc.insertString(doc.getLength(), Principal.usuarios.get(destino - 1).getUsuario(), formatacao("destinoNome")); // escreve o nome com a formatação adequada
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal")); // escreve a data da mensagem
         switch(mensagem.getTipoMensagem()){
             case 'T': // caso for mensagem de texto
@@ -221,12 +214,27 @@ public class FrameConversa extends javax.swing.JFrame {
         return formatacao;
     }
     
-    public void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
-        lblFoto.setIcon(destino.getFoto());
-        lblUsuario.setText(destino.getUsuario());
-        setTitle(destino.getUsuario() + " - Mensageiro");
-        lblStatus.setText((destino.isOnline()? "Online" : "Offline"));
-        lblStatus.setForeground((destino.isOnline()? new Color(31, 167, 9) : Color.red));
+    public void carregarInfo(){ // carrega as informações do destino
+        if(tipoDestino == 'U'){
+            lblFoto.setIcon(Principal.usuarios.get(destino - 1).getFoto());
+            lblDestino.setText(Principal.usuarios.get(destino - 1).getUsuario());
+            setTitle(Principal.usuarios.get(destino - 1).getUsuario() + " - Mensageiro");
+            lblStatus.setText((Principal.usuarios.get(destino - 1).isOnline()? "Online" : "Offline"));
+            lblStatus.setForeground((Principal.usuarios.get(destino - 1).isOnline()? new Color(31, 167, 9) : Color.red));
+        }else{
+            Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
+            lblFoto.setIcon(grupo.getFoto());
+            lblDestino.setText(grupo.getNome());
+            setTitle(grupo.getNome() + " - Mensageiro");
+            String membros = "";
+            for (int i = 0; i < 10; i++) {
+                if(grupo.getMembros()[i] == 0)
+                    break;
+                membros += Principal.usuarios.get(grupo.getMembros()[i] - 1).getUsuario() + ", ";
+            }
+            membros = membros.substring(0, membros.lastIndexOf(","));
+            lblStatus.setText(membros);
+        }
     }
     
     /** This method is called from within the constructor to
@@ -242,7 +250,7 @@ public class FrameConversa extends javax.swing.JFrame {
         jScrollBar1 = new javax.swing.JScrollBar();
         pnlHeader = new javax.swing.JPanel();
         lblFoto = new javax.swing.JLabel();
-        lblUsuario = new javax.swing.JLabel();
+        lblDestino = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
         pnlConversa = new javax.swing.JPanel();
         scroll = new javax.swing.JScrollPane();
@@ -253,12 +261,9 @@ public class FrameConversa extends javax.swing.JFrame {
         lblTexto = new javax.swing.JLabel();
         lblImagem = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Usuário");
-        setMaximumSize(null);
         setMinimumSize(new java.awt.Dimension(600, 500));
         setName("frmConversa"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(600, 500));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.rowWeights = new double[] {2.0, 50.0, 1.0};
         getContentPane().setLayout(layout);
@@ -277,14 +282,14 @@ public class FrameConversa extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         pnlHeader.add(lblFoto, gridBagConstraints);
 
-        lblUsuario.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        lblUsuario.setText("Usuário");
+        lblDestino.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lblDestino.setText("Usuário");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        pnlHeader.add(lblUsuario, gridBagConstraints);
+        pnlHeader.add(lblDestino, gridBagConstraints);
 
         lblStatus.setText("Offline");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -375,11 +380,11 @@ public class FrameConversa extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;
     private javax.swing.JScrollBar jScrollBar1;
+    private javax.swing.JLabel lblDestino;
     private javax.swing.JLabel lblFoto;
     private javax.swing.JLabel lblImagem;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblTexto;
-    private javax.swing.JLabel lblUsuario;
     private javax.swing.JPanel pnlConversa;
     private javax.swing.JPanel pnlEnviarMsg;
     private javax.swing.JPanel pnlHeader;

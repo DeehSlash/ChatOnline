@@ -15,7 +15,7 @@ public class Transmissao {
             if(usuario.getId() != mensagem.getIdOrigem()){
                 mensagem.setIdDestino(usuario.getId());
                 for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
-                    if(conversa.getIdDestino() == usuario.getId()){
+                    if(conversa.getDestino() == usuario.getId()){
                         mensagem.setIdMensagem(conversa.mensagens.size() + 1);
                         conversa.escreverMensagem(mensagem, false);
                     }
