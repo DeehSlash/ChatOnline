@@ -54,6 +54,7 @@ public class FrameConversa extends javax.swing.JFrame {
     }
     
     public int getDestino(){ return destino; }
+    public char getTipoDestino() { return tipoDestino; }
     
     private void addListeners(){
         
