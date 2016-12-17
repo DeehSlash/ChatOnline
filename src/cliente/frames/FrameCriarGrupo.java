@@ -36,8 +36,14 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     
     private void addListeners(){
         btnOk.addActionListener((ActionEvent e) -> {
-            if(txtNome.getText().isEmpty())
+            if(txtNome.getText().isEmpty()){
                 JOptionPane.showMessageDialog(null, "Campo nome do grupo não pode ser vazio!", "Campo vazio", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(quantidadeMembros() == 0){
+                JOptionPane.showMessageDialog(null, "Selecione pelo menos 1 membro", "Poucos membros", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             int id;
             try {
                 id = Principal.frmPrincipal.conexao.comunicador.recuperarIdDisponivelGrupo();
@@ -76,6 +82,14 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         });
     }
     
+    private int quantidadeMembros(){
+        int n = 0;
+        for (JCheckBox checkBox : lista) {
+            if(checkBox.isSelected())
+                n++;
+        }
+        return n;
+    }
     
     private int[] identificarMembros(){
         int[] membros = new int[10];
