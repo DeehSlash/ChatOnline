@@ -5,26 +5,33 @@ import compartilhado.aplicacao.Foto;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Usuario;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 public class FrameCriarGrupo extends javax.swing.JFrame {
 
     private ArrayList<JCheckBox> lista;
-    int n;
+    private int n;
+    private ImageIcon foto;
     
     public FrameCriarGrupo() {
         initComponents();
-        //lblFoto.setIcon(Foto.redimensionarFoto(imagem, 50, false));
+        addListeners();
         carregarUsuarios();
         n = 0;
+        foto = new ImageIcon(getClass().getResource("/compartilhado/imagens/grupo.png")); // cria uma ImageIcon com a foto padrão de usuário
+        Image fotoRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false); // redimensiona a imagem
+        lblFoto.setIcon(new ImageIcon(fotoRedimensionada));
     }
     
     private void addListeners(){
@@ -39,7 +46,6 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            ImageIcon foto = null;
             Grupo grupo = new Grupo(id, txtNome.getText(), identificarMembros(), foto);
             try {
                 Principal.frmPrincipal.conexao.comunicador.criarGrupo(grupo);
@@ -55,6 +61,18 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         
         btnCancelar.addActionListener((ActionEvent e) -> {
             dispose();
+        });
+        
+        btnAlterarFoto.addActionListener((ActionEvent e) -> {
+            JFileChooser fs = new JFileChooser();
+            fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int val = fs.showOpenDialog(this);
+            if(val == JFileChooser.APPROVE_OPTION){
+                File caminhoFoto = fs.getSelectedFile();
+                foto = new ImageIcon(caminhoFoto.getPath());
+                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
+                lblFoto.setIcon(new ImageIcon(imagemRedimensionada));
+            }
         });
     }
     

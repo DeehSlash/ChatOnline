@@ -132,7 +132,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         }
         Principal.grupos.add(grupo);
         Principal.getConexao(idConexao).atualizarLista();
-        Principal.frmPrincipal.enviarLog("Grupo" + grupo.getNome() + " foi criado");
+        Principal.frmPrincipal.enviarLog("Grupo " + grupo.getNome() + " foi criado");
         return 1;
     }
 
