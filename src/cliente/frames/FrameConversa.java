@@ -11,6 +11,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
 import compartilhado.aplicacao.Foto;
+import compartilhado.modelo.Grupo;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -20,8 +21,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,6 +33,7 @@ public class FrameConversa extends javax.swing.JFrame {
 
     private Usuario origem;
     private Usuario destino;
+    private Grupo destinoGrupo;
     private char tipoDestino;
     
     private StyledDocument doc;
@@ -47,10 +47,14 @@ public class FrameConversa extends javax.swing.JFrame {
         addListeners();
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.origem = origem;
-        if(tipoDestino == 'U')
+        if(tipoDestino == 'U'){
             destino = Principal.usuarios.get(idDestino - 1);
+            mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId(), 'U');
+        }else{
+            destinoGrupo = Principal.frmPrincipal.getGrupo(idDestino);
+            mensagemBuilder = new MensagemBuilder(origem.getId(), destinoGrupo.getId(), 'G');
+        }
         mensagens = new ArrayList<>();
-        mensagemBuilder = new MensagemBuilder(origem.getId(), destino.getId());
         tipoMensagem = 'T';
         carregarInfoUsuario();
     }
@@ -118,11 +122,11 @@ public class FrameConversa extends javax.swing.JFrame {
                 Mensagem mensagem = null;
                 switch(tipoMensagem){
                     case 'T':
-                        mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'T', txtMensagem.getText()); // cria a mensagem
+                        mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'T', txtMensagem.getText()); // cria a mensagem
                         break;
                     case 'I':
                         ImageIcon imagem = new ImageIcon(txtMensagem.getText());
-                        mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'U', 'I', imagem); // cria a mensagem
+                        mensagem = mensagemBuilder.criarMensagem(mensagens.size() + 1, 'I', imagem); // cria a mensagem
                         break;
                 }
                 btnEnviar.setText("Enviando...");

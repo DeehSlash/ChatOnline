@@ -161,7 +161,7 @@ public class GerenciadorBD {
     
     public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino) throws SQLException, IOException{
         ArrayList<Mensagem> mensagens = new ArrayList<>();
-        MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0);
+        MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0, 'U');
         PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE (idUsuarioOrigem = ? AND idUsuarioDestino = ?) OR (idUsuarioOrigem = ? AND idUsuarioDestino = ?) AND destinoTipo = 'U' ORDER BY idMensagem");
         ps.setInt(1, idOrigem);
         ps.setInt(2, idDestino);
@@ -169,14 +169,16 @@ public class GerenciadorBD {
         ps.setInt(4, idOrigem);
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
-            Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("destinoTipo").charAt(0), rs.getString("tipoMens").charAt(0), null);
+            Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("tipoMens").charAt(0), null);
             mensagem.setIdOrigem(rs.getInt("idUsuarioOrigem"));
             switch(mensagem.getDestinoTipo()){
                 case 'U':
                     mensagem.setIdDestino(rs.getInt("idUsuarioDestino"));
+                    mensagem.setDestinoTipo('U');
                     break;
                 case 'G':
                     mensagem.setIdDestino(rs.getInt("idGrupoDestino"));
+                    mensagem.setDestinoTipo('G');
                     break;
             }
             switch(mensagem.getTipoMensagem()){

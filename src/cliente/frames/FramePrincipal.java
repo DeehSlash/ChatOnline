@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -114,8 +112,8 @@ public class FramePrincipal extends javax.swing.JFrame {
         
         itemTransmissao.addActionListener((ActionEvent e) -> {
             String msg = JOptionPane.showInputDialog(this, "Digite a mensagem que será transmitida:", "Enviar transmissão", JOptionPane.INFORMATION_MESSAGE);
-            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getCliente().getId(), 0);
-            Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'U', 'T', msg);
+            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getCliente().getId(), 0, 'U');
+            Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'T', msg);
             try {
                 Transmissao.transmitir(Principal.usuarios, mensagem);
                 JOptionPane.showMessageDialog(this, "A transmissão foi enviada!", "Transmissão", JOptionPane.INFORMATION_MESSAGE);
