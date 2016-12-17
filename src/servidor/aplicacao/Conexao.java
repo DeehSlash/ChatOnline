@@ -74,6 +74,15 @@ public class Conexao extends Thread {
         }
     }
     
+    public boolean pertenceAoGrupo(int id){
+        Grupo grupo = Principal.grupos.get(id - 1);
+        for (int i = 0; i < 10; i++) {
+            if(grupo.getMembros()[i] == getIdCliente())
+                return true;
+        }
+        return false;
+    }
+    
     public ArrayList<Grupo> getGrupos(){
         ArrayList<Grupo> grupos = new ArrayList<>();
         for (Grupo grupo : Principal.grupos) {
