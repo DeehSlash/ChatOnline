@@ -2,6 +2,7 @@ package servidor.aplicacao;
 
 // IMPORTAÇÕES DO PROJETO
 import compartilhado.aplicacao.IComunicadorCliente;
+import compartilhado.modelo.Grupo;
 import java.io.DataOutputStream;
 // IMPORTAÇÕES JAVA
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.net.Socket;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public class Conexao extends Thread {
     
@@ -51,7 +53,7 @@ public class Conexao extends Thread {
         Principal.frmPrincipal.alterarUsuarios(false); // decrementa a qtd de usuários online
         removerConexao();
         setOnline(false); // define o usuário como offline
-        atualizarListaUsuarios(); // atualiza a lista de usuários
+        atualizarLista(); // atualiza a lista de usuários
         cliente.close(); // fecha a conexão
     }
     
@@ -65,11 +67,24 @@ public class Conexao extends Thread {
         Principal.conexoes.remove(i);
     }
     
-    public void atualizarListaUsuarios() throws RemoteException{
+    public void atualizarLista() throws RemoteException{
         for (Conexao conexao : Principal.conexoes) { // para cada conexão
             if(conexao.getIdCliente() != getIdCliente()) // exceto a própria
-                conexao.comunicador.atualizarListaUsuarios(Principal.usuarios); // envia a lista de usuários atualizada
+                conexao.comunicador.atualizarLista(Principal.usuarios, conexao.getGrupos()); // envia a lista de usuários atualizada
         }
+    }
+    
+    private ArrayList<Grupo> getGrupos(){
+        ArrayList<Grupo> grupos = new ArrayList<>();
+        for (Grupo grupo : Principal.grupos) {
+            for (int i = 0; i < 10; i++) {
+                if(grupo.getMembros()[i] == getIdCliente()){
+                    grupos.add(grupo);
+                    break;
+                }
+            }
+        }
+        return grupos;
     }
     
     private void setOnline(boolean online){

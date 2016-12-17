@@ -63,7 +63,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         Principal.getConexao(idConexao).setIdCliente(id);
         Principal.usuarios.get(id - 1).setOnline(true);
         Principal.frmPrincipal.alterarUsuarios(true); // incrementa número de usuários online
-        Principal.getConexao(idConexao).atualizarListaUsuarios();
+        Principal.getConexao(idConexao).atualizarLista();
         return status; // retorna status de autenticação
     }
 
@@ -104,7 +104,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         try {
             Principal.gerenciador.alterarUsuario(usuario);
             Principal.usuarios.set(usuario.getId() - 1, usuario);
-            Principal.getConexao(idConexao).atualizarListaUsuarios();
+            Principal.getConexao(idConexao).atualizarLista();
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao alterar usuário " + usuario.getUsuario() + ": " + ex.getMessage());
             ex.printStackTrace();
@@ -140,6 +140,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
     public int recuperarIdDisponivelGrupo() throws RemoteException {
         try {
             return Principal.gerenciador.receberIdGrupoDisponivel();
