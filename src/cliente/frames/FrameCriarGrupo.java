@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -35,7 +36,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 id = Principal.frmPrincipal.conexao.comunicador.recuperarIdDisponivelGrupo();
             } catch (RemoteException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             ImageIcon foto = null;
@@ -44,7 +45,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 Principal.frmPrincipal.conexao.comunicador.criarGrupo(grupo);
             } catch (RemoteException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             Principal.grupos.add(grupo);
@@ -60,7 +61,9 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     
     private int[] identificarMembros(){
         int[] membros = new int[10];
-        int i = 0;
+        Arrays.fill(membros, 0);
+        membros[0] = Principal.frmPrincipal.conexao.getCliente().getId();
+        int i = 1;
         for (JCheckBox checkBox : lista) {
             if(checkBox.isSelected()){
                 membros[i] = Principal.frmPrincipal.idPorNome(checkBox.getText());
