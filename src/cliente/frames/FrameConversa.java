@@ -164,6 +164,7 @@ public class FrameConversa extends javax.swing.JFrame {
                 ex.printStackTrace();
             }    
         }
+        descerScroll();
     }
     
     public void escreverMensagem(Mensagem mensagem, boolean carregamento) throws BadLocationException{

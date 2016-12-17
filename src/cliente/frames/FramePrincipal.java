@@ -157,9 +157,11 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(usuario.getId() != conexao.getCliente().getId()){
                 try {
                     FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), usuario.getId(), 'U');
-                    conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId(), 'U');
-                    conversa.carregarMensagens();
                     conversas.add(conversa);
+                    conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId(), 'U');
+                    new Thread(() -> {
+                        conversa.carregarMensagens();
+                    }).start();
                 } catch (RemoteException ex) {
                     ex.printStackTrace();
                 }
@@ -168,9 +170,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         for (Grupo grupo : Principal.grupos) {
             try {
                 FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), grupo.getId(), 'G');
-                conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), grupo.getId(), 'G');
-                conversa.carregarMensagens();
                 conversas.add(conversa);
+                conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), grupo.getId(), 'G');
+                new Thread(() -> {
+                        conversa.carregarMensagens();
+                }).start();
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }
@@ -187,15 +191,27 @@ public class FramePrincipal extends javax.swing.JFrame {
         boolean conversaAberta = false;
         int i = 0;
         for (FrameConversa conversa : conversas) {
-            if((conversa.getDestino() == mensagem.getIdOrigem() && conversa.getTipoDestino() == mensagem.getDestinoTipo()) ||
-                    (conversa.getDestino() == mensagem.getIdDestino() && conversa.getTipoDestino() == mensagem.getDestinoTipo())){
-                conversa.setVisible(true);
-                try {
-                    conversa.escreverMensagem(mensagem, false);
-                } catch (BadLocationException ex) {
-                    ex.printStackTrace();
+            if(mensagem.getDestinoTipo() == 'U'){
+                if(conversa.getDestino() == mensagem.getIdOrigem() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+                    conversa.setVisible(true);
+                    try {
+                        conversa.escreverMensagem(mensagem, false);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
                 }
-                break;
+            }
+            if(mensagem.getDestinoTipo() == 'G'){
+                if(conversa.getDestino() == mensagem.getIdDestino() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+                    conversa.setVisible(true);
+                    try {
+                        conversa.escreverMensagem(mensagem, false);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
+                }
             }
             i++;
         }
