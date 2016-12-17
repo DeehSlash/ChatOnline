@@ -17,7 +17,7 @@ public interface IComunicadorServidor extends Remote{
     public boolean alterarUsuario(Usuario usuario) throws RemoteException;
     public Usuario getUsuarioPorNome(String nome) throws RemoteException;
     
-    public int criarGrupo(Grupo grupo) throws RemoteException;
+    public boolean criarGrupo(Grupo grupo) throws RemoteException;
     public boolean alterarGrupo(Grupo grupo) throws RemoteException;
     public int recuperarIdDisponivelGrupo() throws RemoteException;
     

@@ -123,17 +123,18 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
     
     @Override
-    public int criarGrupo(Grupo grupo) throws RemoteException {
+    public boolean criarGrupo(Grupo grupo) throws RemoteException {
         try {
             Principal.gerenciador.criarGrupo(grupo);
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao criar grupo " + grupo.getNome() + ": " + ex.getMessage());
             ex.printStackTrace();
+            return false;
         }
         Principal.grupos.add(grupo);
         Principal.getConexao(idConexao).atualizarLista();
         Principal.frmPrincipal.enviarLog("Grupo " + grupo.getNome() + " foi criado");
-        return 1;
+        return true;
     }
 
     @Override
