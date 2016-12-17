@@ -137,7 +137,7 @@ public class GerenciadorBD {
     
     public ArrayList<Usuario> getListaUsuarios() throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "SELECT * FROM usuario ORDER by id";
+        String SQL = "SELECT * FROM usuario ORDER BY id";
         ResultSet rs = st.executeQuery(SQL);
         ArrayList<Usuario> usuarios = new ArrayList<>();
         while(rs.next()){
@@ -154,8 +154,24 @@ public class GerenciadorBD {
         return usuarios;
     }
     
-    public ArrayList<Grupo> getListaGrupos(){
+    public ArrayList<Grupo> getListaGrupos() throws SQLException, IOException{
+        Statement st = conexao().createStatement();
+        String SQL = "SELECT * FROM grupo ORDER BY id";
+        ResultSet rs = st.executeQuery(SQL);
         ArrayList<Grupo> grupos = new ArrayList<>();
+        while(rs.next()){
+            int id = rs.getInt("id");
+            String nome = rs.getString("nomeGrupo");
+            int[] membros = new int[10];
+            for (int i = 0; i < 10; i++) {
+                membros[i] = rs.getInt("idMembro" + (i + 1));
+            }
+            Blob blob = rs.getBlob("foto");
+            InputStream is = blob.getBinaryStream();
+            Image imagem = ImageIO.read(is);
+            ImageIcon foto = new ImageIcon(imagem);
+            grupos.add(new Grupo(id, nome, membros, foto));
+        }
         return grupos;
     }
     
