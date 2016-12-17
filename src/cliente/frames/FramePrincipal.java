@@ -185,7 +185,8 @@ public class FramePrincipal extends javax.swing.JFrame {
         boolean conversaAberta = false;
         int i = 0;
         for (FrameConversa conversa : conversas) {
-            if(conversa.getDestino() == mensagem.getIdOrigem() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+            if((conversa.getDestino() == mensagem.getIdOrigem() && conversa.getTipoDestino() == mensagem.getDestinoTipo()) ||
+                    (conversa.getDestino() == mensagem.getIdDestino()&& conversa.getTipoDestino() == mensagem.getDestinoTipo())){
                 conversa.setVisible(true);
                 try {
                     conversa.escreverMensagem(mensagem, false);
