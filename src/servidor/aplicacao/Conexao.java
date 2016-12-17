@@ -74,7 +74,7 @@ public class Conexao extends Thread {
         }
     }
     
-    private ArrayList<Grupo> getGrupos(){
+    public ArrayList<Grupo> getGrupos(){
         ArrayList<Grupo> grupos = new ArrayList<>();
         for (Grupo grupo : Principal.grupos) {
             for (int i = 0; i < 10; i++) {

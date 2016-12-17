@@ -131,6 +131,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             ex.printStackTrace();
         }
         Principal.grupos.add(grupo);
+        Principal.getConexao(idConexao).atualizarLista();
         Principal.frmPrincipal.enviarLog("Grupo" + grupo.getNome() + " foi criado");
         return 1;
     }
@@ -158,7 +159,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
 
     @Override
     public ArrayList<Grupo> recuperarListaGrupos() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Principal.getConexao(idConexao).getGrupos();
     }
 
     @Override
