@@ -1,8 +1,9 @@
 package cliente.frames;
 
+import compartilhado.aplicacao.Foto;
 import compartilhado.aplicacao.MensagemBuilder;
+import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
-import compartilhado.modelo.Usuario;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.text.BadLocationException;
@@ -10,10 +11,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
-import compartilhado.aplicacao.Foto;
-import compartilhado.modelo.Grupo;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -23,7 +21,6 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
@@ -178,7 +175,7 @@ public class FrameConversa extends javax.swing.JFrame {
         if(mensagem.getIdOrigem() == origem) // verifica quem que enviou a mensagem
             doc.insertString(doc.getLength(), Principal.usuarios.get(origem - 1).getUsuario(), formatacao("origemNome")); // escreve o nome com a formatação adequada
         else
-            doc.insertString(doc.getLength(), Principal.usuarios.get(destino - 1).getUsuario(), formatacao("destinoNome")); // escreve o nome com a formatação adequada
+            doc.insertString(doc.getLength(), Principal.usuarios.get(mensagem.getIdOrigem() - 1).getUsuario(), formatacao("destinoNome")); // escreve o nome com a formatação adequada
         doc.insertString(doc.getLength(), " (" + DateFormat.getInstance().format(mensagem.getDataMensagem()) + ")\n", formatacao("normal")); // escreve a data da mensagem
         switch(mensagem.getTipoMensagem()){
             case 'T': // caso for mensagem de texto

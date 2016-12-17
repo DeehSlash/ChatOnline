@@ -5,7 +5,6 @@ import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
 import compartilhado.modelo.Usuario;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class ComunicadorCliente implements IComunicadorCliente {
