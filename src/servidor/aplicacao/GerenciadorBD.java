@@ -74,11 +74,19 @@ public class GerenciadorBD {
     }
     
     public boolean criarGrupo(Grupo grupo) throws SQLException, IOException{
-        Statement st = conexao().createStatement();
+        PreparedStatement ps = conexao().prepareStatement("INSERT INTO grupo (id, nomeGrupo,"
+                + " idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         int[] m = grupo.getMembros();
-        String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
-                + grupo.getId() + ", '" + grupo.getNome() + "', " + m[0] + ", " + m[1] + ", " + m[2] + ", " + m[3] + ", " + m[4] + ", " + m[5] + ", " + m[6] + ", " + m[7] + ", " + m[8] + ", " + m[9] + ", '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()) + "')";
-        int result = st.executeUpdate(SQL);
+        ps.setInt(1, grupo.getId());
+        ps.setString(2, grupo.getNome());
+        int j = 0;
+        for (int i = 3; i < 13; i++) {
+            ps.setInt(i, m[j]);
+            j++;
+        }
+        ps.setBlob(13, compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()));
+        int result = ps.executeUpdate();
         return result == 1;
     }
     
