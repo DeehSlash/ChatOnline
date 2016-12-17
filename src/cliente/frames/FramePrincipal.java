@@ -193,6 +193,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         for (FrameConversa conversa : conversas) {
             if(mensagem.getDestinoTipo() == 'U'){
                 if(conversa.getDestino() == mensagem.getIdOrigem() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+                    conversaAberta = true;
                     conversa.setVisible(true);
                     try {
                         conversa.escreverMensagem(mensagem, false);
@@ -204,6 +205,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
             if(mensagem.getDestinoTipo() == 'G'){
                 if(conversa.getDestino() == mensagem.getIdDestino() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+                    conversaAberta = true;
                     conversa.setVisible(true);
                     try {
                         conversa.escreverMensagem(mensagem, false);
@@ -214,6 +216,15 @@ public class FramePrincipal extends javax.swing.JFrame {
                 }
             }
             i++;
+        }
+        if(!conversaAberta){ // caso a conversa não esteja aberta (novo usuário ou grupo) então cria a conversa e adiciona na lista
+            int id;
+            if(mensagem.getDestinoTipo() == 'U')
+                id = mensagem.getIdOrigem();
+            else
+                id = mensagem.getIdDestino();
+            FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), id, mensagem.getDestinoTipo());
+            conversas.add(conversa);
         }
     }
     
