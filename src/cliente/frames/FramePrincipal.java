@@ -189,6 +189,14 @@ public class FramePrincipal extends javax.swing.JFrame {
         return -1;
     }
     
+    public Grupo getGrupo(int id){
+        for (Grupo grupo : Principal.grupos) {
+            if(grupo.getId() == id)
+                return grupo;
+        }
+        return null;
+    }
+    
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
         Usuario usuario = Principal.usuarios.get(conexao.getCliente().getId() - 1);
         lblFoto.setIcon(usuario.getFoto());
