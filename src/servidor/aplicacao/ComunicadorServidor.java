@@ -169,6 +169,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             return false;
         }
         for (Conexao conexao : Principal.conexoes) {
+            System.out.println("conexao id cliente " + conexao.getIdCliente() + " == " + mensagem.getIdDestino());
             if(conexao.getIdCliente() == mensagem.getIdDestino())
                 System.out.println("entrou no if");
                 if(conexao.comunicador == null){
