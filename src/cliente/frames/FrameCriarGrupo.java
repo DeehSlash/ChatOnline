@@ -92,7 +92,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
     
     private void adicionarListenersCheckBox(){
         for (JCheckBox checkBox : lista) {
-            checkBox.addItemListener((ItemEvent e) -> {
+            checkBox.addActionListener((ActionEvent e) -> {
                 if(checkBox.isSelected()){
                     if(n < 9){
                         checkBox.setSelected(true);
