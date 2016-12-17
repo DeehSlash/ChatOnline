@@ -31,10 +31,9 @@ public class FrameLogin extends javax.swing.JFrame {
     private void autenticarUsuario(boolean cadastro){
         if(verificarCampos()){ // se os campos estiverem preenchidos, continua
             lblStatus.setText("Criando conexão...");
-            if(conexao == null){
+            if(conexao == null)
                 conexao = new Conexao(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
-                conexao.setCliente(new Usuario(-1, txtUsuario.getText(), null)); // cliente temporário
-            }
+            conexao.setCliente(new Usuario(-1, txtUsuario.getText(), null)); // cliente temporário
             try {
                 lblStatus.setText("Conectando ao servidor...");
                 if(conexao.comunicador == null)
