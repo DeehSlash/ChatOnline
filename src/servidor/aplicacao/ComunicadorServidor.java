@@ -171,14 +171,22 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
             return false;
         }
+        boolean teste = false;
         for (Conexao conexao : Principal.conexoes) {
-            if((conexao.getIdCliente() == mensagem.getIdDestino() && mensagem.getDestinoTipo() == 'U') || // primeira verificação para individual
-                    (conexao.pertenceAoGrupo(mensagem.getIdDestino()) && mensagem.getDestinoTipo() == 'G')){ // segunda para grupo
-                if(conexao.comunicador == null) // verifica se o comunicador não é nulo
-                    return false;
-                conexao.comunicador.receberMensagem(mensagem); // envia a mensagem
-                if(mensagem.getDestinoTipo() == 'U') // se for conversa individual, não há nada mais para fazer, então retorna
-                    return true;
+            if(conexao.getIdCliente() != mensagem.getIdOrigem()){
+                if(conexao.getIdCliente() == mensagem.getIdDestino() && mensagem.getDestinoTipo() == 'U') // se a mensagem for individual e é o destinatário
+                    teste = true; // então a mensagem é para essa conexão
+                else if(mensagem.getDestinoTipo() == 'G'){ // ou se for a mensagem para grupo
+                    if(conexao.pertenceAoGrupo(mensagem.getIdDestino())) // e essa conexão faz parte do grupo
+                        teste = true; // então a mensagem é para essa conexão
+                }
+                if(teste){
+                    if(conexao.comunicador == null) // verifica se o comunicador não é nulo
+                        return false;
+                    conexao.comunicador.receberMensagem(mensagem); // envia a mensagem
+                    if(mensagem.getDestinoTipo() == 'U') // se for conversa individual, não há nada mais para fazer, então retorna
+                        return true;
+                }
             }
         }
         return true;
