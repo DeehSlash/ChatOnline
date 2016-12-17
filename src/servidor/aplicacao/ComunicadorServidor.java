@@ -172,15 +172,14 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             return false;
         }
         for (Conexao conexao : Principal.conexoes) {
-            System.out.println("conexao id cliente " + conexao.getIdCliente() + " == " + mensagem.getIdDestino());
-            if(conexao.getIdCliente() == mensagem.getIdDestino())
-                System.out.println("entrou no if");
-                if(conexao.comunicador == null){
-                    System.out.println("comunicador é null");
+            if((conexao.getIdCliente() == mensagem.getIdDestino() && mensagem.getDestinoTipo() == 'U') || // primeira verificação para individual
+                    (conexao.pertenceAoGrupo(mensagem.getIdDestino()) && mensagem.getDestinoTipo() == 'G')){ // segunda para grupo
+                if(conexao.comunicador == null) // verifica se o comunicador não é nulo
                     return false;
-                }
-                conexao.comunicador.receberMensagem(mensagem);
-                return true;
+                conexao.comunicador.receberMensagem(mensagem); // envia a mensagem
+                if(mensagem.getDestinoTipo() == 'U') // se for conversa individual, não há nada mais para fazer, então retorna
+                    return true;
+            }
         }
         return true;
     }
