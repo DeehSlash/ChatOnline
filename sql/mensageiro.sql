@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `grupo` (
   `id` int(3) NOT NULL,
-  `nomeGrupo` varchar(10) NOT NULL,
+  `nomeGrupo` varchar(20) NOT NULL,
   `idMembro1` int(3) unsigned DEFAULT NULL,
   `idMembro2` int(3) unsigned DEFAULT NULL,
   `idMembro3` int(3) unsigned DEFAULT NULL,
