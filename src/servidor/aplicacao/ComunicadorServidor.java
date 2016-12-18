@@ -141,7 +141,22 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
 
     @Override
     public boolean alterarGrupo(Grupo grupo) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Principal.gerenciador.alterarGrupo(grupo);
+            int i = 0;
+            for (Grupo g : Principal.grupos) {
+                if(g.getId() == grupo.getId())
+                    break;
+                i++;
+            }
+            Principal.grupos.set(i, grupo);
+            Principal.getConexao(idConexao).atualizarLista();
+        } catch (SQLException | IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao alterar grupo " + grupo.getNome() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
     }
     
     @Override

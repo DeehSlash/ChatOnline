@@ -21,4 +21,6 @@ public class Grupo implements Serializable{
     public String getNome(){ return nome; }
     public int[] getMembros(){ return membros; }
     public ImageIcon getFoto(){ return foto; }
+    
+    public void setFoto(ImageIcon foto){ this.foto = foto; }
 }

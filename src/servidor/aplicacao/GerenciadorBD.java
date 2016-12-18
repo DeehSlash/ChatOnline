@@ -91,11 +91,18 @@ public class GerenciadorBD {
     }
     
     public boolean alterarGrupo(Grupo grupo) throws SQLException, IOException{
-        Statement st = conexao().createStatement();
+        PreparedStatement ps = conexao().prepareStatement("UPDATE grupo SET nomeGrupo = ?, idMembro1 = ?, idMembro2 = ?, idMembro3 = ?, idMembro4 = ?,"
+                + " idMembro5 = ?, idMembro6 = ?, idMembro7 = ?, idMembro8 = ?, idMembro9 = ?, idMembro10 = ?, foto = ? WHERE id = ?");
         int[] m = grupo.getMembros();
-        String SQL = "UPDATE grupo SET nomeGrupo = '" + grupo.getNome() + "', idMembro1 = " + m[0] + ", idMembro2 = " + m[1] + ", idMembro3 = " + m[2] + ", idMembro4 = " + m[3] + ", idMembro5 = " + m[4] + ", idMembro6 = " + m[5]
-                     + ", idMembro7 = " + m[6] + ", idMembro8 = " + m[7] + ", idMembro9 = " + m[8] + ", idMembro10 = " + m[9] + ", foto = '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()) + "' WHERE id = " + grupo.getId();
-        int result = st.executeUpdate(SQL);
+        ps.setString(1, grupo.getNome());
+        int j = 0;
+        for (int i = 2; i < 12; i++) {
+            ps.setInt(i, m[j]);
+            j++;
+        }
+        ps.setBlob(12, compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()));
+        ps.setInt(13, grupo.getId());
+        int result = ps.executeUpdate();
         return result == 1;
     }
     

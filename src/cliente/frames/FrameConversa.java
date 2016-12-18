@@ -131,6 +131,38 @@ public class FrameConversa extends javax.swing.JFrame {
         mnuArquivo.add(itemSair);
         menu.add(mnuArquivo);
         setJMenuBar(menu);
+        // implementa eventos de clique
+        itemAlterarFoto.addActionListener((ActionEvent e) -> {
+            ImageIcon foto = null;
+            JFileChooser fs = new JFileChooser();
+            fs.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            int val = fs.showOpenDialog(this);
+            if(val == JFileChooser.APPROVE_OPTION){
+                File caminhoFoto = fs.getSelectedFile();
+                foto = new ImageIcon(caminhoFoto.getPath());
+                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
+                foto = new ImageIcon(imagemRedimensionada);
+                for (Grupo grupo : Principal.grupos) {
+                    if(grupo.getId() == destino){
+                        try {
+                            grupo.setFoto(foto);
+                            Principal.frmPrincipal.conexao.comunicador.alterarGrupo(grupo);
+                        } catch (RemoteException ex) {
+                            JOptionPane.showMessageDialog(null, "Houve uma falha ao enviar a mensagem para o servidor, tente novamente", 
+                                    "Falha no envio", JOptionPane.ERROR_MESSAGE);
+                            ex.printStackTrace();
+                            return;
+                        }
+                        lblFoto.setIcon(foto);
+                        break;
+                    }
+                }
+            }
+        });
+        
+        itemSair.addActionListener((ActionEvent e) -> {
+            setVisible(false);
+        });
     }
     
     private void enviarMensagem(){
@@ -234,7 +266,7 @@ public class FrameConversa extends javax.swing.JFrame {
         }else if(tipo.equals("origemNome"))
             StyleConstants.setBold(formatacao, true);
         else if(tipo.equals("normal")){
-            // não faz nada
+            // não faz nada além do básico
         }
         return formatacao;
     }
