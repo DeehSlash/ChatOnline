@@ -22,8 +22,12 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
+import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.text.Style;
 
@@ -48,6 +52,8 @@ public class FrameConversa extends javax.swing.JFrame {
         mensagemBuilder = new MensagemBuilder(origem, destino, tipoDestino);
         mensagens = new ArrayList<>();
         tipoMensagem = 'T';
+        if(tipoDestino == 'G')
+            implementarMenu();
         carregarInfo();
     }
     
@@ -106,6 +112,25 @@ public class FrameConversa extends javax.swing.JFrame {
                 }
             }  
         }); 
+    }
+    
+    private void implementarMenu(){
+        // declaração de variáveis
+        JMenuBar menu = new JMenuBar();
+        JMenu mnuArquivo = new JMenu();
+        JMenuItem itemAlterarFoto = new JMenuItem();
+        JSeparator separador = new JSeparator();
+        JMenuItem itemSair = new JMenuItem();
+        // propriedades
+        mnuArquivo.setText("Arquivo");
+        itemAlterarFoto.setText("Alterar foto...");
+        itemSair.setText("Sair");
+        // adiciona os componentes
+        mnuArquivo.add(itemAlterarFoto);
+        mnuArquivo.add(separador);
+        mnuArquivo.add(itemSair);
+        menu.add(mnuArquivo);
+        setJMenuBar(menu);
     }
     
     private void enviarMensagem(){
