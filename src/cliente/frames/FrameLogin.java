@@ -6,9 +6,7 @@ import compartilhado.modelo.UsuarioAutenticacao;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.JOptionPane;
 
 public class FrameLogin extends javax.swing.JFrame {
@@ -33,11 +31,13 @@ public class FrameLogin extends javax.swing.JFrame {
     private void autenticarUsuario(boolean cadastro){
         if(verificarCampos()){ // se os campos estiverem preenchidos, continua
             lblStatus.setText("Criando conexão...");
-            conexao = new Conexao(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
+            if(conexao == null)
+                conexao = new Conexao(txtEndereco.getText(), Integer.parseInt(txtPorta.getText())); // cria a conexão
             conexao.setCliente(new Usuario(-1, txtUsuario.getText(), null)); // cliente temporário
             try {
                 lblStatus.setText("Conectando ao servidor...");
-                conexao.conectar(); // conecta com o servidor
+                if(conexao.comunicador == null)
+                    conexao.conectar(); // conecta com o servidor
                 lblStatus.setText(cadastro? "Cadastrando usuário..." : "Autenticando usuário...");
                 int status;
                 UsuarioAutenticacao autenticacao = new UsuarioAutenticacao(txtUsuario.getText(), new String(txtSenha.getPassword()));

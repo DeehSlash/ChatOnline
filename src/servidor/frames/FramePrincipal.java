@@ -61,7 +61,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 txtPorta.setEnabled(true);
                 break;
             case 1: // iniciando
-                lblStatus.setText("Iniciando...");
+                lblStatus.setText("Iniciando");
                 lblStatus.setForeground(new Color(230, 194, 0));
                 btnIniciar.setEnabled(false);
                 btnParar.setEnabled(true);
@@ -82,6 +82,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     
     public void enviarLog(String mensagem){
         txtLog.append(mensagem + "\n");
+        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
     }
     
     /** This method is called from within the constructor to
@@ -103,7 +104,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtEndereco = new javax.swing.JTextField();
         pnlInfo = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scroll = new javax.swing.JScrollPane();
         txtLog = new javax.swing.JTextArea();
         lblUsuarios = new javax.swing.JLabel();
         lblUsuariosConectados = new javax.swing.JLabel();
@@ -193,21 +194,24 @@ public class FramePrincipal extends javax.swing.JFrame {
         pnlInfo.setBorder(javax.swing.BorderFactory.createTitledBorder("Informações"));
         pnlInfo.setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane1.setMaximumSize(new java.awt.Dimension(170, 100));
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(170, 100));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(170, 100));
+        scroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setToolTipText("");
+        scroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scroll.setAutoscrolls(true);
+        scroll.setMaximumSize(new java.awt.Dimension(170, 100));
+        scroll.setMinimumSize(new java.awt.Dimension(170, 100));
+        scroll.setPreferredSize(new java.awt.Dimension(170, 100));
 
         txtLog.setEditable(false);
         txtLog.setColumns(20);
         txtLog.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        txtLog.setLineWrap(true);
         txtLog.setRows(5);
         txtLog.setToolTipText("");
         txtLog.setWrapStyleWord(true);
-        txtLog.setMaximumSize(new java.awt.Dimension(170, 100));
-        txtLog.setMinimumSize(new java.awt.Dimension(170, 100));
+        txtLog.setMaximumSize(null);
         txtLog.setName(""); // NOI18N
-        txtLog.setPreferredSize(new java.awt.Dimension(170, 100));
-        jScrollPane1.setViewportView(txtLog);
+        scroll.setViewportView(txtLog);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -218,7 +222,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(20, 20, 5, 20);
-        pnlInfo.add(jScrollPane1, gridBagConstraints);
+        pnlInfo.add(scroll, gridBagConstraints);
 
         lblUsuarios.setText("Usuários conectados:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -250,13 +254,13 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnIniciar;
     private javax.swing.JButton btnParar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblPorta;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblUsuarios;
     private javax.swing.JLabel lblUsuariosConectados;
     private javax.swing.JPanel pnlConexao;
     private javax.swing.JPanel pnlInfo;
+    private javax.swing.JScrollPane scroll;
     private javax.swing.JTextField txtEndereco;
     private javax.swing.JTextArea txtLog;
     private javax.swing.JTextField txtPorta;

@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -40,7 +38,10 @@ public class FramePrincipal extends javax.swing.JFrame {
         conversas = new ArrayList<>();
         carregarLista(false);
         carregarInfoUsuario();
-        inicializarConversas();
+        new Thread(() -> {
+            inicializarConversas();
+            carregarMensagens();
+        }).start();
         Thread t = conexao;
         t.start();
     }
@@ -63,26 +64,42 @@ public class FramePrincipal extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent evt){
                 if (evt.getClickCount() == 2){
                     boolean aberta = false;
-                    Usuario destino = null;
-                    if(!listUsuarios.getSelectedValue().equals("----------Offline----------") && // ignora se foi clicado na mensagem de online/offline
-                            !listUsuarios.getSelectedValue().equals("----------Online----------"))
-                        destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1); // encontra o destino a partir do nome
-                    if(destino != null){
-                        int i = 0;
-                        for (FrameConversa conversa : conversas) { // verifica se a conversa já foi aberta alguma vez e pega a id da lista
-                            if(conversa.getIdDestino() == destino.getId()){
-                                aberta = true;
-                                break;
-                            }
-                            i++;
+                    int destino = 0;
+                    if(listUsuarios.getSelectedValue().equals("----------Offline----------") || // ignora se foi clicado na mensagem de online/offline
+                            listUsuarios.getSelectedValue().equals("----------Online----------") || 
+                            listUsuarios.getSelectedValue().equals("---------Grupos----------"))
+                        return;
+                    char tipoDestino = identificarSelecao();
+                    switch(tipoDestino){
+                        case 'U':
+                            destino = Principal.usuarios.get(idPorNome(listUsuarios.getSelectedValue()) - 1).getId(); // encontra o destino a partir do nome
+                            break;
+                        case 'G':
+                            destino = getGrupoPorNome(listUsuarios.getSelectedValue()).getId();
+                            break;
+                    }
+                    if(destino == 0)
+                        return;
+                    int i = 0;
+                    for (FrameConversa conversa : conversas) { // verifica se a conversa já foi aberta alguma vez e pega a id da lista
+                        if(conversa.getDestino() == destino && conversa.getTipoDestino() == tipoDestino){
+                            aberta = true;
+                            break;
                         }
-                        if(aberta){ // se já foi aberta
-                            if(!conversas.get(i).isVisible()) // e não estiver visivel
-                                 conversas.get(i).setVisible(true); // torna visivel
-                        }else{ // se nunca foi aberta
-                            conversas.add(new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), destino.getId(), 'U')); // adiciona na lista
-                            conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
+                        i++;
+                    }
+                    if(aberta){ // se já foi aberta
+                        if(conversas.get(i).getCarregado() == false){
+                            conversas.get(i).setNotificar(true);
+                            JOptionPane.showMessageDialog(null, "A conversa ainda não foi carregada, você será notificado quando estiver pronta.",
+                                    "Conversa não carregada", JOptionPane.INFORMATION_MESSAGE);
+                            return;
                         }
+                        if(!conversas.get(i).isVisible()) // e não estiver visivel
+                             conversas.get(i).setVisible(true); // torna visivel
+                    }else{ // se nunca foi aberta
+                        conversas.add(new FrameConversa(conexao.getCliente().getId(), destino, tipoDestino)); // adiciona na lista
+                        conversas.get(conversas.size() - 1).setVisible(true); // torna vísivel
                     }
                 }
             }
@@ -114,8 +131,8 @@ public class FramePrincipal extends javax.swing.JFrame {
         
         itemTransmissao.addActionListener((ActionEvent e) -> {
             String msg = JOptionPane.showInputDialog(this, "Digite a mensagem que será transmitida:", "Enviar transmissão", JOptionPane.INFORMATION_MESSAGE);
-            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getCliente().getId(), 0);
-            Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'U', 'T', msg);
+            MensagemBuilder mensagemBuilder = new MensagemBuilder(conexao.getCliente().getId(), 0, 'U');
+            Mensagem mensagem = mensagemBuilder.criarMensagem(0, 'T', msg);
             try {
                 Transmissao.transmitir(Principal.usuarios, mensagem);
                 JOptionPane.showMessageDialog(this, "A transmissão foi enviada!", "Transmissão", JOptionPane.INFORMATION_MESSAGE);
@@ -130,11 +147,46 @@ public class FramePrincipal extends javax.swing.JFrame {
             frmCriarGrupo.setVisible(true);
         });
         
+        itemDeletarGrupo.addActionListener((ActionEvent e) -> {
+            String nome = JOptionPane.showInputDialog(this, "Digite o nome do grupo que será deletado:", "Deletar grupo", JOptionPane.QUESTION_MESSAGE);
+            Grupo grupo = null;
+            int i = 0;
+            for (Grupo g : Principal.grupos) {
+                if(g.getNome().equals(nome)){
+                    grupo = g;
+                    break;
+                }
+                i++;
+            }
+            if(grupo == null){
+                JOptionPane.showMessageDialog(this, "Não existe um grupo com o nome informado, verifique e tente novamente", "Grupo não existe", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            try {
+                conexao.comunicador.deletarGrupo(grupo);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Principal.grupos.remove(i);
+            carregarLista(true);
+            i = 0;
+            for (FrameConversa conversa : conversas) {
+                if(conversa.getDestino() == grupo.getId() && conversa.getTipoDestino() == 'G')
+                    break;
+                i++;
+            }
+            conversas.get(i).dispose();
+            conversas.remove(i);
+        });
+        
         itemSair.addActionListener((ActionEvent e) -> {
             try {
                 fecharConversas();
                 conexao.comunicador.desconectar();
                 dispose();
+                System.exit(0);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -144,16 +196,39 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void inicializarConversas(){
         for (Usuario usuario : Principal.usuarios) {
             if(usuario.getId() != conexao.getCliente().getId()){
-                try {
-                    FrameConversa conversa = new FrameConversa(Principal.usuarios.get(conexao.getCliente().getId() - 1), usuario.getId(), 'U');
-                    conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId());
-                    conversa.carregarMensagens();
-                    conversas.add(conversa);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), usuario.getId(), 'U');
+                conversas.add(conversa);
             }
         }
+        for (Grupo grupo : Principal.grupos) {
+            FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), grupo.getId(), 'G');
+            conversas.add(conversa);
+        }
+    }
+    
+    private void carregarMensagens(){
+        lblStatusConexao.setForeground(Color.RED);
+        for (FrameConversa conversa : conversas) {
+            String nome;
+            if(conversa.getTipoDestino() == 'U') { nome = Principal.usuarios.get(conversa.getDestino() - 1).getUsuario(); }
+            else { nome = getGrupoPorId(conversa.getDestino()).getNome(); }
+            lblStatusConexao.setText("Carregando conversa com " + nome);
+            try {
+                conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), conversa.getDestino(), conversa.getTipoDestino());
+                new Thread(() -> {
+                    conversa.carregarMensagens();
+                    conversa.setCarregado(true);
+                    if(conversa.getNotificar() == true)
+                        JOptionPane.showMessageDialog(this, "A conversa com " + nome + " foi carregada, você pode abrir a conversa agora.",
+                                "Conversa carregada", JOptionPane.INFORMATION_MESSAGE);
+                }).start();
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                
+            }
+        }
+        lblStatusConexao.setText("Conectado");
+        lblStatusConexao.setForeground(new Color(31, 167, 9));
     }
     
     private void fecharConversas(){
@@ -166,17 +241,60 @@ public class FramePrincipal extends javax.swing.JFrame {
         boolean conversaAberta = false;
         int i = 0;
         for (FrameConversa conversa : conversas) {
-            if(conversa.getIdDestino() == mensagem.getIdOrigem()){
-                conversa.setVisible(true);
-                try {
-                    conversa.escreverMensagem(mensagem, false);
-                } catch (BadLocationException ex) {
-                    ex.printStackTrace();
+            if(mensagem.getDestinoTipo() == 'U'){
+                if(conversa.getDestino() == mensagem.getIdOrigem() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+                    conversaAberta = true;
+                    conversa.setVisible(true);
+                    try {
+                        conversa.escreverMensagem(mensagem, false);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
                 }
-                break;
+            }
+            if(mensagem.getDestinoTipo() == 'G'){
+                if(conversa.getDestino() == mensagem.getIdDestino() && conversa.getTipoDestino() == mensagem.getDestinoTipo()){
+                    conversaAberta = true;
+                    conversa.setVisible(true);
+                    try {
+                        conversa.escreverMensagem(mensagem, false);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
+                }
             }
             i++;
         }
+        if(!conversaAberta){ // caso a conversa não esteja aberta (novo usuário ou grupo) então cria a conversa e adiciona na lista
+            int id;
+            if(mensagem.getDestinoTipo() == 'U')
+                id = mensagem.getIdOrigem();
+            else
+                id = mensagem.getIdDestino();
+            FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), id, mensagem.getDestinoTipo());
+            conversas.add(conversa);
+        }
+    }
+    
+    private char identificarSelecao(){
+        DefaultListModel modelo = (DefaultListModel) listUsuarios.getModel();
+        int selecionado = listUsuarios.getSelectedIndex();
+        int i = selecionado - 1;
+        boolean encontrou = false;
+        while(i >= 0){
+            switch(modelo.get(i).toString()){
+                case "----------Online----------":
+                    return 'U';
+                case "----------Offline----------":
+                    return 'U';
+                case "---------Grupos----------":
+                    return 'G';
+            }
+            i--;
+        }
+        return 'N';
     }
     
     public int idPorNome(String nome){
@@ -186,6 +304,22 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         }
         return -1;
+    }
+    
+    public Grupo getGrupoPorNome(String nome){
+        for (Grupo grupo : Principal.grupos) {
+            if(grupo.getNome().equals(nome))
+                return grupo;
+        }
+        return null;   
+    }
+    
+    public Grupo getGrupoPorId(int id){
+        for (Grupo grupo : Principal.grupos) {
+            if(grupo.getId() == id)
+                return grupo;
+        }
+        return null;
     }
     
     private void carregarInfoUsuario(){ // carrega as informações do usuário (cliente)
@@ -208,13 +342,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     public void atualizarConversas() {
         int id;
         for (FrameConversa conversa : conversas) {
-            id = conversa.getIdDestino();
-            for (Usuario usuario : Principal.usuarios) {
-                if(usuario.getId() == id){
-                    conversa.setDestino(usuario);
-                }
-            }
-            conversa.carregarInfoUsuario();
+            conversa.carregarInfo();
         }
     }
     
@@ -222,6 +350,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         if(!atualizacao){
             try {
                 Principal.usuarios = conexao.comunicador.recuperarListaUsuarios();
+                Principal.grupos = conexao.comunicador.recuperarListaGrupos();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -239,7 +368,7 @@ public class FramePrincipal extends javax.swing.JFrame {
                 listModel.addElement(usuario.getUsuario());
             }
         }
-        listModel.addElement("----------Grupos-----------");
+        listModel.addElement("---------Grupos----------");
         for(Grupo grupo : Principal.grupos){
             listModel.addElement(grupo.getNome());
         }

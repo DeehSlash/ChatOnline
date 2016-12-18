@@ -74,20 +74,35 @@ public class GerenciadorBD {
     }
     
     public boolean criarGrupo(Grupo grupo) throws SQLException, IOException{
-        Statement st = conexao().createStatement();
-        int [] m = grupo.getMembros();
-        String SQL = "INSERT INTO grupo (id, nomeGrupo, idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto) VALUES ('" 
-                + grupo.getId() + "', '" + grupo.getNome() + "', '" + m[0] + "', '" + m[1] + "', '" + m[2] + "', '" + m[3] + "', '" + m[4] + "', '" + m[5] + "', '" + m[6] + "', '" + m[7] + "', '" + m[8] + "', '" + m[9] + "', '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()) + "')";
-        int result = st.executeUpdate(SQL);
+        PreparedStatement ps = conexao().prepareStatement("INSERT INTO grupo (id, nomeGrupo,"
+                + " idMembro1, idMembro2, idMembro3, idMembro4, idMembro5, idMembro6, idMembro7, idMembro8, idMembro9, idMembro10, foto)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        int[] m = grupo.getMembros();
+        ps.setInt(1, grupo.getId());
+        ps.setString(2, grupo.getNome());
+        int j = 0;
+        for (int i = 3; i < 13; i++) {
+            ps.setInt(i, m[j]);
+            j++;
+        }
+        ps.setBlob(13, compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()));
+        int result = ps.executeUpdate();
         return result == 1;
     }
     
     public boolean alterarGrupo(Grupo grupo) throws SQLException, IOException{
-        Statement st = conexao().createStatement();
+        PreparedStatement ps = conexao().prepareStatement("UPDATE grupo SET nomeGrupo = ?, idMembro1 = ?, idMembro2 = ?, idMembro3 = ?, idMembro4 = ?,"
+                + " idMembro5 = ?, idMembro6 = ?, idMembro7 = ?, idMembro8 = ?, idMembro9 = ?, idMembro10 = ?, foto = ? WHERE id = ?");
         int[] m = grupo.getMembros();
-        String SQL = "UPDATE grupo SET nomeGrupo = '" + grupo.getNome() + "', idMembro1 = '" + m[0] + "', idMembro2 = '" + m[1] + "', idMembro3 = '" + m[2] + "', idMembro4 = '" + m[3] + "', idMembro5 = '" + m[4] + "', idMembro6 = '" + m[5]
-                     + "', idMembro7 = '" + m[6] + "', idMembro8 = '" + m[7] + "', idMembro9 = '" + m[8] + "', idMembro10 = '" + m[9] + "', foto = '" + compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()) + "' WHERE id = '" + grupo.getId() + "'";
-        int result = st.executeUpdate(SQL);
+        ps.setString(1, grupo.getNome());
+        int j = 0;
+        for (int i = 2; i < 12; i++) {
+            ps.setInt(i, m[j]);
+            j++;
+        }
+        ps.setBlob(12, compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()));
+        ps.setInt(13, grupo.getId());
+        int result = ps.executeUpdate();
         return result == 1;
     }
     
@@ -129,7 +144,7 @@ public class GerenciadorBD {
     
     public ArrayList<Usuario> getListaUsuarios() throws SQLException, IOException{
         Statement st = conexao().createStatement();
-        String SQL = "SELECT * FROM usuario ORDER by id";
+        String SQL = "SELECT * FROM usuario ORDER BY id";
         ResultSet rs = st.executeQuery(SQL);
         ArrayList<Usuario> usuarios = new ArrayList<>();
         while(rs.next()){
@@ -146,29 +161,55 @@ public class GerenciadorBD {
         return usuarios;
     }
     
-    public ArrayList<Grupo> getListaGrupos(){
+    public ArrayList<Grupo> getListaGrupos() throws SQLException, IOException{
+        Statement st = conexao().createStatement();
+        String SQL = "SELECT * FROM grupo ORDER BY id";
+        ResultSet rs = st.executeQuery(SQL);
         ArrayList<Grupo> grupos = new ArrayList<>();
+        while(rs.next()){
+            int id = rs.getInt("id");
+            if(id != 0){
+                String nome = rs.getString("nomeGrupo");
+                int[] membros = new int[10];
+                for (int i = 0; i < 10; i++) {
+                    membros[i] = rs.getInt("idMembro" + (i + 1));
+                }
+                Blob blob = rs.getBlob("foto");
+                InputStream is = blob.getBinaryStream();
+                Image imagem = ImageIO.read(is);
+                ImageIcon foto = new ImageIcon(imagem);
+                grupos.add(new Grupo(id, nome, membros, foto));
+            }
+        }
         return grupos;
     }
     
-    public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino) throws SQLException, IOException{
+    public ArrayList<Mensagem> getListaMensagens(int idOrigem, int idDestino, char tipoDestino) throws SQLException, IOException{
         ArrayList<Mensagem> mensagens = new ArrayList<>();
-        MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0);
-        PreparedStatement ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE (idUsuarioOrigem = ? AND idUsuarioDestino = ?) OR (idUsuarioOrigem = ? AND idUsuarioDestino = ?) AND destinoTipo = 'U' ORDER BY idMensagem");
-        ps.setInt(1, idOrigem);
-        ps.setInt(2, idDestino);
-        ps.setInt(3, idDestino);
-        ps.setInt(4, idOrigem);
+        MensagemBuilder mensagemBuilder = new MensagemBuilder(0, 0, 'U');
+        PreparedStatement ps;
+        if(tipoDestino == 'U'){
+            ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE (idUsuarioOrigem = ? AND idUsuarioDestino = ?) OR (idUsuarioOrigem = ? AND idUsuarioDestino = ?) AND destinoTipo = 'U' ORDER BY idMensagem");
+            ps.setInt(1, idOrigem);
+            ps.setInt(2, idDestino);
+            ps.setInt(3, idDestino);
+            ps.setInt(4, idOrigem);    
+        }else{
+            ps = conexao().prepareStatement("SELECT * FROM mensagem WHERE idGrupoDestino = ? AND destinoTipo = 'G' ORDER BY idMensagem");
+            ps.setInt(1, idDestino);
+        }
         ResultSet rs = ps.executeQuery();
         while(rs.next()){
-            Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("destinoTipo").charAt(0), rs.getString("tipoMens").charAt(0), null);
+            Mensagem mensagem = mensagemBuilder.criarMensagem(rs.getInt("idMensagem"), rs.getString("tipoMens").charAt(0), null);
             mensagem.setIdOrigem(rs.getInt("idUsuarioOrigem"));
             switch(mensagem.getDestinoTipo()){
                 case 'U':
                     mensagem.setIdDestino(rs.getInt("idUsuarioDestino"));
+                    mensagem.setDestinoTipo('U');
                     break;
                 case 'G':
                     mensagem.setIdDestino(rs.getInt("idGrupoDestino"));
+                    mensagem.setDestinoTipo('G');
                     break;
             }
             switch(mensagem.getTipoMensagem()){

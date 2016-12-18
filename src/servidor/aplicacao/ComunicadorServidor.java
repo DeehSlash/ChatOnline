@@ -13,6 +13,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
@@ -63,7 +65,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         Principal.getConexao(idConexao).setIdCliente(id);
         Principal.usuarios.get(id - 1).setOnline(true);
         Principal.frmPrincipal.alterarUsuarios(true); // incrementa número de usuários online
-        Principal.getConexao(idConexao).atualizarListaUsuarios();
+        Principal.getConexao(idConexao).atualizarLista();
         return status; // retorna status de autenticação
     }
 
@@ -104,7 +106,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         try {
             Principal.gerenciador.alterarUsuario(usuario);
             Principal.usuarios.set(usuario.getId() - 1, usuario);
-            Principal.getConexao(idConexao).atualizarListaUsuarios();
+            Principal.getConexao(idConexao).atualizarLista();
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao alterar usuário " + usuario.getUsuario() + ": " + ex.getMessage());
             ex.printStackTrace();
@@ -123,23 +125,61 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
     
     @Override
-    public int criarGrupo(Grupo grupo) throws RemoteException {
+    public boolean criarGrupo(Grupo grupo) throws RemoteException {
         try {
             Principal.gerenciador.criarGrupo(grupo);
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao criar grupo " + grupo.getNome() + ": " + ex.getMessage());
             ex.printStackTrace();
+            return false;
         }
         Principal.grupos.add(grupo);
-        Principal.frmPrincipal.enviarLog("Grupo" + grupo.getNome() + " foi criado");
-        return 1;
+        Principal.getConexao(idConexao).atualizarLista();
+        Principal.frmPrincipal.enviarLog("Grupo " + grupo.getNome() + " foi criado");
+        return true;
     }
 
     @Override
     public boolean alterarGrupo(Grupo grupo) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            Principal.gerenciador.alterarGrupo(grupo);
+            int i = 0;
+            for (Grupo g : Principal.grupos) {
+                if(g.getId() == grupo.getId())
+                    break;
+                i++;
+            }
+            Principal.grupos.set(i, grupo);
+            Principal.getConexao(idConexao).atualizarLista();
+        } catch (SQLException | IOException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao alterar grupo " + grupo.getNome() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
     }
-
+    
+    @Override
+    public boolean deletarGrupo(Grupo grupo) throws RemoteException {
+        try {
+            Principal.gerenciador.deletarGrupo(grupo.getId());
+        } catch (SQLException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao deletar grupo " + grupo.getNome() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+        int i = 0;
+        for (Grupo g : Principal.grupos) {
+            if(g.getId() == grupo.getId())
+                break;
+            i++;
+        }
+        Principal.grupos.remove(i);
+        Principal.getConexao(idConexao).atualizarLista();
+        return true;
+    }
+    
+    @Override
     public int recuperarIdDisponivelGrupo() throws RemoteException {
         try {
             return Principal.gerenciador.receberIdGrupoDisponivel();
@@ -151,13 +191,22 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
     
     @Override
+    public boolean verificarNomeGrupo(String nome) throws RemoteException{
+        for (Grupo grupo : Principal.grupos) {
+            if(grupo.getNome().equals(nome))
+                return true;
+        }
+        return false;
+    }
+    
+    @Override
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException {
         return Principal.usuarios; // retorna a lista de usuários
     }
 
     @Override
     public ArrayList<Grupo> recuperarListaGrupos() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Principal.getConexao(idConexao).getGrupos();
     }
 
     @Override
@@ -168,18 +217,32 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
             return false;
         }
+        boolean teste = false;
         for (Conexao conexao : Principal.conexoes) {
-            if(conexao.getIdCliente() == mensagem.getIdDestino())
-                conexao.comunicador.receberMensagem(mensagem);
+            if(conexao.getIdCliente() != mensagem.getIdOrigem()){
+                if(conexao.getIdCliente() == mensagem.getIdDestino() && mensagem.getDestinoTipo() == 'U') // se a mensagem for individual e é o destinatário
+                    teste = true; // então a mensagem é para essa conexão
+                else if(mensagem.getDestinoTipo() == 'G'){ // ou se for a mensagem para grupo
+                    if(conexao.pertenceAoGrupo(mensagem.getIdDestino())) // e essa conexão faz parte do grupo
+                        teste = true; // então a mensagem é para essa conexão
+                }
+                if(teste){
+                    if(conexao.comunicador == null) // verifica se o comunicador não é nulo
+                        return false;
+                    conexao.comunicador.receberMensagem(mensagem); // envia a mensagem
+                    if(mensagem.getDestinoTipo() == 'U') // se for conversa individual, não há nada mais para fazer, então retorna
+                        return true;
+                }
+            }
         }
         return true;
     }
 
     @Override
-    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino) throws RemoteException {
+    public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino, char tipoDestino) throws RemoteException {
         ArrayList<Mensagem> mensagens = null;
         try {
-            mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino);
+            mensagens = Principal.gerenciador.getListaMensagens(idOrigem, idDestino, tipoDestino);
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao recuperar lista de mensagens com origem " + idOrigem + " e destino " + idDestino + ": " + ex.getMessage());
         }
