@@ -13,39 +13,6 @@ import javax.imageio.ImageIO;
 
 public class Imagem {
     
-    public static BufferedImage rotateImage(BufferedImage rotateImage, double angle) {
-        angle %= 360;
-        if (angle < 0) angle += 360;
-
-        AffineTransform tx = new AffineTransform();
-        tx.rotate(Math.toRadians(angle), rotateImage.getWidth() / 2.0, rotateImage.getHeight() / 2.0);
-
-        double ytrans = 0;
-        double xtrans = 0;
-        if( angle <= 90 ){
-            xtrans = tx.transform(new Point2D.Double(0, rotateImage.getHeight()), null).getX();
-            ytrans = tx.transform(new Point2D.Double(0.0, 0.0), null).getY();
-        }
-        else if( angle <= 180 ){
-            xtrans = tx.transform(new Point2D.Double(rotateImage.getWidth(), rotateImage.getHeight()), null).getX();
-            ytrans = tx.transform(new Point2D.Double(0, rotateImage.getHeight()), null).getY();
-        }
-        else if( angle <= 270 ){
-            xtrans = tx.transform(new Point2D.Double(rotateImage.getWidth(), 0), null).getX();
-            ytrans = tx.transform(new Point2D.Double(rotateImage.getWidth(), rotateImage.getHeight()), null).getY();
-        }
-        else{
-            xtrans = tx.transform(new Point2D.Double(0, 0), null).getX();
-            ytrans = tx.transform(new Point2D.Double(rotateImage.getWidth(), 0), null).getY();
-        }
-
-        AffineTransform translationTransform = new AffineTransform();
-        translationTransform.translate(-xtrans, -ytrans);
-        tx.preConcatenate(translationTransform);
-
-        return new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR).filter(rotateImage, null);
-    }
-    
     public static Image redimensionarImagem(Image imagem, int tam, boolean manterProporcao){
         Image imagemRedimensionada;
         BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
