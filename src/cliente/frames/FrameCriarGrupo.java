@@ -1,14 +1,14 @@
 package cliente.frames;
 
+// IMPORTAÇÕES DO PROJETO
 import cliente.aplicacao.Principal;
-import compartilhado.aplicacao.Foto;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Usuario;
+// IMPORTAÇÕES JAVA
 import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -44,6 +44,16 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Selecione pelo menos 1 membro", "Poucos membros", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            try {
+                if(Principal.frmPrincipal.conexao.comunicador.verificarNomeGrupo(txtNome.getText())){
+                    JOptionPane.showMessageDialog(null, "Já existe um grupo com este nome, verifique e tente novamente!", "Nome já existente", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             int id;
             try {
                 id = Principal.frmPrincipal.conexao.comunicador.recuperarIdDisponivelGrupo();
@@ -62,6 +72,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
             }
             Principal.grupos.add(grupo);
             Principal.frmPrincipal.carregarLista(true);
+            JOptionPane.showMessageDialog(null, "O grupo foi criado, agora ele está disponível na sua lista!", "Grupo criado", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         });
         

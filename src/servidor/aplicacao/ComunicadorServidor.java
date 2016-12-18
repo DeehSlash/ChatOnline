@@ -154,6 +154,15 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
     
     @Override
+    public boolean verificarNomeGrupo(String nome) throws RemoteException{
+        for (Grupo grupo : Principal.grupos) {
+            if(grupo.getNome().equals(nome))
+                return true;
+        }
+        return false;
+    }
+    
+    @Override
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException {
         return Principal.usuarios; // retorna a lista de usuários
     }
