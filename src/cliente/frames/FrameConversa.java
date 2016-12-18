@@ -1,6 +1,6 @@
 package cliente.frames;
 
-import compartilhado.aplicacao.Foto;
+import compartilhado.aplicacao.Imagem;
 import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
@@ -11,6 +11,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
+import cliente.jogo.FrameJogo;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -129,14 +130,17 @@ public class FrameConversa extends javax.swing.JFrame {
         JMenuBar menu = new JMenuBar();
         JMenu mnuArquivo = new JMenu();
         JMenuItem itemAlterarFoto = new JMenuItem();
+        JMenuItem itemIniciarJogo = new JMenuItem();
         JSeparator separador = new JSeparator();
         JMenuItem itemSair = new JMenuItem();
         // propriedades
         mnuArquivo.setText("Arquivo");
         itemAlterarFoto.setText("Alterar foto...");
+        itemIniciarJogo.setText("Iniciar jogo");
         itemSair.setText("Sair");
         // adiciona os componentes
         mnuArquivo.add(itemAlterarFoto);
+        mnuArquivo.add(itemIniciarJogo);
         mnuArquivo.add(separador);
         mnuArquivo.add(itemSair);
         menu.add(mnuArquivo);
@@ -150,7 +154,7 @@ public class FrameConversa extends javax.swing.JFrame {
             if(val == JFileChooser.APPROVE_OPTION){
                 File caminhoFoto = fs.getSelectedFile();
                 foto = new ImageIcon(caminhoFoto.getPath());
-                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
+                Image imagemRedimensionada = compartilhado.aplicacao.Imagem.redimensionarImagem(foto.getImage(), 50, false);
                 foto = new ImageIcon(imagemRedimensionada);
                 for (Grupo grupo : Principal.grupos) {
                     if(grupo.getId() == destino){
@@ -168,6 +172,11 @@ public class FrameConversa extends javax.swing.JFrame {
                     }
                 }
             }
+        });
+        
+        itemIniciarJogo.addActionListener((ActionEvent e) -> {
+            FrameJogo frameJogo = new FrameJogo();
+            frameJogo.setVisible(true);
         });
         
         itemSair.addActionListener((ActionEvent e) -> {
@@ -253,7 +262,7 @@ public class FrameConversa extends javax.swing.JFrame {
             case 'I': // caso for mensagem de imagem
                 Style estilo = doc.addStyle("imagem", null); // cria um novo estilo
                 ImageIcon imagem = (ImageIcon)mensagem.getMensagem(); // obtem a imagem da mensagem
-                StyleConstants.setIcon(estilo, new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true))); // define o icone com redimensionamento
+                StyleConstants.setIcon(estilo, new ImageIcon(Imagem.redimensionarImagem(imagem.getImage(), 200, true))); // define o icone com redimensionamento
                 doc.insertString(doc.getLength(), "imagem", estilo); // insere a imagem no documento
                 doc.insertString(doc.getLength(), "\n", formatacao("normal")); // pula uma linha
                 break;
@@ -290,7 +299,7 @@ public class FrameConversa extends javax.swing.JFrame {
             lblStatus.setForeground((Principal.usuarios.get(destino - 1).isOnline()? new Color(31, 167, 9) : Color.red));
         }else{
             Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
-            Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(grupo.getFoto().getImage(), 50, false);
+            Image foto = compartilhado.aplicacao.Imagem.redimensionarImagem(grupo.getFoto().getImage(), 50, false);
             lblFoto.setIcon(new ImageIcon(foto));
             lblDestino.setText(grupo.getNome());
             setTitle(grupo.getNome() + " - Mensageiro");
@@ -332,6 +341,7 @@ public class FrameConversa extends javax.swing.JFrame {
         setTitle("Usuário");
         setMinimumSize(new java.awt.Dimension(600, 500));
         setName("frmConversa"); // NOI18N
+        setPreferredSize(new java.awt.Dimension(600, 500));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.rowWeights = new double[] {2.0, 50.0, 1.0};
         getContentPane().setLayout(layout);
