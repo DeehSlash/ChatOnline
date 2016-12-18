@@ -37,6 +37,9 @@ public class FrameConversa extends javax.swing.JFrame {
     private final int destino;
     private final char tipoDestino;
     
+    private boolean carregado;
+    private boolean notificar;
+    
     private StyledDocument doc;
     
     private final MensagemBuilder mensagemBuilder;
@@ -49,6 +52,8 @@ public class FrameConversa extends javax.swing.JFrame {
         this.origem = origem;
         this.destino = destino;
         this.tipoDestino = tipoDestino;
+        carregado = false;
+        notificar = false;
         mensagemBuilder = new MensagemBuilder(origem, destino, tipoDestino);
         mensagens = new ArrayList<>();
         tipoMensagem = 'T';
@@ -59,6 +64,11 @@ public class FrameConversa extends javax.swing.JFrame {
     
     public int getDestino(){ return destino; }
     public char getTipoDestino() { return tipoDestino; }
+    public boolean getCarregado() { return carregado; }
+    public boolean getNotificar() { return notificar; }
+    
+    public void setCarregado(boolean carregado) { this.carregado = carregado; }
+    public void setNotificar(boolean notificar) { this.notificar = notificar; }
     
     private void addListeners(){
         

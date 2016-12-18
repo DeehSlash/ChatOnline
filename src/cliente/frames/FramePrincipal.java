@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -38,10 +36,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         addListeners();
         this.conexao = conexao;
         conversas = new ArrayList<>();
+        carregarLista(false);
+        carregarInfoUsuario();
         new Thread(() -> {
-            carregarLista(false);
-            carregarInfoUsuario();
             inicializarConversas();
+            carregarMensagens();
         }).start();
         Thread t = conexao;
         t.start();
@@ -90,6 +89,12 @@ public class FramePrincipal extends javax.swing.JFrame {
                         i++;
                     }
                     if(aberta){ // se já foi aberta
+                        if(conversas.get(i).getCarregado() == false){
+                            conversas.get(i).setNotificar(true);
+                            JOptionPane.showMessageDialog(null, "A conversa ainda não foi carregada, você será notificado quando estiver pronta.",
+                                    "Conversa não carregada", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         if(!conversas.get(i).isVisible()) // e não estiver visivel
                              conversas.get(i).setVisible(true); // torna visivel
                     }else{ // se nunca foi aberta
@@ -191,30 +196,39 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void inicializarConversas(){
         for (Usuario usuario : Principal.usuarios) {
             if(usuario.getId() != conexao.getCliente().getId()){
-                try {
-                    FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), usuario.getId(), 'U');
-                    conversas.add(conversa);
-                    conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), usuario.getId(), 'U');
-                    new Thread(() -> {
-                        conversa.carregarMensagens();
-                    }).start();
-                } catch (RemoteException ex) {
-                    ex.printStackTrace();
-                }
+                FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), usuario.getId(), 'U');
+                conversas.add(conversa);
             }
         }
         for (Grupo grupo : Principal.grupos) {
+            FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), grupo.getId(), 'G');
+            conversas.add(conversa);
+        }
+    }
+    
+    private void carregarMensagens(){
+        lblStatusConexao.setForeground(Color.RED);
+        for (FrameConversa conversa : conversas) {
+            String nome;
+            if(conversa.getTipoDestino() == 'U') { nome = Principal.usuarios.get(conversa.getDestino() - 1).getUsuario(); }
+            else { nome = getGrupoPorId(conversa.getDestino()).getNome(); }
+            lblStatusConexao.setText("Carregando conversa com " + nome);
             try {
-                FrameConversa conversa = new FrameConversa(conexao.getCliente().getId(), grupo.getId(), 'G');
-                conversas.add(conversa);
-                conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), grupo.getId(), 'G');
+                conversa.mensagens = conexao.comunicador.recuperarListaMensagens(conexao.getCliente().getId(), conversa.getDestino(), conversa.getTipoDestino());
                 new Thread(() -> {
-                        conversa.carregarMensagens();
+                    conversa.carregarMensagens();
+                    conversa.setCarregado(true);
+                    if(conversa.getNotificar() == true)
+                        JOptionPane.showMessageDialog(this, "A conversa com " + nome + " foi carregada, você pode abrir a conversa agora.",
+                                "Conversa carregada", JOptionPane.INFORMATION_MESSAGE);
                 }).start();
             } catch (RemoteException ex) {
                 ex.printStackTrace();
+                
             }
         }
+        lblStatusConexao.setText("Conectado");
+        lblStatusConexao.setForeground(new Color(31, 167, 9));
     }
     
     private void fecharConversas(){
