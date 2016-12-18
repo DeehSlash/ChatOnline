@@ -13,6 +13,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
@@ -141,7 +143,27 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     public boolean alterarGrupo(Grupo grupo) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    @Override
+    public boolean deletarGrupo(Grupo grupo) throws RemoteException {
+        try {
+            Principal.gerenciador.deletarGrupo(grupo.getId());
+        } catch (SQLException ex) {
+            Principal.frmPrincipal.enviarLog("Exceção ao deletar grupo " + grupo.getNome() + ": " + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+        int i = 0;
+        for (Grupo g : Principal.grupos) {
+            if(g.getId() == grupo.getId())
+                break;
+            i++;
+        }
+        Principal.grupos.remove(i);
+        Principal.getConexao(idConexao).atualizarLista();
+        return true;
+    }
+    
     @Override
     public int recuperarIdDisponivelGrupo() throws RemoteException {
         try {

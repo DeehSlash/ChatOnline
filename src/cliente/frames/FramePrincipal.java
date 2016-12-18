@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -138,6 +140,40 @@ public class FramePrincipal extends javax.swing.JFrame {
         itemCriarGrupo.addActionListener((ActionEvent e) -> {
             FrameCriarGrupo frmCriarGrupo = new FrameCriarGrupo();
             frmCriarGrupo.setVisible(true);
+        });
+        
+        itemDeletarGrupo.addActionListener((ActionEvent e) -> {
+            String nome = JOptionPane.showInputDialog(this, "Digite o nome do grupo que será deletado:", "Deletar grupo", JOptionPane.QUESTION_MESSAGE);
+            Grupo grupo = null;
+            int i = 0;
+            for (Grupo g : Principal.grupos) {
+                if(g.getNome().equals(nome)){
+                    grupo = g;
+                    break;
+                }
+                i++;
+            }
+            if(grupo == null){
+                JOptionPane.showMessageDialog(this, "Não existe um grupo com o nome informado, verifique e tente novamente", "Grupo não existe", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            try {
+                conexao.comunicador.deletarGrupo(grupo);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha na comunicação com o servidor, tente novamente!", "Falha na comunicação", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Principal.grupos.remove(i);
+            carregarLista(true);
+            i = 0;
+            for (FrameConversa conversa : conversas) {
+                if(conversa.getDestino() == grupo.getId() && conversa.getTipoDestino() == 'G')
+                    break;
+                i++;
+            }
+            conversas.get(i).dispose();
+            conversas.remove(i);
         });
         
         itemSair.addActionListener((ActionEvent e) -> {
