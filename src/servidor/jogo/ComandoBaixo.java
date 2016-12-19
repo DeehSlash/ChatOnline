@@ -1,5 +1,8 @@
 package servidor.jogo;
 
+import java.awt.Point;
+import servidor.aplicacao.Principal;
+
 public class ComandoBaixo implements Comando {
     
     int id;
@@ -12,7 +15,24 @@ public class ComandoBaixo implements Comando {
     
     @Override
     public void executar() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Jogo jogo = Principal.getJogo(id);
+        Point posicao;
+        if(time.equals("azul"))
+            posicao = jogo.getPosicaoAzul();
+        else
+            posicao = jogo.getPosicaoVermelho();
+        // verifica x
+        if((posicao.x + jogo.getTamVeiculo() + jogo.getPasso()) > jogo.getTamJanela().x)
+            return;
+        // verifica colisão
+        if(((posicao.x + jogo.getTamVeiculo() + jogo.getPasso()) >= jogo.getPosicaoVermelho().x) &&
+                ((posicao.x + jogo.getTamVeiculo() + jogo.getPasso()) <= jogo.getPosicaoVermelho().x + jogo.getTamVeiculo()))
+            return;
+        posicao.x += jogo.getPasso(); // incrementa o x (anda para baixo)
+        if(time.equals("azul")) // seta a posição no jogo
+            jogo.setPosicaoAzul(posicao);
+        else
+            jogo.setPosicaoVermelho(posicao);
     }
 
 }
