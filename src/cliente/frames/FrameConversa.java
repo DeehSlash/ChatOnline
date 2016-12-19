@@ -259,7 +259,7 @@ public class FrameConversa extends javax.swing.JFrame {
         return min == max;
     }
     
-    private void descerScroll(){
+    public void descerScroll(){
         SwingUtilities.invokeLater(() -> {
             scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
         });

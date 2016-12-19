@@ -21,7 +21,7 @@ public class ComunicadorCliente implements IComunicadorCliente {
     @Override
     public boolean iniciarJogo(int idGrupo) throws RemoteException{
         for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
-            if(conversa.getDestino() == idGrupo){
+            if(conversa.getDestino() == idGrupo && conversa.getTipoDestino() == 'G'){
                 conversa.setVisible(true);
                 conversa.iniciarJogo();
                 return true;
@@ -33,8 +33,9 @@ public class ComunicadorCliente implements IComunicadorCliente {
     @Override
     public boolean receberInformacao(int idGrupo, String informacao) throws RemoteException {
         for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
-            if(conversa.getDestino() == idGrupo){
+            if(conversa.getDestino() == idGrupo && conversa.getTipoDestino() == 'G'){
                 conversa.escreverInformacao(informacao);
+                conversa.descerScroll();
                 return true;
             }
         }
