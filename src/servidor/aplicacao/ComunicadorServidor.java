@@ -222,6 +222,11 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
             return false;
         }
+        String msg = (String) mensagem.getMensagem();
+        if(msg.startsWith(".") && mensagem.getDestinoTipo() == 'G'){ // se a mensagem começa com ".", então ela é um comando para o jogo em grupo
+            if(Principal.getJogo(mensagem.getIdDestino()) != null)
+                Principal.getJogo(mensagem.getIdDestino()).receberComando(msg);
+        }
         boolean teste = false;
         for (Conexao conexao : Principal.conexoes) {
             if(conexao.getIdCliente() != mensagem.getIdOrigem()){
