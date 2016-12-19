@@ -309,7 +309,7 @@ public class FrameConversa extends javax.swing.JFrame {
             descerScroll(); // desce o scroll
     }
     
-    private void escreverInformacao(String informacao){
+    public void escreverInformacao(String informacao){
         try {
             doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
             boolean deveDarScroll = testeScroll(); // faz o teste de scroll

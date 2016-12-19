@@ -1,5 +1,6 @@
 package cliente.aplicacao;
 
+import cliente.frames.FrameConversa;
 import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
@@ -17,6 +18,17 @@ public class ComunicadorCliente implements IComunicadorCliente {
         return true;
     }
 
+    @Override
+    public boolean receberInformacao(int idGrupo, String informacao) throws RemoteException {
+        for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
+            if(conversa.getDestino() == idGrupo){
+                conversa.escreverInformacao(informacao);
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public boolean atualizarLista(ArrayList<Usuario> usuarios, ArrayList<Grupo> grupos) throws RemoteException {
         Principal.usuarios = usuarios;

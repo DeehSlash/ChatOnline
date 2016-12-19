@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public interface IComunicadorCliente extends Remote {
 
     public boolean receberMensagem(Mensagem mensagem) throws RemoteException;
+    public boolean receberInformacao(int idGrupo, String informacao) throws RemoteException;
     
     public boolean atualizarLista(ArrayList<Usuario> usuarios, ArrayList<Grupo> grupos) throws RemoteException;
     
