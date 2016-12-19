@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import servidor.aplicacao.Principal;
 
-
 public class Jogo {
 
     private final int idGrupo;
@@ -26,7 +25,9 @@ public class Jogo {
     private int rotacaoVermelho;
     
     private boolean tiroAzul;
+    private Point posicaoTiroAzul;
     private boolean tiroVermelho;
+    private Point posicaoTiroVermelho;
     
     private int vidaAzul;
     private int vidaVermelho;
@@ -55,11 +56,15 @@ public class Jogo {
     public Point getPosicaoVermelho() { return posicaoVermelho; }
     public boolean getTiroAzul() { return tiroAzul; }
     public boolean getTiroVermelho() { return tiroVermelho; }
+    public Point getPosicaoTiroAzul() { return posicaoTiroAzul; }
+    public Point getPosicaoTiroVermelho() { return posicaoTiroVermelho; }
     
     public void setPosicaoAzul(Point posicao) { posicaoAzul = posicao; }
     public void setPosicaoVermelho(Point posicao) { posicaoVermelho = posicao; }
     public void setTiroAzul(boolean tiro) { tiroAzul = tiro; }
     public void setTiroVermelho(boolean tiro) { tiroVermelho = tiro; }
+    public void setPosicaoTiroAzul(Point posicao) { posicaoTiroAzul = posicao; }
+    public void setPosicaoTiroVermelho(Point posicao) { posicaoTiroVermelho = posicao; }
     
     public void inicializar(){
         // inicialização das variáveis com valores iniciais
