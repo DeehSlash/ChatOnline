@@ -1,8 +1,10 @@
-package servidor.aplicacao;
+package servidor.jogo;
 
 import compartilhado.modelo.Usuario;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import servidor.aplicacao.Principal;
+
 
 public class Jogo {
 

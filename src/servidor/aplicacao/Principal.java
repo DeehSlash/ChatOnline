@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import servidor.jogo.Jogo;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

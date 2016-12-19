@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import servidor.jogo.Jogo;
 import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.aplicacao.IComunicadorServidor;
 import compartilhado.modelo.Grupo;

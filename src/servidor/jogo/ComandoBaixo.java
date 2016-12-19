@@ -1,0 +1,10 @@
+package servidor.jogo;
+
+public class ComandoBaixo implements Comando {
+
+    @Override
+    public void executar() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+}
