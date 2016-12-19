@@ -16,6 +16,7 @@ public class Jogo {
     
     private final Point tamJanela;
     private final int tamVeiculo;
+    private final int passo;
     
     private Point posicaoAzul;
     private int rotacaoAzul;
@@ -34,10 +35,14 @@ public class Jogo {
         this.timeVermelho = timeVermelho;
         tamJanela = new Point(500, 500);
         tamVeiculo = 50;
+        passo = 10;
         inicializar();
     }
     
     public int getIdGrupo() { return idGrupo; }
+    public Point getTamJanela() { return tamJanela; }
+    public int getTamVeiculo() { return tamVeiculo; }
+    public int getPasso() { return passo; }
     public Point getPosicaoAzul() { return posicaoAzul; }
     public Point getPosicaoVermelho() { return posicaoVermelho; }
     
