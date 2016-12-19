@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
@@ -91,6 +92,22 @@ public class PanelJogo extends javax.swing.JPanel {
         veiculoVermelho = Imagem.redimensionarImagem(imagem.getImage(), 50, true);
         imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/tiro.png"));
         tiro = Imagem.redimensionarImagem(imagem.getImage(), 10, true);
+    }
+    
+    private Rectangle getLimiteVeiculo(String time){
+        if(time.equals("azul")){
+            return new Rectangle(posicaoAzul.x, posicaoAzul.y, veiculoAzul.getWidth(null), veiculoAzul.getHeight(null));
+        }else if(time.equals("vermelho"))
+            return new Rectangle(posicaoVermelho.x, posicaoVermelho.y, veiculoVermelho.getWidth(null), veiculoVermelho.getHeight(null));
+        return null;
+    }
+    
+    private Rectangle getLimiteTiro(String time){
+        if(time.equals("azul")){
+            return new Rectangle(posicaoTiroAzul.x, posicaoTiroAzul.y, tiro.getWidth(null), tiro.getHeight(null));
+        }else if(time.equals("vermelho"))
+            return new Rectangle(posicaoTiroVermelho.x, posicaoTiroVermelho.y, tiro.getWidth(null), tiro.getHeight(null));
+        return null;
     }
     
     private void desenharVeiculo(Graphics g, String veiculo, int x, int y, int rotacao){
