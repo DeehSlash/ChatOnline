@@ -38,6 +38,11 @@ public class Jogo {
     }
     
     public int getIdGrupo() { return idGrupo; }
+    public Point getPosicaoAzul() { return posicaoAzul; }
+    public Point getPosicaoVermelho() { return posicaoVermelho; }
+    
+    public void setPosicaoAzul(Point posicao) { posicaoAzul = posicao; }
+    public void setPosicaoVermelho(Point posicao) { posicaoVermelho = posicao; }
     
     public void inicializar(){
         // inicialização das variáveis com valores iniciais
