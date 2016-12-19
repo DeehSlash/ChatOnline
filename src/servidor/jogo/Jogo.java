@@ -26,6 +26,8 @@ public class Jogo {
     private int vidaAzul;
     private int vidaVermelho;
     
+    private ComandoInvoker comandoInvoker;
+    
     public Jogo(int idGrupo, ArrayList<Usuario> timeAzul, ArrayList<Usuario> timeVermelho){
         this.idGrupo = idGrupo;
         this.timeAzul = timeAzul;
@@ -46,6 +48,7 @@ public class Jogo {
         rotacaoVermelho = 180;
         vidaAzul = 5;
         vidaVermelho = 5;
+        comandoInvoker = new ComandoInvoker(idGrupo);
         try {
             enviarInformacao("Iniciando jogo...");
             String azul = "Time azul: ";
@@ -89,6 +92,11 @@ public class Jogo {
             if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null)
                 Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.receberInformacao(idGrupo, informacao);
         }
+    }
+    
+    public void receberComando(String nome){
+        if(comandoInvoker.setComando(nome))
+            comandoInvoker.executar();
     }
     
 }
