@@ -12,6 +12,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
 import cliente.jogo.FrameJogo;
+import compartilhado.modelo.Usuario;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -177,13 +178,41 @@ public class FrameConversa extends javax.swing.JFrame {
         });
         
         itemIniciarJogo.addActionListener((ActionEvent e) -> {
-            FrameJogo frameJogo = new FrameJogo();
-            frameJogo.setVisible(true);
-            try {
-                escreverInformacao("Jogo foi iniciado com sucesso!");
-            } catch (BadLocationException ex) {
-                Logger.getLogger(FrameConversa.class.getName()).log(Level.SEVERE, null, ex);
+            escreverInformacao("Iniciando jogo...");
+            ArrayList<Usuario> timeAzul = new ArrayList<>(); // declara os times
+            ArrayList<Usuario> timeVermelho = new ArrayList<>();
+            Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
+            int qtd = 0;
+            for (int i = 0; i < 10; i++) { // conta quantos membros tem no grupo
+                if(grupo.getMembros()[i] != 0)
+                    qtd++;
+                else
+                    break;
             }
+            int qtdTimeVermelho = qtd / 2;
+            int qtdTimeAzul = qtd - qtdTimeVermelho;
+            for (int i = 0; i < qtd; i++) {
+                if(timeAzul.size() == qtdTimeAzul)
+                    timeVermelho.add(Principal.usuarios.get(grupo.getMembros()[i] - 1));
+                else
+                    timeAzul.add(Principal.usuarios.get(grupo.getMembros()[i] - 1));
+            }
+            String azul = "Time azul: ";
+            for (Usuario usuario : timeAzul) {
+                azul += usuario.getUsuario() + ", ";
+            }
+            azul = azul.substring(0, azul.lastIndexOf(","));
+            String vermelho = "Time vermelho: ";
+            for (Usuario usuario : timeVermelho) {
+                vermelho += usuario.getUsuario() + ", ";
+            }
+            vermelho = vermelho.substring(0, vermelho.lastIndexOf(","));
+            escreverInformacao(azul);
+            escreverInformacao(vermelho);
+            escreverInformacao("Comandos:\n.cima\n.baixo\n.esquerda\n.direita\n.atirar");
+            FrameJogo frameJogo = new FrameJogo(timeAzul, timeVermelho);
+            frameJogo.setVisible(true);
+            escreverInformacao("O jogo foi iniciado");
         });
         
         itemSair.addActionListener((ActionEvent e) -> {
@@ -280,14 +309,18 @@ public class FrameConversa extends javax.swing.JFrame {
             descerScroll(); // desce o scroll
     }
     
-    private void escreverInformacao(String informacao) throws BadLocationException{
-        doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
-        boolean deveDarScroll = testeScroll(); // faz o teste de scroll
-        doc.insertString(doc.getLength(), "\n" + informacao + "\n", formatacao("informacao")); // escreve a informação
-        doc.setParagraphAttributes(0, doc.getLength(), formatacao("normal"), true); // formata a fonte e paragrafo
-        txtConversa.setStyledDocument(doc); // joga o documento de volta para o JTextPane
-        if(deveDarScroll) // se deve dar scroll
-            descerScroll(); // desce o scroll
+    private void escreverInformacao(String informacao){
+        try {
+            doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
+            boolean deveDarScroll = testeScroll(); // faz o teste de scroll
+            doc.insertString(doc.getLength(), "\n" + informacao + "\n", formatacao("informacao")); // escreve a informação
+            doc.setParagraphAttributes(0, doc.getLength(), formatacao("normal"), true); // formata a fonte e paragrafo
+            txtConversa.setStyledDocument(doc); // joga o documento de volta para o JTextPane
+            if(deveDarScroll) // se deve dar scroll
+                descerScroll(); // desce o scroll
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+        }
     }
     
     private SimpleAttributeSet formatacao(String tipo){

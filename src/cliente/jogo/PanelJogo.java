@@ -19,6 +19,7 @@ public class PanelJogo extends javax.swing.JPanel {
     private int azulX;
     private int azulY;
     private int azulRotacao;
+    
     private int vermelhoX;
     private int vermelhoY;
     private int vermelhoRotacao;
