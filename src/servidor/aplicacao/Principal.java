@@ -97,4 +97,12 @@ public class Principal {
         }
         return null;
     }
+    
+    public static Conexao getConexaoPorIdUsuario(int id){
+        for (Conexao conexao : conexoes) {
+            if(conexao.getIdCliente() == id)
+                return conexao;
+        }
+        return null;
+    }
 }
