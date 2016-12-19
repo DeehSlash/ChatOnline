@@ -2,6 +2,7 @@ package servidor.jogo;
 
 import compartilhado.modelo.Usuario;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import servidor.aplicacao.Principal;
@@ -131,6 +132,14 @@ public class Jogo {
             ex.printStackTrace();
             Principal.frmPrincipal.enviarLog("Exceção ao atualizar posição de jogo com id " + idGrupo + ": " + ex.getMessage());
         }
+    }
+    
+    public Rectangle getLimite(String time){
+        if(time.equals("azul")){
+            return new Rectangle(posicaoAzul.x, posicaoAzul.y, tamVeiculo, tamVeiculo);
+        }else if(time.equals("vermelho"))
+            return new Rectangle(posicaoVermelho.x, posicaoVermelho.y, tamVeiculo, tamVeiculo);
+        return null;
     }
     
     public void receberComando(int id, String nome){
