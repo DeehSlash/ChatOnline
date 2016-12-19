@@ -134,11 +134,11 @@ public class Jogo {
         }
     }
     
-    public Rectangle getLimite(String time){
+    public Rectangle getLimite(String time, int x, int y){ // x e y são incrementos para verificar se uma futura posição vai colidir
         if(time.equals("azul")){
-            return new Rectangle(posicaoAzul.x, posicaoAzul.y, tamVeiculo, tamVeiculo);
+            return new Rectangle(posicaoAzul.x + x, posicaoAzul.y + y, tamVeiculo, tamVeiculo);
         }else if(time.equals("vermelho"))
-            return new Rectangle(posicaoVermelho.x, posicaoVermelho.y, tamVeiculo, tamVeiculo);
+            return new Rectangle(posicaoVermelho.x + x, posicaoVermelho.y + y, tamVeiculo, tamVeiculo);
         return null;
     }
     

@@ -25,8 +25,13 @@ public class ComandoBaixo implements Comando {
         if((posicao.y + jogo.getTamVeiculo() + jogo.getPasso()) > jogo.getTamJanela().y)
             return;
         // verifica colisão
-        if(jogo.getLimite("azul").intersects(jogo.getLimite("vermelho")))
-            return;
+        if(time.equals("azul")){
+            if(jogo.getLimite("azul", 0, jogo.getPasso()).intersects(jogo.getLimite("vermelho", 0, 0)))
+                return;
+        }else{
+            if(jogo.getLimite("azul", 0, 0).intersects(jogo.getLimite("vermelho", 0, jogo.getPasso())))
+                return;
+        }
         posicao.y += jogo.getPasso(); // incrementa o y (anda para baixo)
         if(time.equals("azul")) // seta a posição no jogo
             jogo.setPosicaoAzul(posicao);
