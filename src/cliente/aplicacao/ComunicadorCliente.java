@@ -45,7 +45,13 @@ public class ComunicadorCliente implements IComunicadorCliente {
 
     @Override
     public boolean atualizarVidaJogo(int idGrupo, int vida, String time) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
+            if(conversa.getDestino() == idGrupo && conversa.getTipoDestino() == 'G'){
+                conversa.frameJogo.atualizarVida(vida, time);
+                return true;
+            }
+        }
+        return false;
     }
     
     @Override

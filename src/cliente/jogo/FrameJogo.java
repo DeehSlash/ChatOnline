@@ -27,6 +27,10 @@ public class FrameJogo extends javax.swing.JFrame {
         jogo.atualizarPosicao(posicao, time);
     }
     
+    public void atualizarVida(int vida, String time){
+        jogo.atualizarVida(vida, time);
+    }
+    
     public void criarTiro(String time){
         jogo.criarTiro(time);
     }

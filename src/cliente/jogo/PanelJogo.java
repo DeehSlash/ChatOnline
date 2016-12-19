@@ -28,6 +28,9 @@ public class PanelJogo extends javax.swing.JPanel {
     private Point posicaoVermelho;
     private int rotacaoVermelho;
     
+    private int vidaAzul;
+    private int vidaVermelho;
+    
     private boolean tiroAzul;
     private Point posicaoTiroAzul;
     private boolean tiroVermelho;
@@ -50,6 +53,8 @@ public class PanelJogo extends javax.swing.JPanel {
         delayTiro = 1;
         posicaoAzul = new Point();
         posicaoVermelho = new Point();
+        vidaAzul = 5;
+        vidaVermelho = 5;
         proximaPosicao = new Point();
         posicaoTiroAzul = new Point();
         posicaoTiroVermelho = new Point();
@@ -75,8 +80,8 @@ public class PanelJogo extends javax.swing.JPanel {
     @Override
     public void paintComponent(Graphics g) {
         g.drawImage(fundo, 0, 0, null);
-        desenharVida(g, "azul", 5);
-        desenharVida(g, "vermelho", 5);
+        desenharVida(g, "azul");
+        desenharVida(g, "vermelho");
         desenharVeiculo(g, "azul");
         desenharVeiculo(g, "vermelho");
         if(tiroAzul)
@@ -137,12 +142,19 @@ public class PanelJogo extends javax.swing.JPanel {
         g2d.setTransform(old);
     } 
     
-    private void desenharVida(Graphics g, String time, int vida){
+    private void desenharVida(Graphics g, String time){
         ImageIcon imagem;
-        if(vida == 0)
-            imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_0.png"));
-        else
-            imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_" + time + "_" + Integer.toString(vida) + ".png"));
+        if(time.equals("azul")){
+            if(vidaAzul == 0)
+                imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_0.png"));
+            else
+                imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_" + time + "_" + Integer.toString(vidaAzul) + ".png"));
+        }else{
+            if(vidaVermelho == 0)
+                imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_0.png"));
+            else
+                imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_" + time + "_" + Integer.toString(vidaVermelho) + ".png"));
+        }
         Image imagemRedimensionada = Imagem.redimensionarImagem(imagem.getImage(), 100, true);
         if(time.equals("azul"))
             g.drawImage(imagemRedimensionada, 0, (tamJanela.y - imagemRedimensionada.getHeight(null)), null);
@@ -277,6 +289,14 @@ public class PanelJogo extends javax.swing.JPanel {
         }else{
             posicaoTiroVermelho.y++;
         }
+        repaint();
+    }
+    
+    public void atualizarVida(int vida, String time){
+        if(time.equals("azul"))
+            vidaAzul = vida;
+        else
+            vidaVermelho = vida;
         repaint();
     }
 }

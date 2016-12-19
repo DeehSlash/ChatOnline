@@ -16,6 +16,7 @@ public class Jogo {
     
     private final Point tamJanela;
     private final int tamVeiculo;
+    private final Point tamTiro;
     private final int passo;
     
     private Point posicaoAzul;
@@ -44,6 +45,7 @@ public class Jogo {
         posicaoVermelho = new Point();
         tiroAzul = false;
         tiroVermelho = false;
+        tamTiro = new Point(10, 63);
         passo = 10;
         inicializar();
     }
@@ -58,6 +60,8 @@ public class Jogo {
     public boolean getTiroVermelho() { return tiroVermelho; }
     public Point getPosicaoTiroAzul() { return posicaoTiroAzul; }
     public Point getPosicaoTiroVermelho() { return posicaoTiroVermelho; }
+    public int getVidaAzul() { return vidaAzul; }
+    public int getVidaVermelho() { return vidaVermelho; }
     
     public void setPosicaoAzul(Point posicao) { posicaoAzul = posicao; }
     public void setPosicaoVermelho(Point posicao) { posicaoVermelho = posicao; }
@@ -65,6 +69,8 @@ public class Jogo {
     public void setTiroVermelho(boolean tiro) { tiroVermelho = tiro; }
     public void setPosicaoTiroAzul(Point posicao) { posicaoTiroAzul = posicao; }
     public void setPosicaoTiroVermelho(Point posicao) { posicaoTiroVermelho = posicao; }
+    public void setVidaAzul(int vida) { vidaAzul = vida; }
+    public void setVidaVermelho(int vida) { vidaVermelho = vida; }
     
     public void inicializar(){
         // inicialização das variáveis com valores iniciais
@@ -148,6 +154,23 @@ public class Jogo {
         }
     }
     
+    public void atualizarVida(int vida, String time){
+        try {
+            for (Usuario usuario : timeAzul) {
+                if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null){
+                    Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.atualizarVidaJogo(idGrupo, vida, time);
+                }
+            }
+            for (Usuario usuario : timeVermelho) {
+                if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null)
+                    Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.atualizarVidaJogo(idGrupo, vida, time);
+            }
+        } catch(RemoteException ex){
+            ex.printStackTrace();
+            Principal.frmPrincipal.enviarLog("Exceção ao atualizar vida de jogo com id " + idGrupo + ": " + ex.getMessage());
+        }
+    }
+    
     public void criarTiro(String time){
         if(time.equals("azul"))
             setTiroAzul(true);
@@ -170,11 +193,19 @@ public class Jogo {
             setTiroVermelho(false);
         } catch(RemoteException ex){
             ex.printStackTrace();
-            Principal.frmPrincipal.enviarLog("Exceção ao atualizar posição de jogo com id " + idGrupo + ": " + ex.getMessage());
+            Principal.frmPrincipal.enviarLog("Exceção ao criar tiro de jogo com id " + idGrupo + ": " + ex.getMessage());
         }
     }
     
-    public Rectangle getLimite(String time, int x, int y){ // x e y são incrementos para verificar se uma futura posição vai colidir
+    public Rectangle getLimiteTiro(String time){
+        if(time.equals("azul")){
+            return new Rectangle(posicaoTiroAzul.x, posicaoTiroAzul.y, tamTiro.x, tamTiro.y);
+        }else if(time.equals("vermelho"))
+            return new Rectangle(posicaoTiroVermelho.x, posicaoTiroVermelho.y, tamTiro.x, tamTiro.y);
+        return null;
+    }
+    
+    public Rectangle getLimiteVeiculo(String time, int x, int y){ // x e y são incrementos para verificar se uma futura posição vai colidir
         if(time.equals("azul")){
             return new Rectangle(posicaoAzul.x + x, posicaoAzul.y + y, tamVeiculo, tamVeiculo);
         }else if(time.equals("vermelho"))
