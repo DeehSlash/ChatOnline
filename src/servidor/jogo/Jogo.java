@@ -1,6 +1,7 @@
 package servidor.jogo;
 
 import compartilhado.modelo.Usuario;
+import java.awt.Point;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import servidor.aplicacao.Principal;
@@ -9,8 +10,19 @@ import servidor.aplicacao.Principal;
 public class Jogo {
 
     private final int idGrupo;
+    
     private final ArrayList<Usuario> timeAzul;
     private final ArrayList<Usuario> timeVermelho;
+    
+    private final int x;
+    private final int y;
+    private final int tamVeiculo;
+    
+    private Point posicaoAzul;
+    private int rotacaoAzul;
+    
+    private Point posicaoVermelho;
+    private int rotacaoVermelho;
     
     private int vidaAzul;
     private int vidaVermelho;
@@ -19,12 +31,24 @@ public class Jogo {
         this.idGrupo = idGrupo;
         this.timeAzul = timeAzul;
         this.timeVermelho = timeVermelho;
+        x = 500;
+        y = 500;
+        tamVeiculo = 50;
         inicializar();
     }
     
+    public int getIdGrupo() { return idGrupo; }
+    
     public void inicializar(){
-        vidaAzul = 50;
-        vidaVermelho = 50;
+        
+        posicaoAzul.x = (x / 2) - (tamVeiculo / 2); // coordenada inicial para x e y
+        posicaoAzul.y = y - tamVeiculo;
+        rotacaoAzul = 0;
+        posicaoVermelho.x = (x / 2) - (tamVeiculo / 2);
+        posicaoVermelho.y = 0;
+        rotacaoVermelho = 180;
+        vidaAzul = 5;
+        vidaVermelho = 5;
         try {
             enviarInformacao("Iniciando jogo...");
             String azul = "Time azul: ";

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import javax.swing.ImageIcon;
 
 public class PanelJogo extends javax.swing.JPanel {
@@ -16,13 +17,11 @@ public class PanelJogo extends javax.swing.JPanel {
     private Image veiculoAzul;
     private Image veiculoVermelho;
     
-    private int azulX;
-    private int azulY;
-    private int azulRotacao;
+    private Point posicaoAzul;
+    private int rotacaoAzul;
     
-    private int vermelhoX;
-    private int vermelhoY;
-    private int vermelhoRotacao;
+    private Point posicaoVermelho;
+    private int rotacaoVermelho;
     
     public PanelJogo(){
         inicializar();
@@ -33,12 +32,12 @@ public class PanelJogo extends javax.swing.JPanel {
         y = 500;
         carregarImagens(); // carrega as imagens para o jogo
         setPreferredSize(new Dimension(x, y));
-        azulX = (x / 2) - (veiculoAzul.getWidth(this) / 2); // coordenada inicial para x e y
-        azulY = y - veiculoAzul.getHeight(this);
-        azulRotacao = 0;
-        vermelhoX = (x / 2) - (veiculoVermelho.getWidth(this) / 2);
-        vermelhoY = 0;
-        vermelhoRotacao = 180;
+        posicaoAzul.x = (x / 2) - (veiculoAzul.getWidth(this) / 2); // coordenada inicial para x e y
+        posicaoAzul.y = y - veiculoAzul.getHeight(this);
+        rotacaoAzul = 0;
+        posicaoVermelho.x = (x / 2) - (veiculoVermelho.getWidth(this) / 2);
+        posicaoVermelho.y = 0;
+        rotacaoVermelho = 180;
     }
     
     @Override
@@ -46,8 +45,8 @@ public class PanelJogo extends javax.swing.JPanel {
         g.drawImage(fundo, 0, 0, null);
         desenharVida(g, "azul", 5);
         desenharVida(g, "vermelho", 5);
-        desenharVeiculo(g, "azul", azulX, azulY, azulRotacao);
-        desenharVeiculo(g, "vermelho", vermelhoX, vermelhoY, vermelhoRotacao);
+        desenharVeiculo(g, "azul", azulX, azulY, rotacaoAzul);
+        desenharVeiculo(g, "vermelho", vermelhoX, vermelhoY, rotacaoVermelho);
     }
     
     private void carregarImagens(){
