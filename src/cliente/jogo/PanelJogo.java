@@ -44,6 +44,8 @@ public class PanelJogo extends javax.swing.JPanel {
     @Override
     public void paintComponent(Graphics g) {
         g.drawImage(fundo, 0, 0, null);
+        desenharVida(g, "azul", 5);
+        desenharVida(g, "vermelho", 5);
         desenharVeiculo(g, "azul", azulX, azulY, azulRotacao);
         desenharVeiculo(g, "vermelho", vermelhoX, vermelhoY, vermelhoRotacao);
     }
@@ -70,6 +72,19 @@ public class PanelJogo extends javax.swing.JPanel {
             g2d.drawImage(veiculoAzul, x, y, null);
         else if(veiculo.equals("vermelho"))
             g2d.drawImage(veiculoVermelho, x, y, null);
+        g2d.rotate(Math.toRadians(0));
     } 
     
+    private void desenharVida(Graphics g, String time, int vida){
+        ImageIcon imagem;
+        if(vida == 0)
+            imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_0.png"));
+        else
+            imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_" + time + "_" + Integer.toString(vida) + ".png"));
+        Image imagemRedimensionada = Imagem.redimensionarImagem(imagem.getImage(), 100, true);
+        if(time.equals("azul"))
+            g.drawImage(imagemRedimensionada, 0, (y - imagemRedimensionada.getHeight(null)), null);
+        else if(time.equals("vermelho"))
+            g.drawImage(imagemRedimensionada, 0, 0, null);
+    }
 }
