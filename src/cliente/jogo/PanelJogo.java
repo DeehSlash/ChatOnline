@@ -227,13 +227,35 @@ public class PanelJogo extends javax.swing.JPanel {
         repaint();
         
         ActionListener action = (ActionEvent e) -> {
-            animarTiro();
+            animarTiro(time);
         };
         timerTiro = new Timer(delay, action);
         timerTiro.start();
     }
     
-    public void animarTiro(){
+    public void animarTiro(String time){
+        // verifica se acertou o veículo inimigo ou se passou do limite do Frame
+        boolean colisao = false;
+        boolean limiteX = false;
+        boolean limiteY = false;
+        if(time.equals("azul")){
+            colisao = getLimiteTiro(time).intersects(getLimiteVeiculo("vermelho"));
+            limiteX = posicaoTiroAzul.getX() < 0 || posicaoTiroAzul.getX() > tamJanela.x;
+            limiteY = posicaoTiroAzul.getY() < 0 || posicaoTiroAzul.getY() > tamJanela.y;
+        }else if (time.equals("vermelho")){
+            colisao = getLimiteTiro(time).intersects(getLimiteVeiculo("vermelho"));
+            limiteX = posicaoTiroVermelho.getX() < 0 || posicaoTiroVermelho.getX() > tamJanela.x;
+            limiteY = posicaoTiroVermelho.getY() < 0 || posicaoTiroVermelho.getY() > tamJanela.y;
+        }
+        if(colisao || limiteX || limiteY){
+            timerTiro.stop();
+            if(time.equals("azul"))
+                tiroAzul = false;
+            else
+                tiroVermelho = false;
+            repaint();
+            return;
+        }
         
     }
 }
