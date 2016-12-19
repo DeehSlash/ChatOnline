@@ -45,8 +45,8 @@ public class PanelJogo extends javax.swing.JPanel {
         g.drawImage(fundo, 0, 0, null);
         desenharVida(g, "azul", 5);
         desenharVida(g, "vermelho", 5);
-        desenharVeiculo(g, "azul", azulX, azulY, rotacaoAzul);
-        desenharVeiculo(g, "vermelho", vermelhoX, vermelhoY, rotacaoVermelho);
+        desenharVeiculo(g, "azul", posicaoAzul.x, posicaoAzul.y, rotacaoAzul);
+        desenharVeiculo(g, "vermelho", posicaoVermelho.x, posicaoVermelho.y, rotacaoVermelho);
     }
     
     private void carregarImagens(){
