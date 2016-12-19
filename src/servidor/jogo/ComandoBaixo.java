@@ -22,17 +22,18 @@ public class ComandoBaixo implements Comando {
         else
             posicao = jogo.getPosicaoVermelho();
         // verifica x
-        if((posicao.x + jogo.getTamVeiculo() + jogo.getPasso()) > jogo.getTamJanela().x)
+        if((posicao.y + jogo.getTamVeiculo() + jogo.getPasso()) > jogo.getTamJanela().y)
             return;
         // verifica colisão
-        if(((posicao.x + jogo.getTamVeiculo() + jogo.getPasso()) >= jogo.getPosicaoVermelho().x) &&
-                ((posicao.x + jogo.getTamVeiculo() + jogo.getPasso()) <= jogo.getPosicaoVermelho().x + jogo.getTamVeiculo()))
+        if(((posicao.y + jogo.getTamVeiculo() + jogo.getPasso()) >= jogo.getPosicaoVermelho().y) &&
+                ((posicao.y + jogo.getTamVeiculo() + jogo.getPasso()) <= jogo.getPosicaoVermelho().y + jogo.getTamVeiculo()))
             return;
-        posicao.x += jogo.getPasso(); // incrementa o x (anda para baixo)
+        posicao.y += jogo.getPasso(); // incrementa o x (anda para baixo)
         if(time.equals("azul")) // seta a posição no jogo
             jogo.setPosicaoAzul(posicao);
         else
             jogo.setPosicaoVermelho(posicao);
+        jogo.atualizarPosicao(time); // atualiza todos os jogadores
     }
 
 }

@@ -35,6 +35,8 @@ public class Jogo {
         this.timeVermelho = timeVermelho;
         tamJanela = new Point(500, 500);
         tamVeiculo = 50;
+        posicaoAzul = new Point();
+        posicaoVermelho = new Point();
         passo = 10;
         inicializar();
     }
@@ -105,6 +107,29 @@ public class Jogo {
         for (Usuario usuario : timeVermelho) {
             if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null)
                 Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.receberInformacao(idGrupo, informacao);
+        }
+    }
+    
+    public void atualizarPosicao(String time){
+        try {
+            for (Usuario usuario : timeAzul) {
+                if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null){
+                    if(time.equals("azul"))
+                        Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.atualizarJogo(idGrupo, posicaoAzul.x, posicaoAzul.y, time);
+                    else if(time.equals("vermelho"))
+                        Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.atualizarJogo(idGrupo, posicaoVermelho.x, posicaoVermelho.y, time);
+                }
+            }
+            for (Usuario usuario : timeVermelho) {
+                if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null)
+                    if(time.equals("azul"))
+                        Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.atualizarJogo(idGrupo, posicaoAzul.x, posicaoAzul.y, time);
+                    else if(time.equals("vermelho"))
+                        Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.atualizarJogo(idGrupo, posicaoVermelho.x, posicaoVermelho.y, time);
+            }
+        } catch(RemoteException ex){
+            ex.printStackTrace();
+            Principal.frmPrincipal.enviarLog("Exceção ao atualizar posição de jogo com id " + idGrupo + ": " + ex.getMessage());
         }
     }
     

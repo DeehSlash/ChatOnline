@@ -1,5 +1,6 @@
 package cliente.jogo;
 
+import java.awt.Point;
 import javax.swing.JFrame;
 
 public class FrameJogo extends javax.swing.JFrame {
@@ -20,5 +21,13 @@ public class FrameJogo extends javax.swing.JFrame {
         setTitle("Jogo");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
+    }
+    
+    public void atualizarPosicao(Point posicao, String time){
+        if(time.equals("azul"))
+            jogo.setPosicaoAzul(posicao);
+        else
+            jogo.setPosicaoVermelho(posicao);
+        repaint();
     }
 }

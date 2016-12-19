@@ -48,7 +48,7 @@ public class FrameConversa extends javax.swing.JFrame {
     public ArrayList<Mensagem> mensagens;
     private char tipoMensagem;
     
-    private FrameJogo frameJogo;
+    public FrameJogo frameJogo;
     
     public FrameConversa(int origem, int destino, char tipoDestino) {
         initComponents();

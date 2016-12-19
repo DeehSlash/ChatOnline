@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 
 public class PanelJogo extends javax.swing.JPanel {
@@ -24,6 +25,8 @@ public class PanelJogo extends javax.swing.JPanel {
     
     public PanelJogo(){
         tamJanela = new Point(500, 500); // variáveis que determinam o tamanho do painel
+        posicaoAzul = new Point();
+        posicaoVermelho = new Point();
         setPreferredSize(new Dimension(tamJanela.x, tamJanela.y));
         inicializar();
     }
@@ -61,6 +64,7 @@ public class PanelJogo extends javax.swing.JPanel {
     
     private void desenharVeiculo(Graphics g, String veiculo, int x, int y, int rotacao){
         Graphics2D g2d = (Graphics2D) g;
+        AffineTransform old = g2d.getTransform();
         g2d.rotate(Math.toRadians(rotacao)); // rotaciona o gráfico
         if(rotacao == 180){ // se a rotação for 180, muda as coordendas
             x += 50; // x e y são acrescidos em 50 (tamanho do veículo), pois quando é invertido (180º) as coordenadas dizem até que ponto será desenhado,
@@ -72,7 +76,7 @@ public class PanelJogo extends javax.swing.JPanel {
             g2d.drawImage(veiculoAzul, x, y, null);
         else if(veiculo.equals("vermelho"))
             g2d.drawImage(veiculoVermelho, x, y, null);
-        g2d.rotate(Math.toRadians(0));
+        g2d.setTransform(old);
     } 
     
     private void desenharVida(Graphics g, String time, int vida){
