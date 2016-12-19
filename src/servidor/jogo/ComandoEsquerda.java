@@ -26,10 +26,10 @@ public class ComandoEsquerda implements Comando {
             return;
         // verifica colisão
         if(time.equals("azul")){
-            if(jogo.getLimite("azul", -jogo.getPasso(), 0).intersects(jogo.getLimite("vermelho", 0, 0)))
+            if(jogo.getLimiteVeiculo("azul", -jogo.getPasso(), 0).intersects(jogo.getLimiteVeiculo("vermelho", 0, 0)))
                 return;
         }else{
-            if(jogo.getLimite("azul", 0, 0).intersects(jogo.getLimite("vermelho", -jogo.getPasso(), 0)))
+            if(jogo.getLimiteVeiculo("azul", 0, 0).intersects(jogo.getLimiteVeiculo("vermelho", -jogo.getPasso(), 0)))
                 return;
         }
         posicao.x -= jogo.getPasso(); // incrementa o y (anda para baixo)
