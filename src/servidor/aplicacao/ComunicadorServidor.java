@@ -198,6 +198,12 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
     
     @Override
+    public boolean iniciarJogo(int idGrupo, ArrayList<Usuario> timeAzul, ArrayList<Usuario> timeVermelho) throws RemoteException{
+        Principal.jogos.add(new Jogo(idGrupo, timeAzul, timeVermelho));
+        return true;
+    }
+    
+    @Override
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException {
         return Principal.usuarios; // retorna a lista de usuários
     }

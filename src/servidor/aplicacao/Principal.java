@@ -30,6 +30,7 @@ public class Principal {
     public static ArrayList<Usuario> usuarios;
     public static ArrayList<Grupo> grupos;
     public static ArrayList<Conexao> conexoes;
+    public static ArrayList<Jogo> jogos;
     
     public static void main(String[] args) {
         try {
@@ -62,6 +63,8 @@ public class Principal {
         
         grupos = gerenciador.getListaGrupos();
         frmPrincipal.enviarLog("Lista de grupos recuperada");
+        
+        jogos = new ArrayList<>();
         
         System.setProperty("java.rmi.server.hostname", endereco);
         LocateRegistry.createRegistry(portaRMI); // inicia o registro RMI na porta informada + 1

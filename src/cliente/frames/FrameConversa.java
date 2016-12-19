@@ -178,7 +178,6 @@ public class FrameConversa extends javax.swing.JFrame {
         });
         
         itemIniciarJogo.addActionListener((ActionEvent e) -> {
-            escreverInformacao("Iniciando jogo...");
             ArrayList<Usuario> timeAzul = new ArrayList<>(); // declara os times
             ArrayList<Usuario> timeVermelho = new ArrayList<>();
             Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
@@ -197,22 +196,16 @@ public class FrameConversa extends javax.swing.JFrame {
                 else
                     timeAzul.add(Principal.usuarios.get(grupo.getMembros()[i] - 1));
             }
-            String azul = "Time azul: ";
-            for (Usuario usuario : timeAzul) {
-                azul += usuario.getUsuario() + ", ";
+            try {
+                Principal.frmPrincipal.conexao.comunicador.iniciarJogo(destino, timeAzul, timeVermelho);
+                FrameJogo frameJogo = new FrameJogo(timeAzul, timeVermelho);
+                frameJogo.setVisible(true);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha ao inciar o jogo no servidor, tente novamente", 
+                        "Falha na inicialização", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            azul = azul.substring(0, azul.lastIndexOf(","));
-            String vermelho = "Time vermelho: ";
-            for (Usuario usuario : timeVermelho) {
-                vermelho += usuario.getUsuario() + ", ";
-            }
-            vermelho = vermelho.substring(0, vermelho.lastIndexOf(","));
-            escreverInformacao(azul);
-            escreverInformacao(vermelho);
-            escreverInformacao("Comandos:\n.cima\n.baixo\n.esquerda\n.direita\n.atirar");
-            FrameJogo frameJogo = new FrameJogo(timeAzul, timeVermelho);
-            frameJogo.setVisible(true);
-            escreverInformacao("O jogo foi iniciado");
         });
         
         itemSair.addActionListener((ActionEvent e) -> {
