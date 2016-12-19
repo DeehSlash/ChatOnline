@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 
 public class PanelJogo extends javax.swing.JPanel {
@@ -25,15 +24,15 @@ public class PanelJogo extends javax.swing.JPanel {
     private int vermelhoRotacao;
     
     public PanelJogo(){
-        x = 500;
-        y = 500;
         inicializar();
     }
     
     private void inicializar(){
-        carregarImagens();
+        x = 500; // variáveis que determinam o tamanho do painel
+        y = 500;
+        carregarImagens(); // carrega as imagens para o jogo
         setPreferredSize(new Dimension(x, y));
-        azulX = (x / 2) - (veiculoAzul.getWidth(this) / 2);
+        azulX = (x / 2) - (veiculoAzul.getWidth(this) / 2); // coordenada inicial para x e y
         azulY = y - veiculoAzul.getHeight(this);
         azulRotacao = 0;
         vermelhoX = (x / 2) - (veiculoVermelho.getWidth(this) / 2);
@@ -43,8 +42,7 @@ public class PanelJogo extends javax.swing.JPanel {
     
     @Override
     public void paintComponent(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(fundo, 0, 0, null);
+        g.drawImage(fundo, 0, 0, null);
         desenharVeiculo(g, "azul", azulX, azulY, azulRotacao);
         desenharVeiculo(g, "vermelho", vermelhoX, vermelhoY, vermelhoRotacao);
     }
@@ -60,14 +58,14 @@ public class PanelJogo extends javax.swing.JPanel {
     
     private void desenharVeiculo(Graphics g, String veiculo, int x, int y, int rotacao){
         Graphics2D g2d = (Graphics2D) g;
-        g2d.rotate(Math.toRadians(rotacao));
-        if(rotacao == 180){
-            x += 50;
-            y += 50;
-            x *= -1;
+        g2d.rotate(Math.toRadians(rotacao)); // rotaciona o gráfico
+        if(rotacao == 180){ // se a rotação for 180, muda as coordendas
+            x += 50; // x e y são acrescidos em 50 (tamanho do veículo), pois quando é invertido (180º) as coordenadas dizem até que ponto será desenhado,
+            y += 50; // não em qual ponto começará a ser desenhado, como é por padrão.
+            x *= -1; // além disso o x e y se torna negativo para aparecer na coordenada certa, já que está invertido em 180º
             y *= -1;
         }
-        if(veiculo.equals("azul"))
+        if(veiculo.equals("azul")) // desenha o veículo informado
             g2d.drawImage(veiculoAzul, x, y, null);
         else if(veiculo.equals("vermelho"))
             g2d.drawImage(veiculoVermelho, x, y, null);
