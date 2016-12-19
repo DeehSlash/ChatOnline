@@ -12,7 +12,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
-public class PanelJogo extends javax.swing.JPanel implements ActionListener {
+public class PanelJogo extends javax.swing.JPanel {
     
     private final Point tamJanela;
 
@@ -38,7 +38,8 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
     private String timeTiro;
     private char eixo;
     
-    private Timer timer;
+    private Timer timerMovimentacao;
+    private Timer timerTiro;
     private final int delay;
     
     public PanelJogo(){
@@ -66,7 +67,6 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
         rotacaoVermelho = 180;
         tiroAzul = false;
         tiroVermelho = false;
-        timer = new Timer(delay, this);
     }
     
     @Override
@@ -144,9 +144,57 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
             eixo = 'y';
         else
             eixo = 'x';
-        timer.start();
+        
+        ActionListener action = (ActionEvent e) -> {
+            animarMovimento();
+        };
+        timerMovimentacao = new Timer(delay, action);
+        timerMovimentacao.start();
     }
     
+    public void animarMovimento(){
+        if(timeMovimentacao.equals("azul") && eixo == 'x'){
+            if(proximaPosicao.x > posicaoAzul.x)
+                posicaoAzul.x++;
+            else if (proximaPosicao.x < posicaoAzul.x)
+                posicaoAzul.x--;
+            else if(proximaPosicao.x == posicaoAzul.x){
+                timerMovimentacao.stop();
+                return;
+            }
+        }
+        if(timeMovimentacao.equals("azul") && eixo == 'y'){
+            if(proximaPosicao.y > posicaoAzul.y)
+                posicaoAzul.y++;
+            else if(proximaPosicao.y < posicaoAzul.y)
+                posicaoAzul.y--;
+            else if(proximaPosicao.y == posicaoAzul.y){
+                timerMovimentacao.stop();
+                return;
+            }
+        }
+        if(timeMovimentacao.equals("vermelho") && eixo == 'x'){
+            if(proximaPosicao.x > posicaoVermelho.x)
+                posicaoVermelho.x++;
+            else if(proximaPosicao.x < posicaoVermelho.x)
+                posicaoVermelho.x--;
+            else if(proximaPosicao.x == posicaoVermelho.x){
+                timerMovimentacao.stop();
+                return;
+            }
+        }
+        if(timeMovimentacao.equals("vermelho") && eixo == 'y'){
+            if(proximaPosicao.y > posicaoVermelho.y)
+                posicaoVermelho.y++;
+            else if(proximaPosicao.y < posicaoVermelho.y)
+                posicaoVermelho.y--;
+            else if(proximaPosicao.y == posicaoVermelho.y){
+                timerMovimentacao.stop();
+                return;
+            }
+        }
+        repaint();
+    }            
     
     public void criarTiro(String time) {
         timeTiro = time;
@@ -160,50 +208,15 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
             tiroVermelho = true;
         }
         repaint();
+        
+        ActionListener action = (ActionEvent e) -> {
+            animarTiro();
+        };
+        timerTiro = new Timer(delay, action);
+        timerTiro.start();
     }
     
-    @Override
-    public void actionPerformed(ActionEvent e){
-        if(timeMovimentacao.equals("azul") && eixo == 'x'){
-            if(proximaPosicao.x > posicaoAzul.x)
-                posicaoAzul.x++;
-            else if (proximaPosicao.x < posicaoAzul.x)
-                posicaoAzul.x--;
-            else if(proximaPosicao.x == posicaoAzul.x){
-                timer.stop();
-                return;
-            }
-        }
-        if(timeMovimentacao.equals("azul") && eixo == 'y'){
-            if(proximaPosicao.y > posicaoAzul.y)
-                posicaoAzul.y++;
-            else if(proximaPosicao.y < posicaoAzul.y)
-                posicaoAzul.y--;
-            else if(proximaPosicao.y == posicaoAzul.y){
-                timer.stop();
-                return;
-            }
-        }
-        if(timeMovimentacao.equals("vermelho") && eixo == 'x'){
-            if(proximaPosicao.x > posicaoVermelho.x)
-                posicaoVermelho.x++;
-            else if(proximaPosicao.x < posicaoVermelho.x)
-                posicaoVermelho.x--;
-            else if(proximaPosicao.x == posicaoVermelho.x){
-                timer.stop();
-                return;
-            }
-        }
-        if(timeMovimentacao.equals("vermelho") && eixo == 'y'){
-            if(proximaPosicao.y > posicaoVermelho.y)
-                posicaoVermelho.y++;
-            else if(proximaPosicao.y < posicaoVermelho.y)
-                posicaoVermelho.y--;
-            else if(proximaPosicao.y == posicaoVermelho.y){
-                timer.stop();
-                return;
-            }
-        }
-        repaint();
+    public void animarTiro(){
+        
     }
 }
