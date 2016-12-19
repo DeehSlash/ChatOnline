@@ -14,8 +14,7 @@ public class Jogo {
     private final ArrayList<Usuario> timeAzul;
     private final ArrayList<Usuario> timeVermelho;
     
-    private final int x;
-    private final int y;
+    private final Point tamJanela;
     private final int tamVeiculo;
     
     private Point posicaoAzul;
@@ -31,8 +30,7 @@ public class Jogo {
         this.idGrupo = idGrupo;
         this.timeAzul = timeAzul;
         this.timeVermelho = timeVermelho;
-        x = 500;
-        y = 500;
+        tamJanela = new Point(500, 500);
         tamVeiculo = 50;
         inicializar();
     }
@@ -40,11 +38,10 @@ public class Jogo {
     public int getIdGrupo() { return idGrupo; }
     
     public void inicializar(){
-        
-        posicaoAzul.x = (x / 2) - (tamVeiculo / 2); // coordenada inicial para x e y
-        posicaoAzul.y = y - tamVeiculo;
+        posicaoAzul.x = (tamJanela.x / 2) - (tamVeiculo / 2); // coordenada inicial para x e y
+        posicaoAzul.y = tamJanela.y - tamVeiculo;
         rotacaoAzul = 0;
-        posicaoVermelho.x = (x / 2) - (tamVeiculo / 2);
+        posicaoVermelho.x = (tamJanela.x / 2) - (tamVeiculo / 2);
         posicaoVermelho.y = 0;
         rotacaoVermelho = 180;
         vidaAzul = 5;
