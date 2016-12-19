@@ -21,6 +21,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -177,6 +179,11 @@ public class FrameConversa extends javax.swing.JFrame {
         itemIniciarJogo.addActionListener((ActionEvent e) -> {
             FrameJogo frameJogo = new FrameJogo();
             frameJogo.setVisible(true);
+            try {
+                escreverInformacao("Jogo foi iniciado com sucesso!");
+            } catch (BadLocationException ex) {
+                Logger.getLogger(FrameConversa.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
         itemSair.addActionListener((ActionEvent e) -> {
@@ -273,6 +280,16 @@ public class FrameConversa extends javax.swing.JFrame {
             descerScroll(); // desce o scroll
     }
     
+    private void escreverInformacao(String informacao) throws BadLocationException{
+        doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
+        boolean deveDarScroll = testeScroll(); // faz o teste de scroll
+        doc.insertString(doc.getLength(), "\n" + informacao + "\n", formatacao("informacao")); // escreve a informação
+        doc.setParagraphAttributes(0, doc.getLength(), formatacao("normal"), true); // formata a fonte e paragrafo
+        txtConversa.setStyledDocument(doc); // joga o documento de volta para o JTextPane
+        if(deveDarScroll) // se deve dar scroll
+            descerScroll(); // desce o scroll
+    }
+    
     private SimpleAttributeSet formatacao(String tipo){
         SimpleAttributeSet formatacao = new SimpleAttributeSet();
         StyleConstants.setFontFamily(formatacao, "Tahoma");
@@ -284,7 +301,10 @@ public class FrameConversa extends javax.swing.JFrame {
             StyleConstants.setForeground(formatacao, Color.blue);
         }else if(tipo.equals("origemNome"))
             StyleConstants.setBold(formatacao, true);
-        else if(tipo.equals("normal")){
+        else if(tipo.equals("informacao")){
+            StyleConstants.setBold(formatacao, true);
+            StyleConstants.setForeground(formatacao, Color.red);
+        } else if(tipo.equals("normal")){
             // não faz nada além do básico
         }
         return formatacao;
