@@ -43,6 +43,8 @@ public class Jogo {
         tamVeiculo = 50;
         posicaoAzul = new Point();
         posicaoVermelho = new Point();
+        posicaoTiroAzul = new Point();
+        posicaoTiroVermelho = new Point();
         tiroAzul = false;
         tiroVermelho = false;
         tamTiro = new Point(10, 63);
@@ -172,10 +174,15 @@ public class Jogo {
     }
     
     public void criarTiro(String time){
-        if(time.equals("azul"))
+        if(time.equals("azul")){
+            posicaoTiroAzul.x = posicaoAzul.x + (tamVeiculo / 2) - (tamTiro.x / 2);
+            posicaoTiroAzul.y = posicaoAzul.y - tamVeiculo;
             setTiroAzul(true);
-        else
+        }else{
+            posicaoTiroVermelho.x = posicaoVermelho.x + (tamVeiculo / 2) - (tamTiro.x / 2);
+            posicaoTiroVermelho.y = posicaoVermelho.y + tamVeiculo;
             setTiroVermelho(true);
+        }
         try {
             for (Usuario usuario : timeAzul) {
                 if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null){
