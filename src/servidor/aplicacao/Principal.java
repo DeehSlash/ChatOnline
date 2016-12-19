@@ -109,4 +109,12 @@ public class Principal {
         }
         return null;
     }
+    
+    public static Jogo getJogo(int id){
+        for (Jogo jogo : jogos) {
+            if(jogo.getIdGrupo() == id)
+                return jogo;
+        }
+        return null;
+    }
 }
