@@ -17,17 +17,13 @@ public class FrameJogo extends javax.swing.JFrame {
         jogo = new PanelJogo();
         add(jogo);
         setSize(516, 539);
-        setResizable(true);
+        setResizable(false);
         setTitle("Jogo");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
     }
     
     public void atualizarPosicao(Point posicao, String time){
-        if(time.equals("azul"))
-            jogo.setPosicaoAzul(posicao);
-        else
-            jogo.setPosicaoVermelho(posicao);
-        repaint();
+        jogo.atualizarPosicao(posicao, time);
     }
 }

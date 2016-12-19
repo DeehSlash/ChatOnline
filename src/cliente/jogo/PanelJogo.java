@@ -6,13 +6,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 
-public class PanelJogo extends javax.swing.JPanel {
+public class PanelJogo extends javax.swing.JPanel implements ActionListener {
     
     private final Point tamJanela;
-    
+
     private Image fundo;
     private Image veiculoAzul;
     private Image veiculoVermelho;
@@ -23,10 +26,20 @@ public class PanelJogo extends javax.swing.JPanel {
     private Point posicaoVermelho;
     private int rotacaoVermelho;
     
+    // variáveis para animação da próxima posição
+    private Point proximaPosicao;
+    private String time;
+    private char eixo;
+    
+    private Timer timer;
+    private final int delay;
+    
     public PanelJogo(){
         tamJanela = new Point(500, 500); // variáveis que determinam o tamanho do painel
+        delay = 10;
         posicaoAzul = new Point();
         posicaoVermelho = new Point();
+        proximaPosicao = new Point();
         setPreferredSize(new Dimension(tamJanela.x, tamJanela.y));
         inicializar();
     }
@@ -42,6 +55,7 @@ public class PanelJogo extends javax.swing.JPanel {
         posicaoVermelho.x = (tamJanela.x / 2) - (veiculoVermelho.getWidth(this) / 2);
         posicaoVermelho.y = 0;
         rotacaoVermelho = 180;
+        timer = new Timer(delay, this);
     }
     
     @Override
@@ -90,5 +104,65 @@ public class PanelJogo extends javax.swing.JPanel {
             g.drawImage(imagemRedimensionada, 0, (tamJanela.y - imagemRedimensionada.getHeight(null)), null);
         else if(time.equals("vermelho"))
             g.drawImage(imagemRedimensionada, 0, 0, null);
+    }
+    
+    public void atualizarPosicao(Point posicao, String time){
+        proximaPosicao = posicao;
+        this.time = time;
+        Point diferenca;
+        if(time.equals("azul"))
+            diferenca = new Point(posicao.x - posicaoAzul.x, posicao.y - posicaoAzul.y);
+        else
+            diferenca = new Point(posicao.x - posicaoVermelho.x, posicao.y - posicaoVermelho.y);
+        if(diferenca.x == 0)
+            eixo = 'y';
+        else
+            eixo = 'x';
+        timer.start();
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e){
+        if(time.equals("azul") && eixo == 'x'){
+            if(proximaPosicao.x > posicaoAzul.x)
+                posicaoAzul.x++;
+            else if (proximaPosicao.x < posicaoAzul.x)
+                posicaoAzul.x--;
+            else if(proximaPosicao.x == posicaoAzul.x){
+                timer.stop();
+                return;
+            }
+        }
+        if(time.equals("azul") && eixo == 'y'){
+            if(proximaPosicao.y > posicaoAzul.y)
+                posicaoAzul.y++;
+            else if(proximaPosicao.y < posicaoAzul.y)
+                posicaoAzul.y--;
+            else if(proximaPosicao.y == posicaoAzul.y){
+                timer.stop();
+                return;
+            }
+        }
+        if(time.equals("vermelho") && eixo == 'x'){
+            if(proximaPosicao.x > posicaoVermelho.x)
+                posicaoVermelho.x++;
+            else if(proximaPosicao.x < posicaoVermelho.x)
+                posicaoVermelho.x--;
+            else if(proximaPosicao.x == posicaoVermelho.x){
+                timer.stop();
+                return;
+            }
+        }
+        if(time.equals("vermelho") && eixo == 'y'){
+            if(proximaPosicao.y > posicaoVermelho.y)
+                posicaoVermelho.y++;
+            else if(proximaPosicao.y < posicaoVermelho.y)
+                posicaoVermelho.y--;
+            else if(proximaPosicao.y == posicaoVermelho.y){
+                timer.stop();
+                return;
+            }
+        }
+        repaint();
     }
 }
