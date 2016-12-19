@@ -10,8 +10,7 @@ import javax.swing.ImageIcon;
 
 public class PanelJogo extends javax.swing.JPanel {
     
-    private int x;
-    private int y;
+    private final Point tamJanela;
     
     private Image fundo;
     private Image veiculoAzul;
@@ -24,18 +23,20 @@ public class PanelJogo extends javax.swing.JPanel {
     private int rotacaoVermelho;
     
     public PanelJogo(){
+        tamJanela = new Point(500, 500); // variáveis que determinam o tamanho do painel
+        setPreferredSize(new Dimension(tamJanela.x, tamJanela.y));
         inicializar();
     }
     
+    public void setPosicaoAzul(Point posicao) { posicaoAzul = posicao; }
+    public void setPosicaoVermelho(Point posicao) { posicaoVermelho = posicao; }
+    
     private void inicializar(){
-        x = 500; // variáveis que determinam o tamanho do painel
-        y = 500;
         carregarImagens(); // carrega as imagens para o jogo
-        setPreferredSize(new Dimension(x, y));
-        posicaoAzul.x = (x / 2) - (veiculoAzul.getWidth(this) / 2); // coordenada inicial para x e y
-        posicaoAzul.y = y - veiculoAzul.getHeight(this);
+        posicaoAzul.x = (tamJanela.x / 2) - (veiculoAzul.getWidth(this) / 2); // coordenada inicial para x e y
+        posicaoAzul.y = tamJanela.y - veiculoAzul.getHeight(this);
         rotacaoAzul = 0;
-        posicaoVermelho.x = (x / 2) - (veiculoVermelho.getWidth(this) / 2);
+        posicaoVermelho.x = (tamJanela.x / 2) - (veiculoVermelho.getWidth(this) / 2);
         posicaoVermelho.y = 0;
         rotacaoVermelho = 180;
     }
@@ -82,7 +83,7 @@ public class PanelJogo extends javax.swing.JPanel {
             imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/vida_" + time + "_" + Integer.toString(vida) + ".png"));
         Image imagemRedimensionada = Imagem.redimensionarImagem(imagem.getImage(), 100, true);
         if(time.equals("azul"))
-            g.drawImage(imagemRedimensionada, 0, (y - imagemRedimensionada.getHeight(null)), null);
+            g.drawImage(imagemRedimensionada, 0, (tamJanela.y - imagemRedimensionada.getHeight(null)), null);
         else if(time.equals("vermelho"))
             g.drawImage(imagemRedimensionada, 0, 0, null);
     }
