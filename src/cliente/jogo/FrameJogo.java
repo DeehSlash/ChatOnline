@@ -16,7 +16,7 @@ public class FrameJogo extends javax.swing.JFrame {
     private void inicializar(){
         jogo = new PanelJogo();
         add(jogo);
-        setSize(516, 539);
+        setSize(506, 529);
         setResizable(false);
         setTitle("Jogo");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -25,5 +25,9 @@ public class FrameJogo extends javax.swing.JFrame {
     
     public void atualizarPosicao(Point posicao, String time){
         jogo.atualizarPosicao(posicao, time);
+    }
+    
+    public void criarTiro(String time){
+        jogo.criarTiro(time);
     }
 }

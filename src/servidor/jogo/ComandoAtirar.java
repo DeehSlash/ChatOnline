@@ -1,5 +1,7 @@
 package servidor.jogo;
 
+import servidor.aplicacao.Principal;
+
 public class ComandoAtirar implements Comando{
 
     int id;
@@ -12,7 +14,12 @@ public class ComandoAtirar implements Comando{
     
     @Override
     public void executar() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Jogo jogo = Principal.getJogo(id);
+        if(time.equals("azul") && jogo.getTiroAzul())
+            return;
+        if(time.equals("vermelho") && jogo.getTiroVermelho())
+            return;
+        jogo.criarTiro(time);
     }
 
 }

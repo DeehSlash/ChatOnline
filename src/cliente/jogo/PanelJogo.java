@@ -19,6 +19,7 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
     private Image fundo;
     private Image veiculoAzul;
     private Image veiculoVermelho;
+    private Image tiro;
     
     private Point posicaoAzul;
     private int rotacaoAzul;
@@ -26,9 +27,15 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
     private Point posicaoVermelho;
     private int rotacaoVermelho;
     
+    private boolean tiroAzul;
+    private Point posicaoTiroAzul;
+    private boolean tiroVermelho;
+    private Point posicaoTiroVermelho;
+    
     // variáveis para animação da próxima posição
     private Point proximaPosicao;
-    private String time;
+    private String timeMovimentacao;
+    private String timeTiro;
     private char eixo;
     
     private Timer timer;
@@ -40,6 +47,8 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
         posicaoAzul = new Point();
         posicaoVermelho = new Point();
         proximaPosicao = new Point();
+        posicaoTiroAzul = new Point();
+        posicaoTiroVermelho = new Point();
         setPreferredSize(new Dimension(tamJanela.x, tamJanela.y));
         inicializar();
     }
@@ -55,6 +64,8 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
         posicaoVermelho.x = (tamJanela.x / 2) - (veiculoVermelho.getWidth(this) / 2);
         posicaoVermelho.y = 0;
         rotacaoVermelho = 180;
+        tiroAzul = false;
+        tiroVermelho = false;
         timer = new Timer(delay, this);
     }
     
@@ -65,6 +76,10 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
         desenharVida(g, "vermelho", 5);
         desenharVeiculo(g, "azul", posicaoAzul.x, posicaoAzul.y, rotacaoAzul);
         desenharVeiculo(g, "vermelho", posicaoVermelho.x, posicaoVermelho.y, rotacaoVermelho);
+        if(tiroAzul)
+            desenharTiro(g, "azul");
+        if(tiroVermelho)
+            desenharTiro(g, "vermelho");
     }
     
     private void carregarImagens(){
@@ -74,6 +89,8 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
         veiculoAzul = Imagem.redimensionarImagem(imagem.getImage(), 50, true);
         imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/veiculo_vermelho.png"));
         veiculoVermelho = Imagem.redimensionarImagem(imagem.getImage(), 50, true);
+        imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/tiro.png"));
+        tiro = Imagem.redimensionarImagem(imagem.getImage(), 10, true);
     }
     
     private void desenharVeiculo(Graphics g, String veiculo, int x, int y, int rotacao){
@@ -106,9 +123,18 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
             g.drawImage(imagemRedimensionada, 0, 0, null);
     }
     
+    private void desenharTiro(Graphics g, String time){
+        ImageIcon imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/tiro.png"));
+        Image imagemRedimensionada = Imagem.redimensionarImagem(imagem.getImage(), 10, true);
+        if(time.equals("azul"))
+            g.drawImage(imagemRedimensionada, posicaoTiroAzul.x, posicaoTiroAzul.y, null);
+        else
+            g.drawImage(imagemRedimensionada, posicaoTiroVermelho.x, posicaoTiroVermelho.y, null);
+    }
+    
     public void atualizarPosicao(Point posicao, String time){
         proximaPosicao = posicao;
-        this.time = time;
+        this.timeMovimentacao = time;
         Point diferenca;
         if(time.equals("azul"))
             diferenca = new Point(posicao.x - posicaoAzul.x, posicao.y - posicaoAzul.y);
@@ -121,9 +147,24 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
         timer.start();
     }
     
+    
+    public void criarTiro(String time) {
+        timeTiro = time;
+        if(timeTiro.equals("azul")){
+            posicaoTiroAzul.x = posicaoAzul.x + (veiculoAzul.getWidth(null) / 2) - (tiro.getWidth(null) / 2);
+            posicaoTiroAzul.y = posicaoAzul.y - veiculoAzul.getHeight(null);
+            tiroAzul = true;
+        }else{
+            posicaoTiroVermelho.x = posicaoVermelho.x + (veiculoVermelho.getWidth(null) / 2) - (tiro.getWidth(null) / 2);
+            posicaoTiroVermelho.y = posicaoVermelho.y + veiculoVermelho.getHeight(null);
+            tiroVermelho = true;
+        }
+        repaint();
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e){
-        if(time.equals("azul") && eixo == 'x'){
+        if(timeMovimentacao.equals("azul") && eixo == 'x'){
             if(proximaPosicao.x > posicaoAzul.x)
                 posicaoAzul.x++;
             else if (proximaPosicao.x < posicaoAzul.x)
@@ -133,7 +174,7 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
                 return;
             }
         }
-        if(time.equals("azul") && eixo == 'y'){
+        if(timeMovimentacao.equals("azul") && eixo == 'y'){
             if(proximaPosicao.y > posicaoAzul.y)
                 posicaoAzul.y++;
             else if(proximaPosicao.y < posicaoAzul.y)
@@ -143,7 +184,7 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
                 return;
             }
         }
-        if(time.equals("vermelho") && eixo == 'x'){
+        if(timeMovimentacao.equals("vermelho") && eixo == 'x'){
             if(proximaPosicao.x > posicaoVermelho.x)
                 posicaoVermelho.x++;
             else if(proximaPosicao.x < posicaoVermelho.x)
@@ -153,7 +194,7 @@ public class PanelJogo extends javax.swing.JPanel implements ActionListener {
                 return;
             }
         }
-        if(time.equals("vermelho") && eixo == 'y'){
+        if(timeMovimentacao.equals("vermelho") && eixo == 'y'){
             if(proximaPosicao.y > posicaoVermelho.y)
                 posicaoVermelho.y++;
             else if(proximaPosicao.y < posicaoVermelho.y)

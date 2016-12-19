@@ -33,7 +33,7 @@ public class ComunicadorCliente implements IComunicadorCliente {
     
     
     @Override
-    public boolean atualizarJogo(int idGrupo, int x, int y, String time) throws RemoteException {
+    public boolean atualizarPosicaoJogo(int idGrupo, int x, int y, String time) throws RemoteException {
         for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
             if(conversa.getDestino() == idGrupo && conversa.getTipoDestino() == 'G'){
                 conversa.frameJogo.atualizarPosicao(new Point(x, y), time);
@@ -44,8 +44,19 @@ public class ComunicadorCliente implements IComunicadorCliente {
     }
 
     @Override
-    public boolean atualizarJogo(int idGrupo, int vida, String time) throws RemoteException {
+    public boolean atualizarVidaJogo(int idGrupo, int vida, String time) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public boolean criarTiroJogo(int idGrupo, String time) throws RemoteException {
+        for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
+            if(conversa.getDestino() == idGrupo && conversa.getTipoDestino() == 'G'){
+                conversa.frameJogo.criarTiro(time);
+                return true;
+            }
+        }
+        return false;
     }
     
     @Override
