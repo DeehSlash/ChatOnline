@@ -3,9 +3,11 @@ package servidor.jogo;
 public class ComandoEsquerda implements Comando {
 
     int id;
+    String time;
     
-    public ComandoEsquerda(int id){
+    public ComandoEsquerda(int id, String time){
         this.id = id;
+        this.time = time;
     }
     
     @Override

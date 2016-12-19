@@ -9,22 +9,22 @@ public class ComandoInvoker {
         idGrupo = id;
     }
     
-    public boolean setComando(String nome){
+    public boolean setComando(String nome, String time){
         switch(nome){
             case ".atirar":
-                comando = new ComandoAtirar(idGrupo);
+                comando = new ComandoAtirar(idGrupo, time);
                 break;
             case ".baixo":
-                comando = new ComandoBaixo(idGrupo);
+                comando = new ComandoBaixo(idGrupo, time);
                 break;
             case ".cima":
-                comando = new ComandoCima(idGrupo);
+                comando = new ComandoCima(idGrupo, time);
                 break;
             case ".direita":
-                comando = new ComandoDireita(idGrupo);
+                comando = new ComandoDireita(idGrupo, time);
                 break;
             case ".esquerda":
-                comando = new ComandoEsquerda(idGrupo);
+                comando = new ComandoEsquerda(idGrupo, time);
                 break;
             default:
                 comando = null;

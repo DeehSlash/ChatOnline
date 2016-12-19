@@ -225,7 +225,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         String msg = (String) mensagem.getMensagem();
         if(msg.startsWith(".") && mensagem.getDestinoTipo() == 'G'){ // se a mensagem começa com ".", então ela é um comando para o jogo em grupo
             if(Principal.getJogo(mensagem.getIdDestino()) != null)
-                Principal.getJogo(mensagem.getIdDestino()).receberComando(msg);
+                Principal.getJogo(mensagem.getIdDestino()).receberComando(mensagem.getIdOrigem(), msg);
         }
         boolean teste = false;
         for (Conexao conexao : Principal.conexoes) {

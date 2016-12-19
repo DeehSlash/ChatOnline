@@ -98,8 +98,15 @@ public class Jogo {
         }
     }
     
-    public void receberComando(String nome){
-        if(comandoInvoker.setComando(nome))
+    public void receberComando(int id, String nome){
+        String time = "";
+        for (Usuario usuario : timeAzul) {
+            if(usuario.getId() == id)
+                time = "azul";
+        }
+        if(time.isEmpty())
+            time = "vermelho";
+        if(comandoInvoker.setComando(nome, time))
             comandoInvoker.executar();
     }
     
