@@ -41,11 +41,13 @@ public class PanelJogo extends javax.swing.JPanel {
     
     private Timer timerMovimentacao;
     private Timer timerTiro;
-    private final int delay;
+    private final int delayMovimentacao;
+    private final int delayTiro;
     
     public PanelJogo(){
         tamJanela = new Point(500, 500); // variáveis que determinam o tamanho do painel
-        delay = 10;
+        delayMovimentacao = 10;
+        delayTiro = 1;
         posicaoAzul = new Point();
         posicaoVermelho = new Point();
         proximaPosicao = new Point();
@@ -60,10 +62,10 @@ public class PanelJogo extends javax.swing.JPanel {
     
     private void inicializar(){
         carregarImagens(); // carrega as imagens para o jogo
-        posicaoAzul.x = (tamJanela.x / 2) - (veiculoAzul.getWidth(this) / 2); // coordenada inicial para x e y
-        posicaoAzul.y = tamJanela.y - veiculoAzul.getHeight(this);
+        posicaoAzul.x = (tamJanela.x / 2) - (veiculoAzul.getWidth(null) / 2); // coordenada inicial para x e y
+        posicaoAzul.y = tamJanela.y - veiculoAzul.getHeight(null);
         rotacaoAzul = 0;
-        posicaoVermelho.x = (tamJanela.x / 2) - (veiculoVermelho.getWidth(this) / 2);
+        posicaoVermelho.x = (tamJanela.x / 2) - (veiculoVermelho.getWidth(null) / 2);
         posicaoVermelho.y = 0;
         rotacaoVermelho = 180;
         tiroAzul = false;
@@ -75,8 +77,8 @@ public class PanelJogo extends javax.swing.JPanel {
         g.drawImage(fundo, 0, 0, null);
         desenharVida(g, "azul", 5);
         desenharVida(g, "vermelho", 5);
-        desenharVeiculo(g, "azul", posicaoAzul.x, posicaoAzul.y, rotacaoAzul);
-        desenharVeiculo(g, "vermelho", posicaoVermelho.x, posicaoVermelho.y, rotacaoVermelho);
+        desenharVeiculo(g, "azul");
+        desenharVeiculo(g, "vermelho");
         if(tiroAzul)
             desenharTiro(g, "azul");
         if(tiroVermelho)
@@ -110,20 +112,28 @@ public class PanelJogo extends javax.swing.JPanel {
         return null;
     }
     
-    private void desenharVeiculo(Graphics g, String veiculo, int x, int y, int rotacao){
+    private Point rotacionar(Point ponto, int graus){
+        Point p = new Point(ponto.x, ponto.y);
+        if(graus == 180){
+            p.x += 50; // x e y são acrescidos em 50 (tamanho do veículo), pois quando é invertido (180º) as coordenadas dizem até que ponto será desenhado,
+            p.y += 50; // não em qual ponto começará a ser desenhado, como é por padrão.
+            p.x *= -1; // além disso o x e y se torna negativo para aparecer na coordenada certa, já que está invertido em 180º
+            p.y *= -1;
+        }
+        return p;
+    }
+    
+    private void desenharVeiculo(Graphics g, String time){
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform old = g2d.getTransform();
-        g2d.rotate(Math.toRadians(rotacao)); // rotaciona o gráfico
-        if(rotacao == 180){ // se a rotação for 180, muda as coordendas
-            x += 50; // x e y são acrescidos em 50 (tamanho do veículo), pois quando é invertido (180º) as coordenadas dizem até que ponto será desenhado,
-            y += 50; // não em qual ponto começará a ser desenhado, como é por padrão.
-            x *= -1; // além disso o x e y se torna negativo para aparecer na coordenada certa, já que está invertido em 180º
-            y *= -1;
+        if(time.equals("azul")){
+            g2d.drawImage(veiculoAzul, posicaoAzul.x, posicaoAzul.y, null);
+        }else{
+            Point p = new Point(posicaoVermelho.x, posicaoVermelho.y);
+            p = rotacionar(p, 180);
+            g2d.rotate(Math.toRadians(180)); // rotaciona o gráfico
+            g2d.drawImage(veiculoVermelho, p.x, p.y, null);
         }
-        if(veiculo.equals("azul")) // desenha o veículo informado
-            g2d.drawImage(veiculoAzul, x, y, null);
-        else if(veiculo.equals("vermelho"))
-            g2d.drawImage(veiculoVermelho, x, y, null);
         g2d.setTransform(old);
     } 
     
@@ -141,12 +151,17 @@ public class PanelJogo extends javax.swing.JPanel {
     }
     
     private void desenharTiro(Graphics g, String time){
-        ImageIcon imagem = new ImageIcon(getClass().getResource("/cliente/jogo/imagens/tiro.png"));
-        Image imagemRedimensionada = Imagem.redimensionarImagem(imagem.getImage(), 10, true);
+        Graphics2D g2d = (Graphics2D) g;
+        AffineTransform old = g2d.getTransform();
         if(time.equals("azul"))
-            g.drawImage(imagemRedimensionada, posicaoTiroAzul.x, posicaoTiroAzul.y, null);
-        else
-            g.drawImage(imagemRedimensionada, posicaoTiroVermelho.x, posicaoTiroVermelho.y, null);
+            g2d.drawImage(tiro, posicaoTiroAzul.x, posicaoTiroAzul.y, null);
+        else{
+            Point p = new Point(posicaoTiroVermelho.x, posicaoTiroVermelho.y);
+            p = rotacionar(p, 180);
+            g2d.rotate(Math.toRadians(180)); // rotaciona o gráfico
+            g2d.drawImage(tiro, p.x, p.y, null);
+        }
+        g2d.setTransform(old);
     }
     
     public void atualizarPosicao(Point posicao, String time){
@@ -165,7 +180,7 @@ public class PanelJogo extends javax.swing.JPanel {
         ActionListener action = (ActionEvent e) -> {
             animarMovimento();
         };
-        timerMovimentacao = new Timer(delay, action);
+        timerMovimentacao = new Timer(delayMovimentacao, action);
         timerMovimentacao.start();
     }
     
@@ -229,7 +244,7 @@ public class PanelJogo extends javax.swing.JPanel {
         ActionListener action = (ActionEvent e) -> {
             animarTiro(time);
         };
-        timerTiro = new Timer(delay, action);
+        timerTiro = new Timer(delayTiro, action);
         timerTiro.start();
     }
     
@@ -243,7 +258,7 @@ public class PanelJogo extends javax.swing.JPanel {
             limiteX = posicaoTiroAzul.getX() < 0 || posicaoTiroAzul.getX() > tamJanela.x;
             limiteY = posicaoTiroAzul.getY() < 0 || posicaoTiroAzul.getY() > tamJanela.y;
         }else if (time.equals("vermelho")){
-            colisao = getLimiteTiro(time).intersects(getLimiteVeiculo("vermelho"));
+            colisao = getLimiteTiro(time).intersects(getLimiteVeiculo("azul"));
             limiteX = posicaoTiroVermelho.getX() < 0 || posicaoTiroVermelho.getX() > tamJanela.x;
             limiteY = posicaoTiroVermelho.getY() < 0 || posicaoTiroVermelho.getY() > tamJanela.y;
         }
@@ -256,6 +271,12 @@ public class PanelJogo extends javax.swing.JPanel {
             repaint();
             return;
         }
-        
+        // incrementa o eixo apropriado e renderiza novamente
+        if(time.equals("azul")){
+            posicaoTiroAzul.y--;
+        }else{
+            posicaoTiroVermelho.y++;
+        }
+        repaint();
     }
 }

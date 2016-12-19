@@ -159,6 +159,10 @@ public class Jogo {
                     Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.criarTiroJogo(idGrupo, time);
                 }
             }
+        if(time.equals("azul"))
+            setTiroAzul(false);
+        else
+            setTiroVermelho(false);
         } catch(RemoteException ex){
             ex.printStackTrace();
             Principal.frmPrincipal.enviarLog("Exceção ao atualizar posição de jogo com id " + idGrupo + ": " + ex.getMessage());
