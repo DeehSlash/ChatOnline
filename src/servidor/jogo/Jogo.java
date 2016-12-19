@@ -40,6 +40,7 @@ public class Jogo {
     public int getIdGrupo() { return idGrupo; }
     
     public void inicializar(){
+        // inicialização das variáveis com valores iniciais
         posicaoAzul.x = (tamJanela.x / 2) - (tamVeiculo / 2); // coordenada inicial para x e y
         posicaoAzul.y = tamJanela.y - tamVeiculo;
         rotacaoAzul = 0;
@@ -48,7 +49,9 @@ public class Jogo {
         rotacaoVermelho = 180;
         vidaAzul = 5;
         vidaVermelho = 5;
+        // cria invoker para comandos
         comandoInvoker = new ComandoInvoker(idGrupo);
+        // envia informações para os jogadores
         try {
             enviarInformacao("Iniciando jogo...");
             String azul = "Time azul: ";
@@ -65,6 +68,7 @@ public class Jogo {
             enviarInformacao(vermelho);
             enviarInformacao("Comandos:\n.cima\n.baixo\n.esquerda\n.direita\n.atirar");
             enviarInformacao("O jogo foi iniciado");
+            // abre o frame do jogo para todos os jogadores
             abrirFrames();
         } catch (RemoteException ex) {
             ex.printStackTrace();
