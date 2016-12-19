@@ -22,8 +22,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -49,6 +47,8 @@ public class FrameConversa extends javax.swing.JFrame {
     private final MensagemBuilder mensagemBuilder;
     public ArrayList<Mensagem> mensagens;
     private char tipoMensagem;
+    
+    private FrameJogo frameJogo;
     
     public FrameConversa(int origem, int destino, char tipoDestino) {
         initComponents();
@@ -128,6 +128,11 @@ public class FrameConversa extends javax.swing.JFrame {
         }); 
     }
     
+    public void iniciarJogo(){
+        frameJogo = new FrameJogo(destino);
+        frameJogo.setVisible(true);
+    }
+    
     private void implementarMenu(){
         // declaração de variáveis
         JMenuBar menu = new JMenuBar();
@@ -198,8 +203,6 @@ public class FrameConversa extends javax.swing.JFrame {
             }
             try {
                 Principal.frmPrincipal.conexao.comunicador.iniciarJogo(destino, timeAzul, timeVermelho);
-                FrameJogo frameJogo = new FrameJogo(timeAzul, timeVermelho);
-                frameJogo.setVisible(true);
             } catch (RemoteException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Houve uma falha ao inciar o jogo no servidor, tente novamente", 

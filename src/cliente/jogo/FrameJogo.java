@@ -1,18 +1,14 @@
 package cliente.jogo;
 
-import compartilhado.modelo.Usuario;
-import java.util.ArrayList;
 import javax.swing.JFrame;
 
 public class FrameJogo extends javax.swing.JFrame {
 
+    int idGrupo;
     private PanelJogo jogo;
-    private final ArrayList<Usuario> timeAzul;
-    private final ArrayList<Usuario> timeVermelho;
     
-    public FrameJogo(ArrayList<Usuario> timeAzul, ArrayList<Usuario> timeVermelho) {
-        this.timeAzul = timeAzul;
-        this.timeVermelho = timeVermelho;
+    public FrameJogo(int idGrupo) {
+        this.idGrupo = idGrupo;
         inicializar();
     }
     

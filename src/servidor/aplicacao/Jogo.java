@@ -39,9 +39,21 @@ public class Jogo {
             enviarInformacao(vermelho);
             enviarInformacao("Comandos:\n.cima\n.baixo\n.esquerda\n.direita\n.atirar");
             enviarInformacao("O jogo foi iniciado");
+            abrirFrames();
         } catch (RemoteException ex) {
             ex.printStackTrace();
             Principal.frmPrincipal.enviarLog("Falha ao enviar informação para grupo " + idGrupo + ":" + ex.getMessage());
+        }
+    }
+    
+    public void abrirFrames() throws RemoteException{
+        for (Usuario usuario : timeAzul) {
+            if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null)
+                Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.iniciarJogo(idGrupo);
+        }
+        for (Usuario usuario : timeVermelho) {
+            if(Principal.getConexaoPorIdUsuario(usuario.getId()) != null)
+                Principal.getConexaoPorIdUsuario(usuario.getId()).comunicador.iniciarJogo(idGrupo);
         }
     }
     

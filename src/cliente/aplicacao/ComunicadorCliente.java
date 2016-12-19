@@ -17,7 +17,19 @@ public class ComunicadorCliente implements IComunicadorCliente {
         Principal.frmPrincipal.receberMensagem(mensagem);
         return true;
     }
-
+    
+    @Override
+    public boolean iniciarJogo(int idGrupo) throws RemoteException{
+        for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
+            if(conversa.getDestino() == idGrupo){
+                conversa.setVisible(true);
+                conversa.iniciarJogo();
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public boolean receberInformacao(int idGrupo, String informacao) throws RemoteException {
         for (FrameConversa conversa : Principal.frmPrincipal.conversas) {
