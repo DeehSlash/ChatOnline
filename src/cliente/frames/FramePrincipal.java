@@ -113,7 +113,7 @@ public class FramePrincipal extends javax.swing.JFrame {
             if(val == JFileChooser.APPROVE_OPTION){
                 File caminhoFoto = fs.getSelectedFile();
                 foto = new ImageIcon(caminhoFoto.getPath());
-                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
+                Image imagemRedimensionada = compartilhado.aplicacao.Imagem.redimensionarImagem(foto.getImage(), 50, false);
                 foto = new ImageIcon(imagemRedimensionada);
                 for (Usuario usuario : Principal.usuarios) {
                     if(usuario.getId() == conexao.getCliente().getId()){

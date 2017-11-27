@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import servidor.jogo.Jogo;
 import compartilhado.aplicacao.IComunicadorCliente;
 import compartilhado.aplicacao.IComunicadorServidor;
 import compartilhado.modelo.Grupo;
@@ -13,8 +14,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 public class ComunicadorServidor extends UnicastRemoteObject implements IComunicadorServidor {
@@ -95,7 +94,7 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
             status = 1; // se não, status é 1 (cadastrou)
         }
         ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png")); // cria uma ImageIcon com a foto padrão de usuário
-        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50, false); // redimensiona a imagem
+        Image foto = compartilhado.aplicacao.Imagem.redimensionarImagem(imagem.getImage(), 50, false); // redimensiona a imagem
         Principal.usuarios.add(new Usuario(Principal.usuarios.size() + 1, autenticacao.getUsuario(), new ImageIcon(foto))); // adiciona na lista de usuários
         Principal.frmPrincipal.enviarLog("Usuário " + autenticacao.getUsuario() + " se cadastrou"); // envia log de cadastro
         return status; // retorna o status
@@ -200,6 +199,12 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
     }
     
     @Override
+    public boolean iniciarJogo(int idGrupo, ArrayList<Usuario> timeAzul, ArrayList<Usuario> timeVermelho) throws RemoteException{
+        Principal.jogos.add(new Jogo(idGrupo, timeAzul, timeVermelho));
+        return true;
+    }
+    
+    @Override
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException {
         return Principal.usuarios; // retorna a lista de usuários
     }
@@ -216,6 +221,11 @@ public class ComunicadorServidor extends UnicastRemoteObject implements IComunic
         } catch (SQLException | IOException ex) {
             Principal.frmPrincipal.enviarLog("Exceção ao enviar mensagem com origem " + mensagem.getIdOrigem() + " e destino " + mensagem.getIdDestino() + ": " + ex.getMessage());
             return false;
+        }
+        String msg = (String) mensagem.getMensagem();
+        if(msg.startsWith(".") && mensagem.getDestinoTipo() == 'G'){ // se a mensagem começa com ".", então ela é um comando para o jogo em grupo
+            if(Principal.getJogo(mensagem.getIdDestino()) != null)
+                Principal.getJogo(mensagem.getIdDestino()).receberComando(mensagem.getIdOrigem(), msg);
         }
         boolean teste = false;
         for (Conexao conexao : Principal.conexoes) {

@@ -23,6 +23,8 @@ public interface IComunicadorServidor extends Remote{
     public int recuperarIdDisponivelGrupo() throws RemoteException;
     public boolean verificarNomeGrupo(String nome) throws RemoteException;
     
+    public boolean iniciarJogo(int idGrupo, ArrayList<Usuario> timeAzul, ArrayList<Usuario> timeVermelho) throws RemoteException;
+    
     public ArrayList<Usuario> recuperarListaUsuarios() throws RemoteException;
     public ArrayList<Grupo> recuperarListaGrupos() throws RemoteException;
     public ArrayList<Mensagem> recuperarListaMensagens(int idOrigem, int idDestino, char tipoDestino) throws RemoteException;

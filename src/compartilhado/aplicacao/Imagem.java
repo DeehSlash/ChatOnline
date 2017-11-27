@@ -2,15 +2,18 @@ package compartilhado.aplicacao;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Foto {
+public class Imagem {
     
-    public static Image redimensionarFoto(Image imagem, int tam, boolean manterProporcao){
+    public static Image redimensionarImagem(Image imagem, int tam, boolean manterProporcao){
         Image imagemRedimensionada;
         BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D bGr = bi.createGraphics();
@@ -23,7 +26,7 @@ public class Foto {
         return imagemRedimensionada;
     }
     
-    public static ByteArrayInputStream imageToBlob(Image imagem) throws IOException{
+    public static ByteArrayInputStream imagemParaBlob(Image imagem) throws IOException{
         BufferedImage bi = new BufferedImage(imagem.getWidth(null), imagem.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bi.createGraphics();
         g2d.drawImage(imagem, 0, 0, null);

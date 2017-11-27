@@ -58,7 +58,7 @@ public class GerenciadorBD {
     public boolean alterarUsuario(Usuario usuario) throws SQLException, IOException{
         PreparedStatement ps = conexao().prepareStatement("UPDATE usuario SET usuario = ?, foto = ? WHERE id = ?");
         ps.setString(1, usuario.getUsuario());
-        ps.setBlob(2, compartilhado.aplicacao.Foto.imageToBlob(usuario.getFoto().getImage()));
+        ps.setBlob(2, compartilhado.aplicacao.Imagem.imagemParaBlob(usuario.getFoto().getImage()));
         ps.setInt(3, usuario.getId());
         int result = ps.executeUpdate();
         return result == 1;
@@ -85,7 +85,7 @@ public class GerenciadorBD {
             ps.setInt(i, m[j]);
             j++;
         }
-        ps.setBlob(13, compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()));
+        ps.setBlob(13, compartilhado.aplicacao.Imagem.imagemParaBlob(grupo.getFoto().getImage()));
         int result = ps.executeUpdate();
         return result == 1;
     }
@@ -100,7 +100,7 @@ public class GerenciadorBD {
             ps.setInt(i, m[j]);
             j++;
         }
-        ps.setBlob(12, compartilhado.aplicacao.Foto.imageToBlob(grupo.getFoto().getImage()));
+        ps.setBlob(12, compartilhado.aplicacao.Imagem.imagemParaBlob(grupo.getFoto().getImage()));
         ps.setInt(13, grupo.getId());
         int result = ps.executeUpdate();
         return result == 1;
@@ -133,11 +133,11 @@ public class GerenciadorBD {
     
     public boolean cadastrarUsuario(UsuarioAutenticacao usuario) throws SQLException, IOException, URISyntaxException{
         ImageIcon imagem = new ImageIcon(getClass().getResource("/compartilhado/imagens/usuario.png"));
-        Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(imagem.getImage(), 50, false);
+        Image foto = compartilhado.aplicacao.Imagem.redimensionarImagem(imagem.getImage(), 50, false);
         PreparedStatement ps = conexao().prepareStatement("INSERT INTO usuario (usuario, senha, foto) VALUES (?, ?, ?)");
         ps.setString(1, usuario.getUsuario());
         ps.setString(2, usuario.getSenha());
-        ps.setBlob(3, compartilhado.aplicacao.Foto.imageToBlob(foto));
+        ps.setBlob(3, compartilhado.aplicacao.Imagem.imagemParaBlob(foto));
         int result = ps.executeUpdate();
         return result == 1;
     }
@@ -251,7 +251,7 @@ public class GerenciadorBD {
         switch(mensagem.getTipoMensagem()){
             case 'I':
                 ImageIcon imagem = (ImageIcon)mensagem.getMensagem();
-                ps.setBlob(9, compartilhado.aplicacao.Foto.imageToBlob(imagem.getImage()));
+                ps.setBlob(9, compartilhado.aplicacao.Imagem.imagemParaBlob(imagem.getImage()));
                 ps.setString(4, "");
                 break;
             case 'A':

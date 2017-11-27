@@ -1,5 +1,6 @@
 package servidor.aplicacao;
 
+import servidor.jogo.Jogo;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,6 +31,7 @@ public class Principal {
     public static ArrayList<Usuario> usuarios;
     public static ArrayList<Grupo> grupos;
     public static ArrayList<Conexao> conexoes;
+    public static ArrayList<Jogo> jogos;
     
     public static void main(String[] args) {
         try {
@@ -63,6 +65,8 @@ public class Principal {
         grupos = gerenciador.getListaGrupos();
         frmPrincipal.enviarLog("Lista de grupos recuperada");
         
+        jogos = new ArrayList<>();
+        
         System.setProperty("java.rmi.server.hostname", endereco);
         LocateRegistry.createRegistry(portaRMI); // inicia o registro RMI na porta informada + 1
         frmPrincipal.enviarLog("Registro RMI iniciado na porta " + portaRMI);
@@ -94,6 +98,22 @@ public class Principal {
         for (Conexao conexao : conexoes) {
             if(conexao.getIdConexao() == id)
                 return conexao;
+        }
+        return null;
+    }
+    
+    public static Conexao getConexaoPorIdUsuario(int id){
+        for (Conexao conexao : conexoes) {
+            if(conexao.getIdCliente() == id)
+                return conexao;
+        }
+        return null;
+    }
+    
+    public static Jogo getJogo(int id){
+        for (Jogo jogo : jogos) {
+            if(jogo.getIdGrupo() == id)
+                return jogo;
         }
         return null;
     }

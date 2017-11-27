@@ -1,6 +1,6 @@
 package cliente.frames;
 
-import compartilhado.aplicacao.Foto;
+import compartilhado.aplicacao.Imagem;
 import compartilhado.aplicacao.MensagemBuilder;
 import compartilhado.modelo.Grupo;
 import compartilhado.modelo.Mensagem;
@@ -11,6 +11,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import cliente.aplicacao.Principal;
+import cliente.jogo.FrameJogo;
+import compartilhado.modelo.Usuario;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -45,6 +47,8 @@ public class FrameConversa extends javax.swing.JFrame {
     private final MensagemBuilder mensagemBuilder;
     public ArrayList<Mensagem> mensagens;
     private char tipoMensagem;
+    
+    public FrameJogo frameJogo;
     
     public FrameConversa(int origem, int destino, char tipoDestino) {
         initComponents();
@@ -124,19 +128,27 @@ public class FrameConversa extends javax.swing.JFrame {
         }); 
     }
     
+    public void iniciarJogo(){
+        frameJogo = new FrameJogo(destino);
+        frameJogo.setVisible(true);
+    }
+    
     private void implementarMenu(){
         // declaração de variáveis
         JMenuBar menu = new JMenuBar();
         JMenu mnuArquivo = new JMenu();
         JMenuItem itemAlterarFoto = new JMenuItem();
+        JMenuItem itemIniciarJogo = new JMenuItem();
         JSeparator separador = new JSeparator();
         JMenuItem itemSair = new JMenuItem();
         // propriedades
         mnuArquivo.setText("Arquivo");
         itemAlterarFoto.setText("Alterar foto...");
+        itemIniciarJogo.setText("Iniciar jogo");
         itemSair.setText("Sair");
         // adiciona os componentes
         mnuArquivo.add(itemAlterarFoto);
+        mnuArquivo.add(itemIniciarJogo);
         mnuArquivo.add(separador);
         mnuArquivo.add(itemSair);
         menu.add(mnuArquivo);
@@ -150,7 +162,7 @@ public class FrameConversa extends javax.swing.JFrame {
             if(val == JFileChooser.APPROVE_OPTION){
                 File caminhoFoto = fs.getSelectedFile();
                 foto = new ImageIcon(caminhoFoto.getPath());
-                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
+                Image imagemRedimensionada = compartilhado.aplicacao.Imagem.redimensionarImagem(foto.getImage(), 50, false);
                 foto = new ImageIcon(imagemRedimensionada);
                 for (Grupo grupo : Principal.grupos) {
                     if(grupo.getId() == destino){
@@ -167,6 +179,35 @@ public class FrameConversa extends javax.swing.JFrame {
                         break;
                     }
                 }
+            }
+        });
+        
+        itemIniciarJogo.addActionListener((ActionEvent e) -> {
+            ArrayList<Usuario> timeAzul = new ArrayList<>(); // declara os times
+            ArrayList<Usuario> timeVermelho = new ArrayList<>();
+            Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
+            int qtd = 0;
+            for (int i = 0; i < 10; i++) { // conta quantos membros tem no grupo
+                if(grupo.getMembros()[i] != 0)
+                    qtd++;
+                else
+                    break;
+            }
+            int qtdTimeVermelho = qtd / 2;
+            int qtdTimeAzul = qtd - qtdTimeVermelho;
+            for (int i = 0; i < qtd; i++) {
+                if(timeAzul.size() == qtdTimeAzul)
+                    timeVermelho.add(Principal.usuarios.get(grupo.getMembros()[i] - 1));
+                else
+                    timeAzul.add(Principal.usuarios.get(grupo.getMembros()[i] - 1));
+            }
+            try {
+                Principal.frmPrincipal.conexao.comunicador.iniciarJogo(destino, timeAzul, timeVermelho);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Houve uma falha ao inciar o jogo no servidor, tente novamente", 
+                        "Falha na inicialização", JOptionPane.ERROR_MESSAGE);
+                return;
             }
         });
         
@@ -218,7 +259,7 @@ public class FrameConversa extends javax.swing.JFrame {
         return min == max;
     }
     
-    private void descerScroll(){
+    public void descerScroll(){
         SwingUtilities.invokeLater(() -> {
             scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMaximum());
         });
@@ -253,7 +294,7 @@ public class FrameConversa extends javax.swing.JFrame {
             case 'I': // caso for mensagem de imagem
                 Style estilo = doc.addStyle("imagem", null); // cria um novo estilo
                 ImageIcon imagem = (ImageIcon)mensagem.getMensagem(); // obtem a imagem da mensagem
-                StyleConstants.setIcon(estilo, new ImageIcon(Foto.redimensionarFoto(imagem.getImage(), 200, true))); // define o icone com redimensionamento
+                StyleConstants.setIcon(estilo, new ImageIcon(Imagem.redimensionarImagem(imagem.getImage(), 200, true))); // define o icone com redimensionamento
                 doc.insertString(doc.getLength(), "imagem", estilo); // insere a imagem no documento
                 doc.insertString(doc.getLength(), "\n", formatacao("normal")); // pula uma linha
                 break;
@@ -262,6 +303,20 @@ public class FrameConversa extends javax.swing.JFrame {
         txtConversa.setStyledDocument(doc); // joga o documento de volta para o JTextPane
         if(deveDarScroll) // se deve dar scroll
             descerScroll(); // desce o scroll
+    }
+    
+    public void escreverInformacao(String informacao){
+        try {
+            doc = txtConversa.getStyledDocument(); // pega o documento do JTextPane
+            boolean deveDarScroll = testeScroll(); // faz o teste de scroll
+            doc.insertString(doc.getLength(), "\n" + informacao + "\n", formatacao("informacao")); // escreve a informação
+            doc.setParagraphAttributes(0, doc.getLength(), formatacao("normal"), true); // formata a fonte e paragrafo
+            txtConversa.setStyledDocument(doc); // joga o documento de volta para o JTextPane
+            if(deveDarScroll) // se deve dar scroll
+                descerScroll(); // desce o scroll
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+        }
     }
     
     private SimpleAttributeSet formatacao(String tipo){
@@ -275,7 +330,10 @@ public class FrameConversa extends javax.swing.JFrame {
             StyleConstants.setForeground(formatacao, Color.blue);
         }else if(tipo.equals("origemNome"))
             StyleConstants.setBold(formatacao, true);
-        else if(tipo.equals("normal")){
+        else if(tipo.equals("informacao")){
+            StyleConstants.setBold(formatacao, true);
+            StyleConstants.setForeground(formatacao, Color.red);
+        } else if(tipo.equals("normal")){
             // não faz nada além do básico
         }
         return formatacao;
@@ -290,7 +348,7 @@ public class FrameConversa extends javax.swing.JFrame {
             lblStatus.setForeground((Principal.usuarios.get(destino - 1).isOnline()? new Color(31, 167, 9) : Color.red));
         }else{
             Grupo grupo = Principal.frmPrincipal.getGrupoPorId(destino);
-            Image foto = compartilhado.aplicacao.Foto.redimensionarFoto(grupo.getFoto().getImage(), 50, false);
+            Image foto = compartilhado.aplicacao.Imagem.redimensionarImagem(grupo.getFoto().getImage(), 50, false);
             lblFoto.setIcon(new ImageIcon(foto));
             lblDestino.setText(grupo.getNome());
             setTitle(grupo.getNome() + " - Mensageiro");
@@ -332,6 +390,7 @@ public class FrameConversa extends javax.swing.JFrame {
         setTitle("Usuário");
         setMinimumSize(new java.awt.Dimension(600, 500));
         setName("frmConversa"); // NOI18N
+        setPreferredSize(new java.awt.Dimension(600, 500));
         java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
         layout.rowWeights = new double[] {2.0, 50.0, 1.0};
         getContentPane().setLayout(layout);

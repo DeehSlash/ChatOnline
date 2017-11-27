@@ -30,7 +30,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
         carregarUsuarios();
         n = 0;
         foto = new ImageIcon(getClass().getResource("/compartilhado/imagens/grupo.png")); // cria uma ImageIcon com a foto padrão de usuário
-        Image fotoRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false); // redimensiona a imagem
+        Image fotoRedimensionada = compartilhado.aplicacao.Imagem.redimensionarImagem(foto.getImage(), 50, false); // redimensiona a imagem
         lblFoto.setIcon(new ImageIcon(fotoRedimensionada));
     }
     
@@ -87,7 +87,7 @@ public class FrameCriarGrupo extends javax.swing.JFrame {
             if(val == JFileChooser.APPROVE_OPTION){
                 File caminhoFoto = fs.getSelectedFile();
                 foto = new ImageIcon(caminhoFoto.getPath());
-                Image imagemRedimensionada = compartilhado.aplicacao.Foto.redimensionarFoto(foto.getImage(), 50, false);
+                Image imagemRedimensionada = compartilhado.aplicacao.Imagem.redimensionarImagem(foto.getImage(), 50, false);
                 lblFoto.setIcon(new ImageIcon(imagemRedimensionada));
             }
         });
